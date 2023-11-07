@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kick the Dot</title>
+<style>
+  #dot {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: blue;
+    border-radius: 50%;
+    top: 80px; /* Start at a fixed vertical position */
+  }
+  #rectangle {
+    position: absolute;
+    width: 100px;
+    height: 20px;
+    background-color: red;
+    bottom: 20px;
+    left: 50%; /* Start in the middle of the screen */
+    transform: translateX(-50%);
+  }
+</style>
+</head>
+<body>
+<div id="dot"></div>
+<div id="rectangle"></div>
+        <script src="{% static 'game/game.js' %}"></script>
+</body>
+</html>
