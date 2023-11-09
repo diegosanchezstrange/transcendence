@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from environ import Env
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'login.apps.LoginConfig',
 ]
 
 MIDDLEWARE = [
@@ -72,6 +74,12 @@ WSGI_APPLICATION = 'front.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+
+env = Env()
+
+Env.read_env()
+
+LOGIN_42 = env('42_LOGIN')
 
 DATABASES = {
     'default': {

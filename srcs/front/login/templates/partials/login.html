@@ -1,0 +1,57 @@
+<div class="container-fluid">
+  <div class="row justify-content-center align-items-center vh-100">
+    <div class="col-md-4 p-5 border-end border-3 border-primary rounded shadow">
+      <h1 class="text-center mb-3">Login</h1>
+      <form>
+        <div class="text-center">
+          <p>Don't have an account? <a href="#">Register</a></p>
+        </div>
+        <div class="mb-3">
+          <!-- <label for="username" class="form-label">Username</label> -->
+          <input
+            type="text"
+            name="username"
+            class="form-control rounded shadow-sm bg-gray-200"
+            placeholder="Username"
+            id="username"
+            aria-describedby="emailHelp"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <!-- <label for="password" class="form-label">Password</label> -->
+          <input
+            type="text"
+            name="password"
+            class="form-control rounded shadow-sm bg-gray-200"
+            placeholder="Password"
+            id="password"
+            required
+          />
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Login</button>
+        <!-- Add alternative login methods here -->
+        {% if LOGIN_42 %}
+        <div class="text-center mt-3">
+          <p>Or</p>
+          <a href="#" class="btn btn-dark w-100 text-white">
+            <span class="me-2">Sign in with</span>
+            <svg
+              viewBox="0 0 57 40"
+              xmlns="http://www.w3.org/2000/svg"
+              height="18"
+              class="ml-2"
+              style="fill: #fff"
+            >
+              <path
+                d="M31.627.205H21.084L0 21.097v8.457h21.084V40h10.543V21.097H10.542L31.627.205M35.349 10.233 45.58 0H35.35v10.233M56.744 10.542V0H46.512v10.542L36.279 21.085v10.543h10.233V21.085l10.232-10.543M56.744 21.395 46.512 31.628h10.232V21.395"
+              ></path>
+            </svg>
+          </a>
+        </div>
+        {% endif %}
+        <a href="#" class="text-center d-block mt-3">Forgot Password?</a>
+      </form>
+    </div>
+  </div>
+</div>

@@ -2,7 +2,7 @@
 
 FROM python AS builder
 
-EXPOSE 8080
+EXPOSE 8083
 
 WORKDIR /app 
 
