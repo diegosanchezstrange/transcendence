@@ -1,13 +1,11 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
+  // TODO: Check where the token should be safely stored
   const token = localStorage.getItem("token");
   let url;
 
-  if (token) {
-    // TODO: fetch home page partial
-    url = "/home";
-  } else {
-    url = "/login";
-  }
+  if (token) url = "/home";
+  else url = "/login";
+
   fetch(url)
     .then((response) => response.text())
     .then((html) => {
