@@ -25,7 +25,24 @@ SECRET_KEY = 'django-insecure-x-x2j3jw0q4!w%0n844_=ky=f5_39$6l2%5t9d2f=-@n+*idoe
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:8000',
+]
+
+ALLOWED_HOSTS = [
+    'localhost',
+    '*',
+]
+
+CORS_ALLOW_ALL_ORIGINS = True
+
+# CORS_ORIGIN_WHITELIST = [
+#     'http://localhost:8000',
+# ]
+
+CSRF_COOKIE_HTTPONLY = False
+
+CORS_ALLOW_CREDENTIALS = True
 
 
 # Application definition
@@ -37,6 +54,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'login.apps.LoginConfig',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -47,9 +66,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'login.middleware.CorsMiddleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
-ROOT_URLCONF = 'login.urls'
+ROOT_URLCONF = 'src.urls'
 
 TEMPLATES = [
     {
@@ -67,7 +89,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'login.wsgi.application'
+WSGI_APPLICATION = 'src.wsgi.application'
 
 
 # Database
@@ -110,6 +132,8 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+
+APPEND_SLASH = False
 
 
 # Static files (CSS, JavaScript, Images)
