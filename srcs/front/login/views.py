@@ -8,7 +8,10 @@ def base(request):
 
 def login(request):
     # Check if 42 login is enabled
-    context = {'LOGIN_42': settings.LOGIN_42}
+    context = {
+        'LOGIN_42': settings.LOGIN_42, 
+        'AUTH_URL': settings.AUTH_URL
+    }
     return render(request, 'partials/login.html', context)
 
 def home(request):
