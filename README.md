@@ -19,6 +19,7 @@ Soon you will know that youâ€™ve already known things that you thought you didnâ
 - wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
 - sudo apt-get update
 - sudo apt-get -y install postgresql
+- pip install psycopg2-binary
 
 ##### Gettext
 - /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
