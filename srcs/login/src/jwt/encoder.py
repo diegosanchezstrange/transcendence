@@ -7,21 +7,10 @@ class Base64Encoder:
         pass
 
     @staticmethod
-    def encode(obj) -> str:
-        if isinstance(obj, str):
-            s = obj
-        else:
-            s = json.dumps(obj)
-        base64_encoded = base64.b64encode(s.encode('utf-8'))
-        return Base64Encoder.replace_special_characters(base64_encoded.decode('utf-8'))
+    def encode(obj):
+        return base64.urlsafe_b64encode(obj).rstrip(b'=')
 
     @staticmethod
-    def replace_special_characters(s: str) -> str:
-        substitutions = {
-            '=': '',
-            '+': '-',
-            '/': '_'
-        }
-        for char_to_be_replaced in substitutions:
-            s = s.replace(char_to_be_replaced, substitutions[char_to_be_replaced])
-        return s
+    def decode(obj):
+        padding = b'=' * (4 - (len(obj) % 4))
+        return base64.urlsafe_b64decode(obj.encode('utf-8') + padding)
