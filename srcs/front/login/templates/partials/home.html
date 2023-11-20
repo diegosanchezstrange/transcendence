@@ -1,3 +1,46 @@
-<div class="container">
-  <h1>Welcome home !!!</h1>
-</div>
+<header>
+    {% include "partials/navbar/navbarHome.html" %}
+</header>
+<main>
+    {% load static %}
+    <div class="container">
+        <h1>Welcome home !!!</h1>
+        <div class="row justify-content-center m-3">
+            <img src="{% static 'login/img/pong.png' %}"
+                 alt="profile"
+                 class="img-fluid col-sm-6" />
+            <div class="col-4">
+                <h2>The best place</h2>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-sm-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">User</h5>
+                        <p class="card-text">This is some text within a card body.</p>
+                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">User</h5>
+                        <p class="card-text">This is some text within a card body.</p>
+                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">User</h5>
+                        <p class="card-text">This is some text within a card body.</p>
+                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

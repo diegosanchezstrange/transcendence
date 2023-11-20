@@ -28,6 +28,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+APPEND_SLASH = False
+
 
 # Application definition
 
@@ -80,7 +82,7 @@ env = Env()
 Env.read_env()
 
 # 42 API
-LOGIN_42 = env('42_LOGIN')
+LOGIN_42 = env('LOGIN_42')
 # REDIRECT_URI = env('REDIRECT_URI')
 # CLIENT_ID = env('CLIENT_ID')
 # SECRET_KEY = env('SECRET_KEY')
