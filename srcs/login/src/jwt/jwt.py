@@ -8,10 +8,12 @@ from encoder import Base64Encoder
 
 class JWT:
     class NoSecretFoundError(Exception):
+        """This exception is raised in case there is no JWT_SECRET environment variable found"""
         def __init__(self):
             super().__init__('No JWT_SECRET environment variable found')
 
     class InvalidJwtTokenError(Exception):
+        """This exception is raised in case the presented JWT is not valid"""
         def __init__(self):
             super().__init__('Invalid JWT Token')
 
@@ -41,7 +43,6 @@ class JWT:
     def decode_jwt(jwt_token: str):
         encoded_header, encoded_payload, encoded_signature = jwt_token.split('.')
 
-        header = json.loads(Base64Encoder.decode(encoded_header).decode('utf-8'))
         payload = json.loads(Base64Encoder.decode(encoded_payload).decode('utf-8'))
         signature = Base64Encoder.decode(encoded_signature)
         secret = os.getenv('JWT_SECRET')
