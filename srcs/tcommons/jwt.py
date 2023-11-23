@@ -2,9 +2,21 @@ import os
 import hashlib
 import json
 import hmac
+import base64
+import json
 
-from encoder import Base64Encoder
+class Base64Encoder:
+    def __init__(self):
+        pass
 
+    @staticmethod
+    def encode(obj):
+        return base64.urlsafe_b64encode(obj).rstrip(b'=')
+
+    @staticmethod
+    def decode(obj):
+        padding = b'=' * (4 - (len(obj) % 4))
+        return base64.urlsafe_b64decode(obj.encode('utf-8') + padding)
 
 class JWT:
     class InvalidJwtTokenError(Exception):
@@ -54,11 +66,11 @@ class JWT:
 If you are using this to test my JWT class, please do not forget to export the 'JWT_TOKEN' environment var
 """
 
-myjwt = JWT({
-    "sub": "testing stuff",
-    "name": "ft_transcendence user",
-    "iat": 2024
-})
-token = str(myjwt)
-print(token)
-print(JWT.decode_jwt(token))
+# myjwt = JWT({
+#     "sub": "testing stuff",
+#     "name": "ft_transcendence user",
+#     "iat": 2024
+# })
+# token = str(myjwt)
+# print(token)
+# print(JWT.decode_jwt(token))
