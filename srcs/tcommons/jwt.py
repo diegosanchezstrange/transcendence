@@ -19,7 +19,13 @@ class Base64Encoder:
         return base64.urlsafe_b64decode(obj.encode('utf-8') + padding)
 
 class JWT:
+    class NoSecretFoundError(Exception):
+        """This exception is raised in case there is no JWT_SECRET environment variable found"""
+        def __init__(self):
+            super().__init__('No JWT_SECRET environment variable found')
+
     class InvalidJwtTokenError(Exception):
+        """This exception is raised in case the presented JWT is not valid"""
         def __init__(self):
             super().__init__('Invalid JWT Token')
 
@@ -31,6 +37,8 @@ class JWT:
         self.headers = Base64Encoder.encode(json.dumps(headers).encode('utf-8'))
         self.payload = Base64Encoder.encode(json.dumps(payload).encode('utf-8'))
         self.__secret = os.getenv('JWT_SECRET')
+        if not self.__secret:
+            raise JWT.NoSecretFoundError
         self.signature = self.create_signature(self.__secret)
         self.all = self.headers + b'.' + self.payload + b'.' + self.signature
         self.all = self.all.decode('utf-8')
@@ -47,7 +55,6 @@ class JWT:
     def decode_jwt(jwt_token: str):
         encoded_header, encoded_payload, encoded_signature = jwt_token.split('.')
 
-        header = json.loads(Base64Encoder.decode(encoded_header).decode('utf-8'))
         payload = json.loads(Base64Encoder.decode(encoded_payload).decode('utf-8'))
         signature = Base64Encoder.decode(encoded_signature)
         secret = os.getenv('JWT_SECRET')
@@ -62,15 +69,16 @@ class JWT:
         return payload
 
 
-"""
-If you are using this to test my JWT class, please do not forget to export the 'JWT_TOKEN' environment var
-"""
-
-# myjwt = JWT({
-#     "sub": "testing stuff",
-#     "name": "ft_transcendence user",
-#     "iat": 2024
-# })
+# # Example usage
+# try:
+#     myjwt = JWT({
+#         "sub": "testing stuff",
+#         "name": "ft_transcendence user",
+#         "iat": 2024
+#     })
+# except JWT.NoSecretFoundError as e:
+#     print(e)
+#     exit(1)
 # token = str(myjwt)
-# print(token)
-# print(JWT.decode_jwt(token))
+# print(f"JWT token: {token}")
+# print(f"JWT token decoded: {JWT.decode_jwt(token)}")
