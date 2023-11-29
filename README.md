@@ -44,6 +44,9 @@ sudo apt-get -y install postgresql
 ```
 pip install psycopg2-binary
 ```
+```
+pip install django-cors-headers
+```
 
 ##### Gettext
 ```
