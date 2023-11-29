@@ -3,7 +3,7 @@ from django.views.generic import View
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 
-from tcommons.jwt import JWT
+#from tcommons.jwt import JWT
 
 import json
 
@@ -13,7 +13,7 @@ import json
 class Login(View):
     def post(self, request):
         print(request.body)
-        jwt = JWT({"name": "Diego", "lastname": "Sanchez"})
+#        jwt = JWT({"name": "Diego", "lastname": "Sanchez"})
         data = json.loads(request.body)
         if data['username'] == 'admin' and data['password'] == 'admin':
             response = {}
