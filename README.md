@@ -22,6 +22,9 @@ sudo apt install -Y python3-pip
 pip3 install Django
 ```
 ```
+pip3 install django-environ
+```
+```
 python manage.py migrate
 ```
 ```
