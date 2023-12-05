@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.views.generic import View
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
+from login.models import
 
 from tcommons.jwt import JWT
 
