@@ -1,6 +1,6 @@
 VOL_DIR	= ${HOME}/data
 
-all: 
+all: commons
 	[ -d $(VOL_DIR)/mysql ] || mkdir -p $(VOL_DIR)/mysql
 	docker-compose --env-file ./srcs/.env -f ./srcs/docker-compose.yml up -d
 
@@ -19,5 +19,10 @@ prune:
 
 re:
 	docker-compose -f ./srcs/docker-compose.yml up --force-recreate --no-deps -d
+
+commons:
+	cd srcs/ && python setup.py sdist bdist_wheel
+	pip install --force-reinstall dist/tcommons-1.0.0-py3-none-any.whl
+
 
 .PHONY: clean re stop build all

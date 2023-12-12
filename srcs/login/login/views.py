@@ -2,13 +2,19 @@ from django.shortcuts import render
 from django.views.generic import View
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
+from tcommons.models import User
+
+from tcommons.jwt import JWT
+
 import json
+
 
 # Create your views here.
 
 class Login(View):
     def post(self, request):
         print(request.body)
+        jwt = JWT({"name": "Diego", "lastname": "Sanchez"})
         data = json.loads(request.body)
         if data['username'] == 'admin' and data['password'] == 'admin':
             response = {}

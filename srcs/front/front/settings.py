@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'front',
     'login.apps.LoginConfig',
 ]
 
@@ -88,17 +89,13 @@ LOGIN_42 = env('LOGIN_42')
 # SECRET_KEY = env('SECRET_KEY')
 
 # Microservices URL's
-AUTH_URL = env('AUTH_URL')
+#AUTH_URL = env('AUTH_URL')
 # USER_URL = env('USER_URL')
 # GAME_URL = env('GAME_URL')
 # MATCH_URL = env('MATCH_URL')
 
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
 }
 
 
