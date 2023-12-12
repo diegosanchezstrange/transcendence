@@ -4,6 +4,8 @@ setup(
     name='tcommons',
     version='1.0.0',
     packages=find_packages(include=['tcommons', 'tcommons.*']),
+    # packages=find_packages(where='.'),
+    package_dir={'tcommons': 'tcommons'},
     include_package_data=True,
     install_requires=[
         'Django>=4.2.7',
