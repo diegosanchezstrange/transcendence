@@ -1,4 +1,9 @@
 version: "3.7"
+
+volumes:
+  database:
+    name: database
+
 services:
   front:
     build: ./front/
@@ -20,6 +25,23 @@ services:
     build: ./users/
     ports:
       - "8082:8080"
+
+  database:
+    container_name: database
+    build: ./postgresql/
+    image: database
+
+    # Data persistance
+    volumes:
+      - 'database:/var/lib/postgresql/data'
+
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_DB: 'pong'
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'postgres'
+  
   # web:
   #   build: ./back/
   #   ports:
