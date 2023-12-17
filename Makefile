@@ -1,5 +1,7 @@
 VOL_DIR	= ${HOME}/data
 
+NEEDS_LIB = login game matchmaking users
+
 all: commons
 	[ -d $(VOL_DIR)/mysql ] || mkdir -p $(VOL_DIR)/mysql
 	docker-compose --env-file ./srcs/.env -f ./srcs/docker-compose.yml up -d
@@ -21,10 +23,21 @@ re:
 	docker-compose -f ./srcs/docker-compose.yml up --force-recreate --no-deps -d
 
 commons:
+	cd srcs/ && python setup.py sdist bdist_wheel && pip install --force-reinstall dist/tcommons-1.0.0-py3-none-any.whl
+
+build-commons:
 	cd srcs/ && python setup.py sdist bdist_wheel
-	pip install --force-reinstall dist/tcommons-1.0.0-py3-none-any.whl
 
-database:
-	docker compose -f ./srcs/docker-compose.yml up -d $@
+# Services that need commons
+game login matchmaking users: build-commons
+	mv srcs/dist/tcommons-1.0.0-py3-none-any.whl srcs/$@
+	docker-compose -f ./srcs/docker-compose.yml up -d $@
 
-.PHONY: clean re stop build database all 
+# Services that don't need commons
+front database:
+	docker-compose -f ./srcs/docker-compose.yml up -d $@
+
+db:
+	docker-compose -f ./srcs/docker-compose.yml up -d database
+
+.PHONY: clean re stop build db all 
