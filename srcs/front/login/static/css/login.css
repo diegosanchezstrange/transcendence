@@ -1,0 +1,10 @@
+.LoginBox {
+  background: #3D3D5B;
+  box-shadow: 0px 4px 7.9px 10px #B12E4E;
+  width: 506px;
+  height: 500px;
+}
+
+.sign-with-42-button {
+  background-color: #000 !important;
+}
