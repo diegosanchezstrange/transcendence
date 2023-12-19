@@ -24,5 +24,7 @@ commons:
 	cd srcs/ && python setup.py sdist bdist_wheel
 	pip install --force-reinstall dist/tcommons-1.0.0-py3-none-any.whl
 
+database:
+	docker compose -f ./srcs/docker-compose.yml up -d $@
 
-.PHONY: clean re stop build all
+.PHONY: clean re stop build database all 
