@@ -1,24 +1,42 @@
-<header>
-</header>
-<main>
-    {% load static %}
-    <div class="container-fluid">
-        <div class="d-flex row justify-content-center align-content-center vh-100">
-            <!-- <div class="col-0 col-sm-0 col-md-0 col-lg-3 p-2 border border-end-0 border-3 bg-black rounded-start"> -->
-            <!--     <div class="border border-3 h-100 text-center"></div> -->
-            <!-- </div> -->
-            <div class="col-12 col-sm-10 col-md-6 col-lg-5 col-xl-4 col-xxl-3 p-5 border border-3 border-custom-color">
-                <div id="loginBox" class="h-100">
+<!-- Load boilerplate -->
+{% extends "../base.html" %}    
+
+<!-- Set title -->
+{% block title %}Login{% endblock %}
+
+<!-- Load local files -->
+{% load static %}
+
+<!-- Local stylesheets -->
+{% block styles %}
+        <link rel="stylesheet"
+	      href="{% static 'css/login.css' %}" />
+{% endblock %}
+
+<!-- Main content -->
+{% block content %}
+        <div class="d-flex row justify-content-center align-content-center">
+            <div class="LoginBox col-sm-10 col-md-6 col-lg-4">
+		    {% csrf_token %}
+	    </div>
+	</div>
+{% endblock %}
+
+<!-- Local javascript -->
+{% block js %}
+<!--    Commented bc I dont want it to redirect to home    
+	<script src="{% static 'js/spa.js' %}"></script>
+-->
+{% endblock %}
+<!--
                     <h1 class="text-center mb-3">Login</h1>
                     <form id="loginForm" action="{{ AUTH_URL }}/login/" method="post">
-                        {% csrf_token %}
                         <div class="text-center">
                             <p>
                                 Don't have an account? <a href="#">Register</a>
                             </p>
                         </div>
                         <div class="mb-3">
-                            <!-- <label for="username" class="form-label">Username</label> -->
                             <input type="text"
                                    name="username"
                                    class="form-control rounded shadow-sm bg-gray-200"
@@ -28,7 +46,6 @@
                                    required />
                         </div>
                         <div class="mb-3">
-                            <!-- <label for="password" class="form-label">Password</label> -->
                             <input type="text"
                                    name="password"
                                    class="form-control rounded shadow-sm bg-gray-200"
@@ -37,7 +54,6 @@
                                    required />
                         </div>
                         <button type="submit" class="btn btn-primary w-100">Login</button>
-                        <!-- Add alternative login methods here -->
                         {% if LOGIN_42 %}
                             <div class="text-center mt-3">
                                 <p>Or</p>
@@ -60,5 +76,4 @@
             </div>
         </div>
     </div>
-</main>
-<script src="{% static 'login/js/loginForm.js' %}"></script>
+    -->
