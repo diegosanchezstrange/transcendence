@@ -13,7 +13,31 @@ function getCsrfToken() {
   return csrfToken;
 }
 
-function formSubmit(e) {
+/*
+ * Function to add an alert box to the page
+ * @param {string} message - The message to display in the alert box
+ * @param {string} type - The type of alert box to display
+ * @param {string} container - The container to add the alert box to
+ * @return {void}
+ * */
+function addAlertBox(message, type, container) {
+  let alert = document.createElement("div");
+
+  if (document.getElementById("alert")) {
+    document.getElementById("alert").remove();
+  }
+
+  alert.className = "alert alert-" + type;
+  alert.id = "alert";
+  alert.innerHTML = message;
+  container.prepend(alert);
+}
+
+/*
+ * Function for the login form submit event
+ * @return {boolean} - void
+ * */
+function formSubmitLogin(e) {
   e.preventDefault();
 
   let formData = new FormData(this);
@@ -45,32 +69,82 @@ function formSubmit(e) {
     })
     .then((text) => {
       console.log(text);
-      let loginContainer = document.getElementById("loginBox");
-
-      if (document.getElementById("alert")) {
-        document.getElementById("alert").remove();
-      }
-
-      let alert = document.createElement("div");
-      alert.className = "alert alert-success";
-      alert.id = "alert";
-      alert.innerHTML = "Login successful!";
-      loginContainer.prepend(alert);
+      addAlertBox(
+        "Login successful!",
+        "success",
+        document.getElementById("loginBox")
+      );
     })
     .catch((error) => {
       console.log(error);
-      let loginContainer = document.getElementById("loginBox");
-
-      if (document.getElementById("alert")) {
-        document.getElementById("alert").remove();
-      }
-
-      let alert = document.createElement("div");
-      alert.className = "alert alert-danger";
-      alert.id = "alert";
-      alert.innerHTML = "Login failed!";
-      loginContainer.prepend(alert);
+      addAlertBox(
+        "Login failed!",
+        "danger",
+        document.getElementById("loginBox")
+      );
     });
 }
 
-document.getElementById("loginForm").addEventListener("submit", formSubmit);
+function formSubmitRegister(e) {
+  e.preventDefault();
+
+  // Get the input field
+  //
+  let password = document.getElementById("password");
+  let passwordConfirm = document.getElementById("passwordRepeat");
+
+  // Validate password
+  if (password.value != passwordConfirm.value) {
+  }
+
+  let formData = new FormData(this);
+  let body = {};
+  let csrfToken;
+
+  formData.forEach((value, key) => {
+    if (key === "csrfmiddlewaretoken") csrfToken = value;
+    body[key] = value;
+  });
+
+  body = JSON.stringify(body);
+
+  fetch(this.getAttribute("action"), {
+    method: this.getAttribute("method"),
+    credentials: "include",
+    headers: {
+      "X-CSRFToken": csrfToken,
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: body,
+  })
+    .then((response) => {
+      if (response.ok) {
+        return response.text();
+      }
+      throw new Error("Network response was not ok.");
+    })
+    .then((text) => {
+      console.log(text);
+      addAlertBox(
+        "Registration successful!",
+        "success",
+        document.getElementById("registerBox")
+      );
+    })
+    .catch((error) => {
+      console.log(error);
+      addAlertBox(
+        "Registration failed!",
+        "danger",
+        document.getElementById("registerBox")
+      );
+    });
+}
+
+document
+  .getElementById("loginForm")
+  .addEventListener("submit", formSubmitLogin);
+document
+  .getElementById("registerForm")
+  .addEventListener("submit", formSubmitRegister);

@@ -10,6 +10,7 @@ def base(request):
     response = render(request, 'base.html')
     return response
 
+@never_cache
 def login(request):
     # Check if 42 login is enabled
     #context = {
@@ -18,10 +19,12 @@ def login(request):
     #}
     return render(request, 'partials/login.html')
 
+@never_cache
 def register(request): # this is a mock to test the database
-    if User.objects.filter(username='test').count() == 0:
-        new_user = User.objects.create(username='test')
-    return HttpResponse(User.objects.values_list('username'))
+    # if User.objects.filter(username='test').count() == 0:
+    #     new_user = User.objects.create(username='test')
+    # return HttpResponse(User.objects.values_list('username'))
+    return render(request, 'partials/register.html')
 
 @never_cache
 def home(request):
