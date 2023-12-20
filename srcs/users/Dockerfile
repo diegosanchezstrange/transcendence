@@ -14,8 +14,12 @@ RUN apt-get install git
 
 RUN pip3 install -r requirements.txt --no-cache-dir
 
-COPY . /app 
+COPY . /app
 
-ENTRYPOINT ["python3"] 
+ENV PYTHONUNBUFFERED=1
 
-CMD ["manage.py", "runserver", "0.0.0.0:8080"]
+CMD ["sh", "start.sh"]
+
+#ENTRYPOINT ["python3"]
+#
+#CMD ["manage.py", "runserver", "0.0.0.0:8080"]
