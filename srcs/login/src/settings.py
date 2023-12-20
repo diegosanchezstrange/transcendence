@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from environ import Env
+
+env = Env()
+env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,9 +33,9 @@ SECRET_KEY = 'django-insecure-x-x2j3jw0q4!w%0n844_=ky=f5_39$6l2%5t9d2f=-@n+*idoe
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:8000',
-]
+# CSRF_TRUSTED_ORIGINS = [
+#     'http://localhost:8000',
+# ]
 
 ALLOWED_HOSTS = [
     'localhost',
@@ -59,7 +63,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
-    'login'
+    'login',
+    'rest_framework'
 ]
 
 from datetime import timedelta
@@ -73,12 +78,10 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'login.middleware.CorsMiddleware.CorsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+    # 'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
 ]
 
@@ -106,14 +109,25 @@ WSGI_APPLICATION = 'src.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# Credentials for local database
+
+DB_HOSTNAME = env('DB_HOSTNAME')
+DB_PORT = env('DB_PORT')
+
+DB_NAME = env('DB_NAME')
+
+DB_USERNAME = env('DB_USERNAME')
+DB_PASSWORD = env('DB_PASSWORD')
+
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'pong',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'database',
-        'PORT': '5432',
+        'NAME': DB_NAME,
+        'USER': DB_USERNAME,
+        'PASSWORD': DB_PASSWORD,
+        'HOST': DB_HOSTNAME,
+        'PORT': DB_PORT,
     }
 }
 
