@@ -1,38 +1,35 @@
-from django.shortcuts import render
-from django.views.generic import View
+from django.http import HttpResponse, JsonResponse
+from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponse
-from tcommons.models import User
-
-from tcommons.jwt import JWT
-
-import json
 
 
-# Create your views here.
+@csrf_exempt
+def create_user(request, *args, **kwargs):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
 
-class Login(View):
-    def post(self, request):
-        print(request.body)
-        jwt = JWT({"name": "Diego", "lastname": "Sanchez"})
-        data = json.loads(request.body)
-        if data['username'] == 'admin' and data['password'] == 'admin':
-            response = {}
-            response['success'] = True
-            response['message'] = 'Login successful'
-            response['token'] = '1234567890'
-            return HttpResponse(json.dumps(response), content_type='application/json')
-        else:
-            response = {}
-            response['success'] = False
-            response['message'] = 'Login failed'
-            return HttpResponse(json.dumps(response),
-                                content_type='application/json', status=403)
+        if not username or not password:
+            return JsonResponse({
+                "status": 400,
+                "message": "Username or password missing."
+            }, status=400)
 
+        if User.objects.filter(username=username).exists():
+            return JsonResponse({
+                "status": 409,
+                "message": f"User with username '{username}' already exists."
+            }, status=409)
 
-def register(request):
-    return render(request, 'newUser.json')
+        user = User.objects.create_user(username=username, password=password)
+        user.save()
 
+        return JsonResponse({
+            "status": 201,
+            "message": f"User '{username}' created successfully."
+        })
 
-def validate(request):
-    return render(request, 'validate.json')
+    return JsonResponse({
+        "status": 405,
+        "message": "User creation must be POST."
+    }, status=405)
