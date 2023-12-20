@@ -8,7 +8,7 @@ WORKDIR /app
 
 COPY requirements.txt /app
 
-COPY ./tcommons-1.0.0-py3-none-any.whl /app
+#COPY ./tcommons-1.0.0-py3-none-any.whl /app
 
 RUN apt-get update
 
@@ -16,10 +16,10 @@ RUN apt-get install git
 
 RUN pip3 install -r requirements.txt --no-cache-dir
 
-RUN pip3 install tcommons-1.0.0-py3-none-any.whl
+ENV PYTHONUNBUFFERED=1
 
-COPY . /app 
+#RUN pip3 install tcommons-1.0.0-py3-none-any.whl
 
-ENTRYPOINT ["python3"] 
+COPY . /app
 
-CMD ["manage.py", "runserver", "0.0.0.0:8080"]
+CMD ["sh", "start.sh"]
