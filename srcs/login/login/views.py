@@ -1,13 +1,39 @@
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import api_view
 
 
-@csrf_exempt
+@api_view(['POST'])
 def create_user(request, *args, **kwargs):
+    """
+    Create a user.
+
+    Args:
+        request (HttpRequest): The request object.
+
+    Returns:
+        HttpResponse: The response object.
+
+        Example:
+        {
+            "status": 201,
+            "message": "User 'username' created successfully."
+        }
+
+    Raises:
+        JsonResponse: If the username or password is missing.
+        JsonResponse: If the username already exists.
+        JsonResponse: If the request method is not POST.
+
+    Body:
+        username (str): The username.
+        password (str): The password.
+
+    """
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
+        username = request.data.get('username')
+        password = request.data.get('password')
 
         if not username or not password:
             return JsonResponse({
