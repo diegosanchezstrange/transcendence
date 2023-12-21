@@ -89,7 +89,7 @@ LOGIN_42 = env('LOGIN_42')
 # SECRET_KEY = env('SECRET_KEY')
 
 # Microservices URL's
-#AUTH_URL = env('AUTH_URL')
+LOGIN_URL = env('LOGIN_URL')
 # USER_URL = env('USER_URL')
 # GAME_URL = env('GAME_URL')
 # MATCH_URL = env('MATCH_URL')

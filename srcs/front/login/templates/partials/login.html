@@ -11,7 +11,7 @@
       >
         <div id="loginBox" class="h-100">
           <h1 class="text-center mb-3">Login</h1>
-          <form id="loginForm" action="{{ AUTH_URL }}/login/" method="post">
+          <form id="loginForm" action="{{ LOGIN_URL }}/login/" method="post">
             {% csrf_token %}
             <div class="text-center">
               <p>Don't have an account? <a href="#">Register</a></p>

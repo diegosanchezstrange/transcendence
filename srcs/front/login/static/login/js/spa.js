@@ -62,7 +62,7 @@ window.addEventListener("popstate", (event) => {
 
 document.addEventListener("DOMContentLoaded", async function () {
   // TODO: Check where the token should be safely stored
-  const token = localStorage.getItem("token");
-
-  Router.changePage("/home");
+  // const token = localStorage.getItem("token");
+  if (path) Router.changePage("/" + path);
+  else Router.changePage("/home");
 });
