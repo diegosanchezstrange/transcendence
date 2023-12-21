@@ -1,3 +1,6 @@
+import os
+
+
 """
 Django settings for users project.
 
@@ -94,11 +97,11 @@ WSGI_APPLICATION = 'src.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'pong',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'database',
-        'PORT': '5432',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USERNAME'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOSTNAME'),
+        'PORT': os.getenv('DB_PORT'),
     }
 }
 
@@ -142,3 +145,8 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Own
+
+MICROSERVICE_API_TOKEN = os.getenv('MICROSERVICE_API_TOKEN')

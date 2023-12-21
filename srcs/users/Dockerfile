@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.4
 
-FROM python AS builder
+FROM python:3.13-rc-bookworm
 
 EXPOSE 8082
 
@@ -19,7 +19,3 @@ COPY . /app
 ENV PYTHONUNBUFFERED=1
 
 CMD ["sh", "start.sh"]
-
-#ENTRYPOINT ["python3"]
-#
-#CMD ["manage.py", "runserver", "0.0.0.0:8080"]
