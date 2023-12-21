@@ -2,6 +2,8 @@ from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
+import requests
+import os
 
 
 @api_view(['POST'])
@@ -46,9 +48,22 @@ def create_user(request, *args, **kwargs):
                 "status": 409,
                 "message": f"User with username '{username}' already exists."
             }, status=409)
+        
+        body = {
+            "username": username,
+            "password": password
+        }
 
-        user = User.objects.create_user(username=username, password=password)
-        user.save()
+        url = "http://localhost:8081/user/create/"
+
+        headers = {
+            "Authorization": os.getenv('MICROSERVICE_API_TOKEN')
+        }
+        
+        response = requests.post(url, data=body, headers=headers)
+        print(headers)
+        if response.status_code != 201:
+            raise Exception("bad")
 
         return JsonResponse({
             "status": 201,
