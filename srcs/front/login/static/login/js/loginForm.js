@@ -69,11 +69,12 @@ function formSubmitLogin(e) {
     })
     .then((text) => {
       console.log(text);
-      addAlertBox(
-        "Login successful!",
-        "success",
-        document.getElementById("loginBox")
-      );
+      Router.changePage("/home/");
+      // addAlertBox(
+      //   "Login successful!",
+      //   "success",
+      //   document.getElementById("loginBox")
+      // );
     })
     .catch((error) => {
       console.log(error);
@@ -126,11 +127,12 @@ function formSubmitRegister(e) {
     })
     .then((text) => {
       console.log(text);
-      addAlertBox(
-        "Registration successful!",
-        "success",
-        document.getElementById("registerBox")
-      );
+      Router.changePage("/home/");
+      // addAlertBox(
+      //   "Registration successful!",
+      //   "success",
+      //   document.getElementById("registerBox")
+      // );
     })
     .catch((error) => {
       console.log(error);
@@ -142,9 +144,15 @@ function formSubmitRegister(e) {
     });
 }
 
-document
-  .getElementById("loginForm")
-  .addEventListener("submit", formSubmitLogin);
-document
-  .getElementById("registerForm")
-  .addEventListener("submit", formSubmitRegister);
+// Check if the forms exist on the page
+// If they do, add event listeners to them
+
+document.getElementById("loginForm") &&
+  document
+    .getElementById("loginForm")
+    .addEventListener("submit", formSubmitLogin);
+
+document.getElementById("registerForm") &&
+  document
+    .getElementById("registerForm")
+    .addEventListener("submit", formSubmitRegister);

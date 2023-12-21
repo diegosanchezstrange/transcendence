@@ -10,6 +10,10 @@ class Router {
     this.routes = {};
   }
 
+  static getJwt() {
+    return localStorage.getItem("token");
+  }
+
   static insertHtml(html) {
     let parser = new DOMParser();
     let doc = parser.parseFromString(html, "text/html");
@@ -34,12 +38,16 @@ class Router {
   }
 
   static changePage(url, popstate = false) {
+    let headers = {
+      "X-Requested-With": "XMLHttpRequest",
+      "Content-Type": "text/html",
+    };
+
+    if (Router.getJwt()) headers["Authorization"] = "Bearer " + Router.getJwt();
+
     fetch(url, {
       method: "GET",
-      headers: {
-        "Content-Type": "text/html",
-        "X-Requested-With": "XMLHttpRequest",
-      },
+      headers: headers,
     })
       .then((response) => response.text())
       .then((html) => {
