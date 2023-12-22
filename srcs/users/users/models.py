@@ -20,3 +20,13 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.userprofile.save()
+
+
+class Friendship(models.Model):
+    user1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="friends")
+    user2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="+")
+
+
+class FriendRequest(models.Model):
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="friend_requests_sent")
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name="friend_requests_received")

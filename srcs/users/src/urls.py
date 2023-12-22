@@ -17,11 +17,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from users.views import profile_view, create_user, change_user_data
+from users.views import send_friend_request, friend_requests_list, accept_friend_request, friends_list
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('profile/', profile_view),
     path('profile/change/', change_user_data),
     path('user/create/', create_user),
+    path('friends/request/', send_friend_request),
+    path('friends/request/list/', friend_requests_list),
+    path('friends/request/accept/', accept_friend_request),
+    path('friends/list/', friends_list),
     # path('/', include('users.urls')),
 ]
