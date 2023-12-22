@@ -6,8 +6,6 @@ from .models import UserProfile
 from functools import wraps
 from src.settings import MICROSERVICE_API_TOKEN
 
-import os
-
 # Create your views here.
 
 
@@ -18,7 +16,7 @@ def api_token_required(f):
     def decorated_function(request, *args, **kwargs):
         api_token = request.headers.get('Authorization')
         if not api_token or api_token != MICROSERVICE_API_TOKEN:
-            return JsonResponse({'error': 'Unauthorized'}, status=401)
+            return JsonResponse({'detail': 'Invalid API token.'}, status=401)
         return f(request, *args, **kwargs)
     return decorated_function
 
@@ -35,8 +33,7 @@ def create_user(request, *args, **kwargs):
     profile, created = UserProfile.objects.get_or_create(user=user)
 
     return JsonResponse({
-        "status": 201,
-        "message": "User created"
+        "detail": "User created successfully"
     }, status=201)
     
 
@@ -47,8 +44,7 @@ def change_user_data(request, *args, **kwargs):
     
     if not new_value:
         return JsonResponse({
-            "status": 304,
-            "message": "No new value detected."
+            "detail": "No value provided"
         }, status=304)
     
     user = request.user
@@ -56,18 +52,19 @@ def change_user_data(request, *args, **kwargs):
     user.save()
 
     return JsonResponse({
-        "status": 204,
+        "detail": "User updated successfully"
     })
 
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def profile_view(request, *args, **kwargs):
-
     user = request.user
     profile, created = UserProfile.objects.get_or_create(user=user)
 
     return JsonResponse({
-        "username": user.username,
-        "profile": profile.test
+        "detail": {
+            "username": user.username,
+            "profile": profile.test
+        }
     })
