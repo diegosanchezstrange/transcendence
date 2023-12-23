@@ -36,7 +36,23 @@ def create_user(request, *args, **kwargs):
     return JsonResponse({
         "detail": "User created successfully"
     }, status=201)
-    
+
+
+@api_view(['POST'])
+@api_token_required
+def create_user_oauth(request, *args, **kwargs):
+    username = request.data.get('username')
+
+    user = User.objects.create_user(username=username)
+    user.save()
+
+    profile, created = UserProfile.objects.get_or_create(user=user)
+
+    return JsonResponse({
+        "detail": "User created successfully",
+        "user_id": user.id
+    }, status=201)
+
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
