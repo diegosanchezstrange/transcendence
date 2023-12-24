@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view, permission_classes
 from .models import UserProfile
 from functools import wraps
@@ -47,6 +48,16 @@ def dev_view_list_users(request, *args, **kwargs):
 
     return JsonResponse({
         "detail": usernames
+    })
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_by_username(request, username, *args, **kwargs):
+    user = get_object_or_404(User, username=username)
+    return JsonResponse({
+        "id": user.id,
+        "username": user.username,
+        "login": user.userprofile.login
     })
 
 
