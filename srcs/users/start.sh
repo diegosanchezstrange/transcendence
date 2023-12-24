@@ -1,5 +1,8 @@
 #! /bin/sh
 
+pip freeze
+env
+
 python3 manage.py makemigrations
 python3 manage.py migrate
 

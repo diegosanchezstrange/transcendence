@@ -1,3 +1,5 @@
+import os
+
 """
 Django settings for login project.
 
@@ -173,6 +175,8 @@ USE_TZ = True
 
 APPEND_SLASH = False
 
+
+MICROSERVICE_API_TOKEN = os.getenv('MICROSERVICE_API_TOKEN')
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/

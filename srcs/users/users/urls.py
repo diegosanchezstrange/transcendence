@@ -1,7 +1,20 @@
 from django.urls import path
-from .views import profile_view, change_user_data
+from .views import create_user, dev_view_list_users, get_or_create_user_oauth, dev_view_delete_user
 
 urlpatterns = [
-    path('profile/', profile_view),
-    path('profile/change/', change_user_data),
+    path('', dev_view_list_users),
+    path('create/', create_user),
+    path('create/42/', get_or_create_user_oauth),
+    path('delete/', dev_view_delete_user),
+    # path('profile/change/', change_user_data),
 ]
+
+
+# urlpatterns = [
+#     path('admin/', admin.site.urls),
+#     path('profile/', profile_view),
+#     path('profile/change/', change_user_data),
+#     path('user/create/', create_user),
+#     path('users/', dev_view_list_users),
+#     path('user/delete/', dev_view_delete_user),
+#     path('user/create/42/', create_user_oauth),

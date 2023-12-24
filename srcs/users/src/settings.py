@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 
 
 """
@@ -43,10 +44,10 @@ INSTALLED_APPS = [
 
 
     'users',
+    'friends',
     'rest_framework',
 ]
 
-from datetime import timedelta
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=20),

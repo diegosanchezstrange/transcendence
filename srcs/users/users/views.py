@@ -1,18 +1,15 @@
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
 from rest_framework.decorators import api_view, permission_classes
 from .models import UserProfile
 from functools import wraps
 from src.settings import MICROSERVICE_API_TOKEN
-from django.shortcuts import get_object_or_404, redirect
-from .models import FriendRequest, Friendship
-from django.db.models import Q
 
 
 # Private endpoint decorator
-# TODO: put in tcommons
-def api_token_required(f):
+# TODO: put in common lib
+def private_microservice_endpoint(f):
     @wraps(f)
     def decorated_function(request, *args, **kwargs):
         api_token = request.headers.get('Authorization')
@@ -22,8 +19,39 @@ def api_token_required(f):
     return decorated_function
 
 
+# TODO: only for dev purposes, delete in prod
+@api_view(['DELETE'])
+def dev_view_delete_user(request, *args, **kwargs):
+    username = request.data.get('username')
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return JsonResponse({
+            "detail": "User not found."
+        }, status=404)
+    user.delete()
+    return JsonResponse({
+        "detail": f"User '{username}' was successfully deleted."
+    }, status=200)
+
+
+# TODO: delete this endpoint
+@api_view(['GET'])
+def dev_view_list_users(request, *args, **kwargs):
+    users = User.objects.all()
+    usernames = [{
+        "user_id": user.id,
+        "username": user.username,
+        "login": user.userprofile.login
+    } for user in users]
+
+    return JsonResponse({
+        "detail": usernames
+    })
+
+
 @api_view(['POST'])
-@api_token_required
+@private_microservice_endpoint
 def create_user(request, *args, **kwargs):
     username = request.data.get('username')
     password = request.data.get('password')
@@ -31,27 +59,55 @@ def create_user(request, *args, **kwargs):
     user = User.objects.create_user(username=username, password=password)
     user.save()
 
-    profile, created = UserProfile.objects.get_or_create(user=user)
-
     return JsonResponse({
-        "detail": "User created successfully"
+        "detail": "User created successfully",
+        "data": {
+            "id": user.id,
+            "username": username
+        }
     }, status=201)
 
 
 @api_view(['POST'])
-@api_token_required
-def create_user_oauth(request, *args, **kwargs):
-    username = request.data.get('username')
+@private_microservice_endpoint
+def get_or_create_user_oauth(request, *args, **kwargs):
+    login = request.data.get('username')
 
-    user = User.objects.create_user(username=username)
-    user.save()
+    try:
+        user = UserProfile.objects.get(login=login).user
+        return JsonResponse({
+            "detail": "User found successfully",
+            "user_id": user.id
+        }, status=200)
 
-    profile, created = UserProfile.objects.get_or_create(user=user)
+    except UserProfile.DoesNotExist:
+        username = login
+        if not User.objects.filter(username=username).exists():
+            user = User.objects.create_user(username=username)
+            user.set_unusable_password()
+            user.save()
+            profile, created = UserProfile.objects.get_or_create(user=user)
+            profile.login = login
+            profile.save()
+            return JsonResponse({
+                "detail": "User created successfully",
+                "user_id": user.id
+            }, status=201)
 
-    return JsonResponse({
-        "detail": "User created successfully",
-        "user_id": user.id
-    }, status=201)
+        suffix = 2
+        while User.objects.filter(username=f'{username}{suffix}').exists():
+            suffix += 1
+
+        user = User.objects.create_user(username=f'{username}{suffix}')
+        user.set_unusable_password()
+        profile = UserProfile.objects.get(user=user)
+        profile.login = login
+        profile.save()
+
+        return JsonResponse({
+            "detail": "User created successfully",
+            "user_id": user.id
+        }, status=201)
 
 
 @api_view(['PUT'])
@@ -73,112 +129,19 @@ def change_user_data(request, *args, **kwargs):
 
     return JsonResponse({
         "detail": "User updated successfully"
-    })
+    }, status=200)
 
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def profile_view(request, *args, **kwargs):
     user = request.user
-    profile, created = UserProfile.objects.get_or_create(user=user)
+    UserProfile.objects.get_or_create(user=user)
 
     return JsonResponse({
         "detail": {
+            "id": user.id,
             "username": user.username,
-            "user_id": user.id,
-            "profile": profile.test
+            "login": user.userprofile.login,
         }
     })
-
-
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def send_friend_request(request, *args, **kwargs):
-    send_to = request.data.get('send_to')
-    if not send_to:
-        return JsonResponse({
-            "detail": "No value provided"
-        }, status=400)
-
-    receiver = User.objects.get(username=send_to)
-
-    if not receiver:
-        return JsonResponse({
-            "detail": "User does not exist"
-        }, status=404)
-
-    friend_request, created = FriendRequest.objects.get_or_create(
-        sender=request.user,
-        receiver=receiver
-    )
-    if created:
-        return JsonResponse({
-            "detail": "Friend request sent successfully"
-        }, status=201)
-    else:
-        # TODO: send 304 (postman bug)
-        return JsonResponse({
-            "detail": "Friend request already sent."
-        })
-
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def friend_requests_list(request):
-    friend_requests = FriendRequest.objects.filter(receiver=request.user)
-
-    result = [friend_request.sender.username for friend_request in friend_requests if friend_request]
-
-    return JsonResponse({
-        "detail": result
-    })
-
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def friends_list(request, *args, **kwargs):
-    user = request.user
-    friends = Friendship.objects.filter(Q(user1=user) | Q(user2=user))
-
-    names = []
-    for friend in friends:
-        if friend.user1 == user:
-            names.append(friend.user2.username)
-        elif friend.user2 == user:
-            names.append(friend.user1.username)
-
-    return JsonResponse({
-        "detail": names
-    })
-
-
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def accept_friend_request(request, *args, **kwargs):
-    receiver = request.user
-    sender_name = request.data.get("sender")
-    sender = User.objects.get(username=sender_name)
-
-    if not sender:
-        return JsonResponse({
-            "detail": "Sender does not exist"
-        }, status=404)
-
-    if not sender:
-        return JsonResponse({}, status=400)
-
-    friend_request = FriendRequest.objects.get(sender=sender, receiver=receiver)
-
-    if not friend_request:
-        return JsonResponse({
-            "detail": "Friend request does not exist"
-        }, status=404)
-
-    friend_request.delete()
-    Friendship.objects.create(user1=request.user, user2=friend_request.sender)
-
-    return JsonResponse({
-        "detail": "OK"
-    }, status=201)
-
-
