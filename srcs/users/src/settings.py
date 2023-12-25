@@ -151,3 +151,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Own
 
 MICROSERVICE_API_TOKEN = os.getenv('MICROSERVICE_API_TOKEN')
+
+
+MEDIA_URL = '/profile_pics/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

@@ -6,6 +6,9 @@ from rest_framework.decorators import api_view, permission_classes
 from .models import UserProfile
 from functools import wraps
 from src.settings import MICROSERVICE_API_TOKEN
+from django.core.files.storage import default_storage
+import os
+from src import settings
 
 
 # Private endpoint decorator
@@ -43,12 +46,14 @@ def dev_view_list_users(request, *args, **kwargs):
     usernames = [{
         "user_id": user.id,
         "username": user.username,
-        "login": user.userprofile.login
+        "login": user.userprofile.login,
+        "profile_pic": f'{request.scheme}://{request.get_host()}{user.userprofile.profile_pic.url}'
     } for user in users]
 
     return JsonResponse({
         "detail": usernames
     })
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -57,7 +62,8 @@ def get_user_by_username(request, username, *args, **kwargs):
     return JsonResponse({
         "id": user.id,
         "username": user.username,
-        "login": user.userprofile.login
+        "login": user.userprofile.login,
+        "profile_pic": f'{request.scheme}://{request.get_host()}{user.userprofile.profile_pic.url}'
     })
 
 
@@ -154,5 +160,42 @@ def profile_view(request, *args, **kwargs):
             "id": user.id,
             "username": user.username,
             "login": user.userprofile.login,
+            "profile_pic": f'{request.scheme}://{request.get_host()}{user.userprofile.profile_pic.url}'
         }
     })
+
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def upload_profile_picture(request, *args, **kwargs):
+    profile_pic = request.FILES.get('profile_pic')
+
+    if not profile_pic:
+        return JsonResponse({
+            "detail": "No profile picture provided"
+        }, status=400)
+
+    profile = request.user.userprofile
+    username = request.user.username
+
+    file_extension = os.path.splitext(profile_pic.name)[1]
+    if file_extension[1:] not in ('jpg', 'jpeg', 'png'):
+        return JsonResponse({
+            "detail": "Invalid file format. (must be jpg, jpeg or png)."
+        }, status=400)
+
+    status_code = 201
+    save_to = f'{settings.MEDIA_ROOT}/{username}{file_extension}'
+
+    if default_storage.exists(save_to):
+        default_storage.delete(save_to)
+        status_code = 200
+
+    path = default_storage.save(save_to, profile_pic)
+    profile.profile_pic = path
+    profile.save()
+    return JsonResponse({
+        "detail": "Profile pic uploaded.",
+        "url": profile.profile_pic.url
+    }, status=status_code)
+
