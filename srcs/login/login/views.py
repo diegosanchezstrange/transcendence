@@ -6,6 +6,8 @@ from rest_framework.decorators import api_view
 from src import settings
 import requests
 import os
+from .utils.utils import request_intra
+from requests.exceptions import RequestException
 
 
 @api_view(['POST'])
@@ -56,8 +58,7 @@ def create_user(request, *args, **kwargs):
             "password": password
         }
 
-        # TODO: get hostname from env
-        url = "http://localhost:8081/users/create/"
+        url = f"http://{settings.USERS_SERVICE_HOST}/users/create/"
 
         headers = {
             "Authorization": os.getenv('MICROSERVICE_API_TOKEN')
@@ -82,33 +83,39 @@ def create_user(request, *args, **kwargs):
 @api_view(['POST'])
 def login_oauth(request, *args, **kwargs):
     access_token = request.data.get('access_token')
-    # TODO: request in loop if request fails
     url = "https://api.intra.42.fr/v2/me"
     headers = {
         "Authorization": f"Bearer {access_token}"
     }
-    response = requests.get(url, headers=headers)
+
+    try:
+        response = request_intra(url, headers)
+    except RequestException:
+        return JsonResponse({
+            "detail": "Intra 42 Client Error."
+        }, status=502)
+
     if response.status_code != 200:
         return JsonResponse({
             "detail": "Invalid access token."
         }, status=401)
 
-    username = response.json()["login"]
+    username = response.json().get("login")
     headers = {
         "Authorization": settings.MICROSERVICE_API_TOKEN
     }
     body = {
         "username": username
     }
-    url = "http://localhost:8081/users/create/42/"
+    url = f"http://{settings.USERS_SERVICE_HOST}/users/create/42/"
 
-    # TODO: get hostname from env
     response = requests.post(url, headers=headers, data=body)
     if response.status_code not in (200, 201):
         return JsonResponse({
-            "detail": "error"
-        })
-    user_id = response.json()['user_id']
+            "detail": "Unable to get or create user."
+        }, status=500)
+
+    user_id = response.json().get('user_id')
     user = User.objects.get(pk=user_id)
     jwt_token = AccessToken.for_user(user)
 
