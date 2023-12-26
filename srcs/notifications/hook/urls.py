@@ -1,6 +1,6 @@
 from django.urls import path
-from views import notification_hook
+from .views import notification_hook
 
 urlpatterns = [
-    path('', notification_hook, name='hook')
+    path('send/', notification_hook, name='hook')
 ]
