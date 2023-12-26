@@ -90,10 +90,11 @@ def accept_friend_request(request, *args, **kwargs):
 
     friend_request = get_object_or_404(FriendRequest, sender=sender, receiver=receiver)
 
-    if not friend_request:
-        return JsonResponse({
-            "detail": "Friend request does not exist"
-        }, status=404)
+    send_friend_request_notification(
+        sender=friend_request.receiver,
+        receiver=friend_request.sender,
+        ntype=NotificationType.ACCEPTED
+    )
 
     friend_request.delete()
     Friendship.objects.create(user1=request.user, user2=friend_request.sender)
