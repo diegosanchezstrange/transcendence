@@ -1,6 +1,8 @@
-<header></header>
+{% load static %}
+<head>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}" />
+</head>
 <main>
-  {% load static %}
   <div class="container-fluid">
     <div class="d-flex row justify-content-center align-content-center vh-100">
       <!-- <div class="col-0 col-sm-0 col-md-0 col-lg-3 p-2 border border-end-0 border-3 bg-black rounded-start"> -->
@@ -67,4 +69,4 @@
     </div>
   </div>
 </main>
-<script src="{% static 'login/js/loginForm.js' %}"></script>
+<script src="{% static 'js/loginForm.js' %}"></script>
