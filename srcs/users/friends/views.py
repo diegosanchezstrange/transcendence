@@ -4,6 +4,10 @@ from django.contrib.auth.models import User
 from rest_framework.decorators import api_view, permission_classes
 from django.db.models import Q
 from .models import Friendship, FriendRequest
+from .notifications.send_notification import send_friend_request_notification
+from .notifications.constants import NotificationType
+from .utils.utils import is_your_friend
+from django.shortcuts import get_object_or_404
 
 
 @api_view(['POST'])
@@ -15,18 +19,20 @@ def send_friend_request(request, *args, **kwargs):
             "detail": "No value provided"
         }, status=400)
 
-    receiver = User.objects.get(username=send_to)
+    receiver = get_object_or_404(User, username=send_to)
 
-    if not receiver:
+    if is_your_friend(request.user, receiver):
         return JsonResponse({
-            "detail": "User does not exist"
-        }, status=404)
+            "detail": f"You are already a friend of {receiver.username}."
+        }, status=200)
 
     friend_request, created = FriendRequest.objects.get_or_create(
         sender=request.user,
         receiver=receiver
     )
     if created:
+        send_friend_request_notification(request.user, receiver, NotificationType.SENT)
+
         return JsonResponse({
             "detail": "Friend request sent successfully"
         }, status=201)
@@ -82,7 +88,7 @@ def accept_friend_request(request, *args, **kwargs):
     if not sender:
         return JsonResponse({}, status=400)
 
-    friend_request = FriendRequest.objects.get(sender=sender, receiver=receiver)
+    friend_request = get_object_or_404(FriendRequest, sender=sender, receiver=receiver)
 
     if not friend_request:
         return JsonResponse({
