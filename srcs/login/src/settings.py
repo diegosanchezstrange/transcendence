@@ -22,15 +22,11 @@ env.read_env()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-MEDIA_ROOT = BASE_DIR / 'media'
-MEDIA_URL = '/media/'
-
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-x-x2j3jw0q4!w%0n844_=ky=f5_39$6l2%5t9d2f=-@n+*idoe'
+SECRET_KEY = os.getenv('JWT_SECRET')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
