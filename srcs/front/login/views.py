@@ -2,13 +2,8 @@ from django.shortcuts import render
 from django.conf import settings
 from django.views.decorators.cache import never_cache
 
-from .models import User 
+from .models import User
 from django.http import HttpResponse
-
-@never_cache
-def base(request):
-    response = render(request, 'base.html')
-    return response
 
 @never_cache
 def login(request):
@@ -24,12 +19,12 @@ def login(request):
         'PATH': 'login',
     }
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        return render(request, 'partials/login.html', context)
+        return render(request, 'login.html', context)
     else:
-        return render(request, 'base.html', context)
+        return render(request, '../templates/base.html', context)
 
 @never_cache
-def register(request): # this is a mock to test the database
+def register(request):
     """
     This view is used to render the register page.
     """
@@ -40,9 +35,9 @@ def register(request): # this is a mock to test the database
         'PATH': 'register'
     }
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        return render(request, 'partials/register.html', context)
+        return render(request, 'register.html', context)
     else:
-        return render(request, 'base.html', context)
+        return render(request, '../templates/base.html', context)
 
 @never_cache
 def home(request):
@@ -56,9 +51,9 @@ def home(request):
     auth = request.headers.get('Authorization')
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         if auth is not None:
-            response = render(request, 'partials/homeUser.html', context)
+            response = render(request, 'homeUser.html', context)
         else:
-            response = render(request, 'partials/home.html', context)
+            response = render(request, 'home.html', context)
     else:
-        response = render(request, 'base.html', context)
+        response = render(request, '../templates/base.html', context)
     return response
