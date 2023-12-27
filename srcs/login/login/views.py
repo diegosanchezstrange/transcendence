@@ -1,7 +1,13 @@
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework.decorators import api_view
+from src import settings
+import requests
+import os
+from .utils.utils import request_intra
+from requests.exceptions import RequestException
 
 
 @api_view(['POST'])
@@ -46,9 +52,22 @@ def create_user(request, *args, **kwargs):
                 "status": 409,
                 "message": f"User with username '{username}' already exists."
             }, status=409)
+        
+        body = {
+            "username": username,
+            "password": password
+        }
 
-        user = User.objects.create_user(username=username, password=password)
-        user.save()
+        url = f"http://{settings.USERS_SERVICE_HOST}/users/create/"
+
+        headers = {
+            "Authorization": os.getenv('MICROSERVICE_API_TOKEN')
+        }
+        
+        response = requests.post(url, data=body, headers=headers)
+        print(headers)
+        if response.status_code != 201:
+            raise Exception("bad")
 
         return JsonResponse({
             "status": 201,
@@ -59,3 +78,47 @@ def create_user(request, *args, **kwargs):
         "status": 405,
         "message": "User creation must be POST."
     }, status=405)
+
+
+@api_view(['POST'])
+def login_oauth(request, *args, **kwargs):
+    access_token = request.data.get('access_token')
+    url = "https://api.intra.42.fr/v2/me"
+    headers = {
+        "Authorization": f"Bearer {access_token}"
+    }
+
+    try:
+        response = request_intra(url, headers)
+    except RequestException:
+        return JsonResponse({
+            "detail": "Intra 42 Client Error."
+        }, status=502)
+
+    if response.status_code != 200:
+        return JsonResponse({
+            "detail": "Invalid access token."
+        }, status=401)
+
+    username = response.json().get("login")
+    headers = {
+        "Authorization": settings.MICROSERVICE_API_TOKEN
+    }
+    body = {
+        "username": username
+    }
+    url = f"http://{settings.USERS_SERVICE_HOST}/users/create/42/"
+
+    response = requests.post(url, headers=headers, data=body)
+    if response.status_code not in (200, 201):
+        return JsonResponse({
+            "detail": "Unable to get or create user."
+        }, status=500)
+
+    user_id = response.json().get('user_id')
+    user = User.objects.get(pk=user_id)
+    jwt_token = AccessToken.for_user(user)
+
+    return JsonResponse({
+        "token": str(jwt_token)
+    })

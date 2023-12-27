@@ -1,3 +1,7 @@
+import os
+from datetime import timedelta
+
+
 """
 Django settings for users project.
 
@@ -20,12 +24,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-x-x2j3jw0q4!w%0n844_=ky=f5_39$6l2%5t9d2f=-@n+*idoe'
+SECRET_KEY = os.getenv('JWT_SECRET')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -40,10 +44,10 @@ INSTALLED_APPS = [
 
 
     'users',
+    'friends',
     'rest_framework',
 ]
 
-from datetime import timedelta
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=20),
@@ -94,11 +98,11 @@ WSGI_APPLICATION = 'src.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'pong',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'database',
-        'PORT': '5432',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USERNAME'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOSTNAME'),
+        'PORT': os.getenv('DB_PORT'),
     }
 }
 
@@ -142,3 +146,12 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Own
+
+MICROSERVICE_API_TOKEN = os.getenv('MICROSERVICE_API_TOKEN')
+
+
+MEDIA_URL = '/profile_pics/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

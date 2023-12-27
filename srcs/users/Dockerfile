@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.4
 
-FROM python AS builder
+FROM python:3.9.18-bookworm
 
 EXPOSE 8082
 
@@ -10,7 +10,7 @@ COPY requirements.txt /app
 
 RUN apt-get update
 
-RUN apt-get install git
+RUN apt-get -y install git postgresql-client
 
 RUN pip3 install -r requirements.txt --no-cache-dir
 
@@ -19,7 +19,3 @@ COPY . /app
 ENV PYTHONUNBUFFERED=1
 
 CMD ["sh", "start.sh"]
-
-#ENTRYPOINT ["python3"]
-#
-#CMD ["manage.py", "runserver", "0.0.0.0:8080"]
