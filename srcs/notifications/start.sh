@@ -15,7 +15,7 @@ while true; do
 done
 
 #python3 manage.py makemigrations
-sleep 1
+sleep 2
 python3 manage.py migrate
 
 python3 manage.py runserver 0.0.0.0:80

@@ -13,10 +13,10 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
-from environ import Env
-
-env = Env()
-env.read_env()
+# from environ import Env
+# 
+# env = Env()
+# env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -109,13 +109,13 @@ WSGI_APPLICATION = 'src.wsgi.application'
 
 # Credentials for local database
 
-DB_HOSTNAME = env('DB_HOSTNAME')
-DB_PORT = env('DB_PORT')
+DB_HOSTNAME = os.getenv('DB_HOSTNAME')
+DB_PORT = os.getenv('DB_PORT')
 
-DB_NAME = env('DB_NAME')
+DB_NAME = os.getenv('DB_NAME')
 
-DB_USERNAME = env('DB_USERNAME')
-DB_PASSWORD = env('DB_PASSWORD')
+DB_USERNAME = os.getenv('DB_USERNAME')
+DB_PASSWORD = os.getenv('DB_PASSWORD')
 
 
 DATABASES = {

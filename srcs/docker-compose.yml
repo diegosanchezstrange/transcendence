@@ -1,65 +1,75 @@
 version: "3.7"
 
-volumes:
-  database:
-    name: database
-
 services:
   front:
     build: ./front/
     ports:
       - "3000:3000"
+
   game:
     build: ./game/
     ports:
-      - "8081:8080"
+      - "8083:8080"
+
   login:
     build: ./login/
     ports:
-      - "8080:8080"
+      - "8080:80"
+    env_file:
+      - "./.env.dockerized" # All the environment, for facilitating development
+    networks:
+      - "internal_microservice"
+
   matchmaking:
     build: ./matchmaking/
     ports:
-      - "8083:8080"
+      - "8084:8080"
+
   users:
     build: ./users/
     ports:
-      - "8082:8080"
+      - "8081:80"
+    env_file:
+      - "./.env.dockerized" # All the environment, for facilitating development
+    networks:
+      - "internal_microservice"
+
+  notifications:
+    build: ./notifications/
+    ports:
+      - "8082:80"
+    env_file:
+      - "./.env.dockerized" # All the environment, for facilitating development
+    networks:
+      - "internal_microservice"
+
+  redis: # TODO: Make it secure with credentials
+    image: redis:7
+    ports:
+      - "6379:6379"
+    networks:
+      - "internal_microservice"
 
   database:
     container_name: database
     build: ./postgresql/
     image: database
-
-    # Data persistance
-    volumes:
-      - 'database:/var/lib/postgresql/data'
-
     ports:
       - '5432:5432'
+    networks:
+      - "internal_microservice"
     environment:
       POSTGRES_DB: 'pong'
       POSTGRES_USER: 'postgres'
-      POSTGRES_PASSWORD: 'postgres'
-  
-  # web:
-  #   build: ./back/
-  #   ports:
-  #     - "5000:5000"
-  #   depends_on:
-  #     - db
-  # db:
-  #   image: postgres:12-alpine
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data/
-  #   environment:
-  #     - POSTGRES_USER=postgres
-  #     - POSTGRES_PASSWORD=postgres
-  #     - POSTGRES_DB=postgres
-  # volumes:
-  #   postgres_data:
-  #     driver: local
-  #     driver_opts:
-  #       type: none
-  #       device: ${HOME}/data/postgres
-  #       o: bind
+      POSTGRES_PASSWORD: 'postgres' # TODO: get from env
+
+      #    # Data persistance commented for development purposes
+      #    volumes:
+      #      - 'database:/var/lib/postgresql/data'
+
+networks:
+  internal_microservice:
+
+volumes:
+  database:
+    name: database

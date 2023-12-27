@@ -2,6 +2,7 @@ from .constants import notification_messages
 import json
 import requests
 from src.settings import MICROSERVICE_API_TOKEN
+import os
 
 
 def send_friend_request_notification(sender, receiver, ntype):
@@ -21,7 +22,8 @@ def send_friend_request_notification(sender, receiver, ntype):
     # TODO: get hostname from environment
 
     # TODO: check if fails
-    response = requests.post("http://localhost:8083/notifications/send/",
+    notifications_host = os.getenv('NOTIFICATIONS_SERVICE_HOST')
+    response = requests.post(f"http://{notifications_host}/notifications/send/",
                              json=data,
                              headers={"Authorization": MICROSERVICE_API_TOKEN})
 
