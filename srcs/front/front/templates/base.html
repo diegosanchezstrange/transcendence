@@ -15,13 +15,18 @@
     
     <!-- Load local files -->
     {% load static %}
+
     <link
       rel="stylesheet" type="text/css"
       href="{% static 'css/base.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/login.css' %}" />
+    </head>
     <script>
 	// Load the path global variable
       const path = "{{ PATH }}";
     </script>
+
   </head>
   <body>
     <header class="GenericHeader">
