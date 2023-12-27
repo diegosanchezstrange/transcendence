@@ -1,5 +1,6 @@
 const containers = {
   header: document.querySelector("header"),
+  nav: document.querySelector("nav"),
   main: document.querySelector("main"),
   footer: document.querySelector("footer"),
   body: document.querySelector("body"),
