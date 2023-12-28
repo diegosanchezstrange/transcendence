@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-82(6is-9=axy572@fz*r7d_zqmy5cyhf4lfw7j85b5#@m#jdlf
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [ "*" ]
 
 APPEND_SLASH = False
 
@@ -83,13 +83,13 @@ env = Env()
 Env.read_env()
 
 # 42 API
-LOGIN_42 = env('LOGIN_42')
+LOGIN_42 = 'LOGIN_42'
 # REDIRECT_URI = env('REDIRECT_URI')
 # CLIENT_ID = env('CLIENT_ID')
 # SECRET_KEY = env('SECRET_KEY')
 
 # Microservices URL's
-#AUTH_URL = env('AUTH_URL')
+LOGIN_URL = 'LOGIN_URL'
 # USER_URL = env('USER_URL')
 # GAME_URL = env('GAME_URL')
 # MATCH_URL = env('MATCH_URL')

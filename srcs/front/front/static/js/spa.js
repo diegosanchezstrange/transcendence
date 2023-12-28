@@ -1,5 +1,6 @@
 const containers = {
   header: document.querySelector("header"),
+  nav: document.querySelector("nav"),
   main: document.querySelector("main"),
   footer: document.querySelector("footer"),
   body: document.querySelector("body"),
@@ -8,6 +9,10 @@ const containers = {
 class Router {
   constructor() {
     this.routes = {};
+  }
+
+  static getJwt() {
+    return localStorage.getItem("token");
   }
 
   static insertHtml(html) {
@@ -34,12 +39,16 @@ class Router {
   }
 
   static changePage(url, popstate = false) {
+    let headers = {
+      "X-Requested-With": "XMLHttpRequest",
+      "Content-Type": "text/html",
+    };
+
+    if (Router.getJwt()) headers["Authorization"] = "Bearer " + Router.getJwt();
+
     fetch(url, {
       method: "GET",
-      headers: {
-        "Content-Type": "text/html",
-        "X-Requested-With": "XMLHttpRequest",
-      },
+      headers: headers,
     })
       .then((response) => response.text())
       .then((html) => {
@@ -62,7 +71,7 @@ window.addEventListener("popstate", (event) => {
 
 document.addEventListener("DOMContentLoaded", async function () {
   // TODO: Check where the token should be safely stored
-  const token = localStorage.getItem("token");
-
-  Router.changePage("/home");
+  // const token = localStorage.getItem("token");
+  if (path) Router.changePage("/" + path);
+  else Router.changePage("/home");
 });
