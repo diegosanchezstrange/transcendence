@@ -76,7 +76,6 @@ function animateDot() {
   if ( dotSpeedX > 0 &&  dotX + dotSpeedX > rectRightBounds.left)
   {
     console.log(dotSpeedX)
-    console.log("entro")
     dotX += dotX + dotSpeedX - rectRightBounds.left;
   }
   else
@@ -119,7 +118,6 @@ function animateDot() {
   }
   // Rebotar contra las paredes de arriba o abajo
   else if ((dotSpeedY < 0 && dotBounds.top <= court.offsetTop) || (dotBounds.bottom>= courtBounds.bottom && dotSpeedY> 0)) {
-    console.log("PARED")
     dotSpeedY = (dotSpeedY + Math.random()) *-1;
   }
   // salirse del court
