@@ -3,7 +3,7 @@
 const gameSocket = new WebSocket(
     'ws://'
     + 'localhost:8000'
-    + '/ws/game/');
+    + '/ws/game/test/');
 
 gameSocket.onmessage = function(e) {
     const data = JSON.parse(e.data);
