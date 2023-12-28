@@ -63,12 +63,13 @@ function formSubmitLogin(e) {
   })
     .then((response) => {
       if (response.ok) {
-        return response.text();
+        return response.json();
       }
       throw new Error("Network response was not ok.");
     })
     .then((text) => {
-      console.log(text);
+      // console.log(text);
+      localStorage.setItem("token", text.access);
       Router.changePage("/home/");
       // addAlertBox(
       //   "Login successful!",
@@ -96,6 +97,12 @@ function formSubmitRegister(e) {
 
   // Validate password
   if (password.value != passwordConfirm.value) {
+    addAlertBox(
+      "Passwords do not match!",
+      "danger",
+      document.getElementById("registerBox")
+    );
+    return;
   }
 
   let formData = new FormData(this);
@@ -104,6 +111,7 @@ function formSubmitRegister(e) {
 
   formData.forEach((value, key) => {
     if (key === "csrfmiddlewaretoken") csrfToken = value;
+    if (key === "passwordRepeat") return;
     body[key] = value;
   });
 
@@ -127,12 +135,12 @@ function formSubmitRegister(e) {
     })
     .then((text) => {
       console.log(text);
-      Router.changePage("/home/");
-      // addAlertBox(
-      //   "Registration successful!",
-      //   "success",
-      //   document.getElementById("registerBox")
-      // );
+      addAlertBox(
+        "Registration successful!",
+        "success",
+        document.getElementById("registerBox")
+      );
+      Router.changePage("/login/");
     })
     .catch((error) => {
       console.log(error);

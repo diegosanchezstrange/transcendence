@@ -32,6 +32,7 @@ def register(request):
     #     new_user = User.objects.create(username='test')
     # return HttpResponse(User.objects.values_list('username'))
     context = {
+       'LOGIN_URL': settings.LOGIN_URL,
         'PATH': 'register'
     }
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
