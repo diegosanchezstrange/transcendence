@@ -16,7 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from game_sockets import urls as game_sockets_urls
+from django.urls import include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', include(game_sockets_urls)),
 ]
