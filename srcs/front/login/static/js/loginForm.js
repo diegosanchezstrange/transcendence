@@ -35,7 +35,7 @@ function addAlertBox(message, type, container) {
 
 /*
  * Function for the login form submit event
- * @return {boolean} - void
+ * @return {boolean} - voiSd
  * */
 function formSubmitLogin(e) {
   e.preventDefault();
@@ -71,11 +71,6 @@ function formSubmitLogin(e) {
       // console.log(text);
       localStorage.setItem("token", text.access);
       Router.changePage("/home/");
-      // addAlertBox(
-      //   "Login successful!",
-      //   "success",
-      //   document.getElementById("loginBox")
-      // );
     })
     .catch((error) => {
       console.log(error);
