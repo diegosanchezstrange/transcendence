@@ -43,5 +43,4 @@ db:
 hakim:
 	docker-compose -f ./srcs/docker-compose.yml up --build database redis users login notifications
 
-
 .PHONY: clean re stop build db all 
