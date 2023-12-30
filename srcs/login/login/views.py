@@ -8,6 +8,9 @@ import requests
 import os
 from .utils.utils import request_intra
 from requests.exceptions import RequestException
+from rest_framework_simplejwt.tokens import UntypedToken
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+from rest_framework_simplejwt.state import token_backend
 
 
 @api_view(['POST'])
@@ -122,3 +125,21 @@ def login_oauth(request, *args, **kwargs):
     return JsonResponse({
         "token": str(jwt_token)
     })
+
+@api_view(['POST'])
+def validate_jwt(request, *args, **kwargs):
+    auth_header = request.headers.get('Authorization')
+    if not auth_header:
+        return JsonResponse({"message": "Invalid token"}, status=401)
+    
+    extract = auth_header.split()
+    if len(extract != 2):
+        return JsonResponse({"message": "Bad authorization header"}, status=400)
+
+    token = extract[1]
+    try:
+        UntypedToken(token)
+        token_backend.decode(token, verify=True)
+        return JsonResponse({"message": "Valid JWT"}, status=200)
+    except (InvalidToken, TokenError) as e:
+        return JsonResponse({"message": "Invalid JWT token."}, status=401)
