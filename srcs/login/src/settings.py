@@ -176,6 +176,8 @@ MICROSERVICE_API_TOKEN = os.getenv('MICROSERVICE_API_TOKEN')
 
 USERS_SERVICE_HOST = os.getenv('USERS_SERVICE_HOST')
 
+API_INTRA_URL = os.getenv('API_INTRA_URL')
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
