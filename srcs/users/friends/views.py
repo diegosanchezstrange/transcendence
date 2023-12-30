@@ -21,7 +21,7 @@ def send_friend_request(request, *args, **kwargs):
 
     receiver = get_object_or_404(User, username=send_to)
 
-    if is_your_friend(request.user, receiver):
+    if is_your_friend(request.user, receiver) or receiver == request.user:
         return JsonResponse({
             "detail": f"You are already a friend of {receiver.username}."
         }, status=200)
