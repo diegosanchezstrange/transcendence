@@ -60,9 +60,8 @@ def home(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         if auth is not None and request.user.is_authenticated:
             user_response = requests.get(settings.USER_URL + "/profile/", headers={'Authorization': auth})
-
             print(user_response.json())
-
+            context['user_info'] = user_response.json()['detail']
             response = render(request, 'homeUser.html', context)
         else:
             response = render(request, 'home.html', context)
