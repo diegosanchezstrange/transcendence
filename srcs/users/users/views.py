@@ -130,17 +130,15 @@ def get_or_create_user_oauth(request, *args, **kwargs):
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def change_user_data(request, *args, **kwargs):
-    test = request.data.get('test') or request.user.userprofile.test
     username = request.data.get('username') or request.user.username
 
-    if not test and not username:
+    if not username:
         return JsonResponse({
             "detail": "No value provided"
         }, status=304)
     
     user = request.user
 
-    request.user.userprofile.test = test
     request.user.username = username
     user.save()
 

@@ -44,7 +44,7 @@ services:
       - "internal_microservice"
 
   redis: # TODO: Make it secure with credentials
-    image: redis:7
+    image: redis:7.2.3-alpine
     ports:
       - "6379:6379"
     networks:
