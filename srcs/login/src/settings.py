@@ -79,7 +79,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
 ]
 
@@ -175,6 +175,8 @@ APPEND_SLASH = False
 MICROSERVICE_API_TOKEN = os.getenv('MICROSERVICE_API_TOKEN')
 
 USERS_SERVICE_HOST = os.getenv('USERS_SERVICE_HOST')
+
+API_INTRA_URL = os.getenv('API_INTRA_URL')
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/

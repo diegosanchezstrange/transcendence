@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from environ import Env
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,14 +22,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-82(6is-9=axy572@fz*r7d_zqmy5cyhf4lfw7j85b5#@m#jdlf'
+# SECRET_KEY = 'django-insecure-82(6is-9=axy572@fz*r7d_zqmy5cyhf4lfw7j85b5#@m#jdlf'
+SECRET_KEY = os.getenv('JWT_SECRET')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = [ "*" ]
 
-APPEND_SLASH = False
+APPEND_SLASH = True
 
 
 # Application definition
@@ -41,8 +43,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'front',
+    'users',
     'login.apps.LoginConfig',
+    'rest_framework',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -83,19 +93,27 @@ env = Env()
 Env.read_env()
 
 # 42 API
-LOGIN_42 = 'LOGIN_42'
+LOGIN_42 = env('LOGIN_42')
 # REDIRECT_URI = env('REDIRECT_URI')
 # CLIENT_ID = env('CLIENT_ID')
 # SECRET_KEY = env('SECRET_KEY')
 
 # Microservices URL's
-LOGIN_URL = 'LOGIN_URL'
-# USER_URL = env('USER_URL')
+LOGIN_SERVICE_HOST = env('LOGIN_SERVICE_HOST')
+USERS_SERVICE_HOST = env('USERS_SERVICE_HOST')
 # GAME_URL = env('GAME_URL')
 # MATCH_URL = env('MATCH_URL')
 
 
 DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USERNAME'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOSTNAME'),
+        'PORT': os.getenv('DB_PORT'),
+    }
 }
 
 
