@@ -21,6 +21,22 @@ def join_queue(request, *args, **kwargs):
         "message": "Queue joined successfully."
     }, status=200)
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def leave_queue(request, *args, **kwargs):
+    user = request.user
+
+    try:
+        Queue.leave_queue(user)
+    except Queue.UserNotInQueueError:
+        return JsonResponse({
+            "message": "You are not in a queue currently."
+        }, status=403)
+
+    return JsonResponse({
+        "message": "Queue left successfully."
+    }, status=200)
+
 
 # TODO: delete this view and the one below
 @api_view(['GET'])

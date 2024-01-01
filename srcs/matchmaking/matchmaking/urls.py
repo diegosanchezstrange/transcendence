@@ -16,12 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .views import join_queue, dev_view_get_queue
+from .views import join_queue, dev_view_get_queue, leave_queue
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('queue/join/', join_queue),
+    path('queue/leave/', leave_queue),
     path('queue/list/', dev_view_get_queue),
     path('queue/delete/', dev_view_get_queue),
 ]

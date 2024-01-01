@@ -25,7 +25,7 @@ class Queue:
         return user in Queue.__queue
     
     @staticmethod
-    def remove_user_from_queue(user):
+    def leave_queue(user):
         if Queue.is_user_in_queue(user=user):
             raise Queue.UserNotInQueueError()
         Queue.__queue.remove(user)
