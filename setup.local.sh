@@ -99,8 +99,8 @@ function main() {
   log "Setting up notifications service"
   run_service "$notifications_dir" "$notifications_port"
 
-#  log "Setting up frontend service"
-#  run_service "$front_dir" "$front_port"
+  log "Setting up frontend service"
+  run_service "$front_dir" "$front_port"
 
   while true; do
     :
