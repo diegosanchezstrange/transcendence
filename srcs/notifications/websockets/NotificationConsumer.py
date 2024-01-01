@@ -3,7 +3,6 @@ from .auth.jwt import validate_jwt_and_get_user_id
 import json
 import re
 from django.contrib.auth.models import User
-import requests
 
 
 class NotificationConsumer(AsyncWebsocketConsumer):
@@ -20,10 +19,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         user_id = await validate_jwt_and_get_user_id(jwt_token)
         if not user_id:
             await self.close()
-
-        user = User.objects.get(pk=user_id)
-
-        print(requests.get("https://42.fr/").text)
 
         self.id = user_id
 
