@@ -7,11 +7,13 @@ front_dir="$base_dir/srcs/front"
 users_dir="$base_dir/srcs/users"
 login_dir="$base_dir/srcs/login"
 notifications_dir="$base_dir/srcs/notifications"
+matchmaking_dir="$base_dir/srcs/matchmaking"
 
 front_port="3000"
 users_port="8081"
 login_port="8080"
 notifications_port="8082"
+matchmaking_port="8083"
 
 set -m
 
@@ -42,9 +44,9 @@ function init_env() {
   export $(cat ../../.env.example|tr "\n" " ")
 }
 
-function setup_database() {
+function setup_database_and_redis() {
   cd "$base_dir/srcs" || (echo "cd failed" && exit 1)
-  docker-compose up --build database &
+  docker-compose up --build database redis &
 }
 
 function run_service() {
@@ -73,20 +75,14 @@ function wait_for_db() {
   done
 }
 
-function setup_redis() {
-    cd "$base_dir/srcs" && docker-compose up --build redis &
-}
-
 function main() {
   # Signal handler to stop everything and clean up
   trap 'sighandler' SIGINT
 
   # Set up database
-  log "Setting up database"
-  setup_database
+  log "Setting up database and redis"
+  setup_database_and_redis
 
-  log "Setting up redis"
-  setup_redis
 
   wait_for_db "localhost" "5432"
 
@@ -98,6 +94,9 @@ function main() {
 
   log "Setting up notifications service"
   run_service "$notifications_dir" "$notifications_port"
+
+  log "Setting up matchmaking service"
+  run_service "$matchmaking_dir" "$matchmaking_port"
 
   log "Setting up frontend service"
   run_service "$front_dir" "$front_port"
