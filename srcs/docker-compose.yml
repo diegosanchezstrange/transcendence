@@ -27,47 +27,61 @@ services:
     restart: on-failure
 
   game:
+    container_name: game
     build: ./game/
-    ports:
-      - "8083:8080"
+    image: game
+
     networks:
       - "internal_microservice"
+
+    restart: on-failure
 
   login:
+    container_name: login
     build: ./login/
-    ports:
-      - "8080:80"
+    image: login
     env_file:
       - "./.env.dockerized" # All the environment, for facilitating development
     networks:
       - "internal_microservice"
+
+    restart: on-failure
 
   matchmaking:
+    container_name: matchmaking
     build: ./matchmaking/
-    ports:
-      - "8084:8080"
+    image: matchmaking
+    
     networks:
       - "internal_microservice"
+    
+    restart: on-failure
 
   users:
+    container_name: users
     build: ./users/
-    ports:
-      - "8081:80"
+    image: users
+
     env_file:
       - "./.env.dockerized" # All the environment, for facilitating development
     networks:
       - "internal_microservice"
+    restart: on-failure
 
   notifications:
+    container_name: notifications
     build: ./notifications/
-    ports:
-      - "8082:80"
+    image: notifications
+
     env_file:
       - "./.env.dockerized" # All the environment, for facilitating development
     networks:
       - "internal_microservice"
 
+    restart: on-failure
+
   redis: # TODO: Make it secure with credentials
+    container_name: redis
     image: redis:7.2.3-alpine
     ports:
       - "6379:6379"
@@ -78,7 +92,7 @@ services:
     container_name: database
     build: ./database/
     image: database
-    # dev only port. DELETE it on release
+      # dev only port. TODO: DELETE it on release
     ports:
       - '5432:5432'
     networks:
@@ -91,6 +105,7 @@ services:
       #    # Data persistance commented for development purposes
       #    volumes:
       #      - 'database:/var/lib/postgresql/data'
+    restart: on-failure
 
 networks:
   internal_microservice:
