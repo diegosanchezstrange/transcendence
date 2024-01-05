@@ -1,49 +1,87 @@
-version: "3.7"
+version: "3.9"
 
 services:
-  front:
-    build: ./front/
+  endpoint:
+    container_name: endpoint
+    build: ./endpoint/
+    image: endpoint
+
     ports:
-      - "3000:3000"
+      - "80:80"
+    networks:
+      - "internal_microservice"
+
+    restart: on-failure
+
+  front:
+    container_name: front
+    build: ./front/
+    image: front
+
+    networks:
+      - "internal_microservice"
+
+    environment:
+      LOGIN_42: ${LOGIN_42}
+
+    restart: on-failure
 
   game:
+    container_name: game
     build: ./game/
-    ports:
-      - "8083:8080"
+    image: game
+
+    networks:
+      - "internal_microservice"
+
+    restart: on-failure
 
   login:
+    container_name: login
     build: ./login/
-    ports:
-      - "8080:80"
+    image: login
     env_file:
       - "./.env.dockerized" # All the environment, for facilitating development
     networks:
       - "internal_microservice"
+
+    restart: on-failure
 
   matchmaking:
+    container_name: matchmaking
     build: ./matchmaking/
-    ports:
-      - "8084:8080"
+    image: matchmaking
+    
+    networks:
+      - "internal_microservice"
+    
+    restart: on-failure
 
   users:
+    container_name: users
     build: ./users/
-    ports:
-      - "8081:80"
+    image: users
+
     env_file:
       - "./.env.dockerized" # All the environment, for facilitating development
     networks:
       - "internal_microservice"
+    restart: on-failure
 
   notifications:
+    container_name: notifications
     build: ./notifications/
-    ports:
-      - "8082:80"
+    image: notifications
+
     env_file:
       - "./.env.dockerized" # All the environment, for facilitating development
     networks:
       - "internal_microservice"
 
+    restart: on-failure
+
   redis: # TODO: Make it secure with credentials
+    container_name: redis
     image: redis:7.2.3-alpine
     ports:
       - "6379:6379"
@@ -52,23 +90,27 @@ services:
 
   database:
     container_name: database
-    build: ./postgresql/
+    build: ./database/
     image: database
+      # dev only port. TODO: DELETE it on release
     ports:
       - '5432:5432'
     networks:
       - "internal_microservice"
     environment:
-      POSTGRES_DB: 'pong'
-      POSTGRES_USER: 'postgres'
-      POSTGRES_PASSWORD: 'postgres' # TODO: get from env
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
 
       #    # Data persistance commented for development purposes
       #    volumes:
       #      - 'database:/var/lib/postgresql/data'
+    restart: on-failure
 
 networks:
   internal_microservice:
+    driver: bridge
+    name: 'internal_microservice'
 
 volumes:
   database:

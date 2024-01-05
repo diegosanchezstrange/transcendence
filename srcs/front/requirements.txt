@@ -13,3 +13,4 @@ requests==2.31.0
 sqlparse==0.4.4
 typing_extensions==4.9.0
 urllib3==1.26.6
+Pillow==10.1.0

@@ -17,4 +17,4 @@ done
 python3 manage.py makemigrations friends users
 python3 manage.py migrate
 
-python3 manage.py runserver 0.0.0.0:80
+exec python3 manage.py runserver 0.0.0.0:80
