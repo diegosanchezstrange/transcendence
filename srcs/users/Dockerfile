@@ -1,16 +1,16 @@
 # syntax=docker/dockerfile:1.4
 
-FROM python:3.9.18-bookworm
+FROM python:3.9-alpine
 
-EXPOSE 8082
+EXPOSE 80
 
 WORKDIR /app 
 
 COPY requirements.txt /app
 
-RUN apt-get update
+RUN apk update
 
-RUN apt-get -y install git postgresql-client
+RUN apk add git postgresql-client
 
 RUN pip3 install -r requirements.txt --no-cache-dir
 
