@@ -50,7 +50,12 @@ class Router {
       method: "GET",
       headers: headers,
     })
-      .then((response) => response.text())
+      .then((response) => {
+        // if (response.status === 401) {
+        //   throw new Error(response.status);
+        // }
+        return response.text();
+      })
       .then((html) => {
         Router.insertHtml(html);
         if (!popstate) {
@@ -58,7 +63,12 @@ class Router {
         }
       })
       .catch((error) => {
-        console.error("Error:", error);
+        console.log(error.message);
+        // let errorCode = parseInt(error.message);
+        // if (errorCode === 401) {
+        //   localStorage.removeItem("token");
+        //   Router.changePage("/login");
+        // }
       });
   }
 }
