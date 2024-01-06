@@ -21,6 +21,7 @@ def login(request):
     context = {
        'LOGIN_42': settings.LOGIN_42, 
        'LOGIN_SERVICE_HOST': settings.LOGIN_SERVICE_HOST,
+        'USERS_SERVICE_HOST': settings.USERS_SERVICE_HOST,
         'PATH': 'login',
     }
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
@@ -38,6 +39,7 @@ def register(request):
     # return HttpResponse(User.objects.values_list('username'))
     context = {
        'LOGIN_SERVICE_HOST': settings.LOGIN_SERVICE_HOST,
+        'USERS_SERVICE_HOST': settings.USERS_SERVICE_HOST,
         'PATH': 'register'
     }
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
@@ -53,7 +55,8 @@ def home(request):
     """
     # Check if req is from the browser or an ajax call
     context = {
-        'PATH': 'home'
+        'PATH': 'home',
+        'USERS_SERVICE_HOST': settings.USERS_SERVICE_HOST,
     }
     # remove bearer from auth
     auth = request.headers.get('Authorization')

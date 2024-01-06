@@ -16,17 +16,38 @@
         <div class="collapse navbar-collapse" id="navbarUser">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" href="">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a onclick="Router.changePage('/profile')" class="nav-link">Profile</a>
+                    <a onclick="home_link()" class="nav-link" href="#" >Home</a>
                 </li>
                 <li class="nav-item">
                     <a onclick="logout()" class="nav-link">Logout</a>
                 </li>
             </ul>
+<!-- <a onclick="friends_link()" href="#"><i class="fa-solid fa-user-group fa-2x pe-3"></i></a> -->
+            <div class="dropdown">
+                <button type="button" onclick="fill_friends_list('{{ USERS_SERVICE_HOST }}/friends/')" class="btn btn-default dropdown-toggle
+                    pe-3" data-bs-toggle="dropdown"><i class="fa-solid fa-user-group fa-2x"></i></button>
+                <div class="dropdown-menu dropdown-menu-end">
+                    <form id="send_friend_request_form" action="{{ USERS_SERVICE_HOST }}/friends/request/send/" class="d-flex">
+                        <input id="username_input" class="form-control" type="text" placeholder="Add friend" aria-label="Search">
+                        <button class="" type="submit" ><i class="fa-solid fa-arrow-right"></i></button>
+                    </form>
+                    <ul id="friends_list">
+                        <li><a class="dropdown-item" href="#">Notification 1</a></li>
+                        <li><a class="dropdown-item" href="#">Notification 2</a></li>
+                        <li><a class="dropdown-item" href="#">Notification 3</a></li>
+                    </ul>
+                </div>
+            </div>
+            <a onclick="profile_link()" href="#" class="me-5"><i class="fa-solid fa-user fa-2x"></i></a>
             <!-- <button class="btn btn-outline-success" type="submit">Login</button> -->
         </div>
     </div>
 </nav>
 <!-- <script src="{% static 'js/navBarLinks.js' %}"></script> -->
+<script>
+    console.log("navbarUser.js loaded");
+    document.getElementById("send_friend_request_form") &&
+    document
+      .getElementById("send_friend_request_form")
+      .addEventListener("submit", send_friend_request);
+</script>

@@ -1,16 +1,21 @@
 <header>{% include "navbar/navbarUser.html" %}</header>
 <main>
-    {% load static %}
-    <div class="container">
-        <!-- Show the user avatar -->
-        <div class="row justify-content-center m-3">
-            <img
-                src="{{ user_info.profile_pic }}"
-                alt="profile"
-                class="img-fluid col-sm-6"
-            />
-            <div class="col-4">
-            </div>
-
+  {% load static %}
+  <div class="container">
+    <!-- Show the user avatar -->
+    <div class="row justify-content-center m-3">
+      <div class="col-4">
+        <img
+          src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+          alt="profile"
+          class="img-fluid"
+          style="width: 180px; border-radius: 10px"
+        />
+      </div>
+      <div class="col-4">
+        <h1>{{ user_info.username }}</h1>
+      </div>
     </div>
+  </div>
 </main>
+<!-- src="{{ user_info.profile_pic }}" -->
