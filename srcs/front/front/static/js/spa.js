@@ -19,6 +19,8 @@ class Router {
     let parser = new DOMParser();
     let doc = parser.parseFromString(html, "text/html");
 
+    let chidlScrips = [];
+
     Array.from(doc.body.children).forEach((child) => {
       if (
         child.nodeType === Node.ELEMENT_NODE &&
@@ -27,17 +29,24 @@ class Router {
       ) {
         // Replace the content of the container with the new content
         child.childNodes.forEach((node) => {
-            if (node.nodeType === Node.ELEMENT_NODE && node.tagName === "SCRIPT") {
-                let newScript = document.createElement("script");
+          if (
+            node.nodeType === Node.ELEMENT_NODE &&
+            node.tagName === "SCRIPT"
+          ) {
+            let newScript = document.createElement("script");
 
-                if (node.src) newScript.src = node.src;
-                else newScript.textContent = node.textContent;
+            //remove the script from the child
+            node.remove();
 
-                // containers["body"].appendChild(newScript);
-                document.body.appendChild(newScript);
-            }
+            if (node.src) newScript.src = node.src;
+            else newScript.textContent = node.textContent;
+
+            // document.body.appendChild(newScript);
+            chidlScrips.push(newScript);
+          }
         });
         containers[child.tagName.toLowerCase()].innerHTML = child.innerHTML;
+        chidlScrips.forEach((node) => document.body.appendChild(node));
       } else if (child.tagName === "SCRIPT") {
         let newScript = document.createElement("script");
 
