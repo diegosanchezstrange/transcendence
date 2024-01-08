@@ -37,14 +37,20 @@ function send_friend_request(e) {
       send_to: username,
     }),
   })
-    .then(function (response) {
+    .then(async function (response) {
+      if (!response.ok) 
+      {
+        let res = await response.json();
+        throw new Error(res["detail"]);
+      }
       return response.json();
     })
     .then(function (json) {
-      console.log(json);
+      console.log(json["detail"]);
     })
     .catch(function (error) {
-      console.log(error);
+            let container = document.getElementById("friends_requests");
+        addAlertBox("Error: " + error.message, "danger", container);
     });
 }
 

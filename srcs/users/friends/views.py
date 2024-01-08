@@ -24,14 +24,19 @@ def send_friend_request(request, *args, **kwargs):
     if is_your_friend(request.user, receiver) or receiver == request.user:
         return JsonResponse({
             "detail": f"You are already a friend of {receiver.username}."
-        }, status=200)
+        }, status=409)
 
     friend_request, created = FriendRequest.objects.get_or_create(
         sender=request.user,
         receiver=receiver
     )
     if created:
-        send_friend_request_notification(request.user, receiver, NotificationType.SENT)
+        try:
+            send_friend_request_notification(request.user, receiver, NotificationType.SENT)
+        except Exception as e:
+            #TODO: Exception handling
+            print(e)
+            pass
 
         return JsonResponse({
             "detail": "Friend request sent successfully"
@@ -40,7 +45,7 @@ def send_friend_request(request, *args, **kwargs):
         # TODO: send 304 (postman bug)
         return JsonResponse({
             "detail": "Friend request already sent."
-        })
+        }, status=409)
 
 
 @api_view(['GET'])

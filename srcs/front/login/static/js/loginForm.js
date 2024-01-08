@@ -1,4 +1,4 @@
-function getCsrfToken() {
+ function getCsrfToken() {
   let csrfToken = null;
   if (document.cookie && document.cookie !== "") {
     const cookies = document.cookie.split(";");
@@ -13,25 +13,26 @@ function getCsrfToken() {
   return csrfToken;
 }
 
-/*
- * Function to add an alert box to the page
- * @param {string} message - The message to display in the alert box
- * @param {string} type - The type of alert box to display
- * @param {string} container - The container to add the alert box to
- * @return {void}
- * */
-function addAlertBox(message, type, container) {
-  let alert = document.createElement("div");
 
-  if (document.getElementById("alert")) {
-    document.getElementById("alert").remove();
-  }
-
-  alert.className = "alert alert-" + type;
-  alert.id = "alert";
-  alert.innerHTML = message;
-  container.prepend(alert);
-}
+// /*
+//  * Function to add an alert box to the page
+//  * @param {string} message - The message to display in the alert box
+//  * @param {string} type - The type of alert box to display
+//  * @param {string} container - The container to add the alert box to
+//  * @return {void}
+//  * */
+// function addAlertBox(message, type, container) {
+//   let alert = document.createElement("div");
+//
+//   if (document.getElementById("alert")) {
+//     document.getElementById("alert").remove();
+//   }
+//
+//   alert.className = "alert alert-" + type;
+//   alert.id = "alert";
+//   alert.innerHTML = message;
+//   container.prepend(alert);
+// }
 
 /*
  * Function for the login form submit event
@@ -70,6 +71,7 @@ function formSubmitLogin(e) {
     .then((text) => {
       // console.log(text);
       localStorage.setItem("token", text.access);
+      notficationsWebSocket = new NotificationsWebsocket();
       Router.changePage("/home/");
     })
     .catch((error) => {

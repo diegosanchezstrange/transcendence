@@ -6,6 +6,26 @@ const containers = {
   body: document.querySelector("body"),
 };
 
+/*
+ * Function to add an alert box to the page
+ * @param {string} message - The message to display in the alert box
+ * @param {string} type - The type of alert box to display
+ * @param {string} container - The container to add the alert box to
+ * @return {void}
+ * */
+function addAlertBox(message, type, container) {
+  let alert = document.createElement("div");
+
+  if (document.getElementById("alert")) {
+    document.getElementById("alert").remove();
+  }
+
+  alert.className = "alert alert-" + type;
+  alert.id = "alert";
+  alert.innerHTML = message;
+  container.prepend(alert);
+}
+
 class Router {
   constructor() {
     this.routes = {};
