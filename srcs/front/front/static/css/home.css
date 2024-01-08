@@ -1,3 +1,11 @@
+.Middle {
+    position: absolute;
+	top: 40%;
+    left: 40%;
+    margin-top: -50px;
+    margin-left: -50px;
+}
+
 .GameCard {
 	width: 486px;
 	height: 184px;
@@ -20,4 +28,8 @@
 	font-weight: 700;
 	line-height: 130%; /* 62.4px */
 	letter-spacing: 4.32px;
+}
+
+.navbarHome {
+	padding-left: 70%;
 }

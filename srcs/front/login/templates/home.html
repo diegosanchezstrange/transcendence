@@ -1,4 +1,5 @@
-<!-- {% include "navbar/navbarHome.html" %} -->
+{% load static %}
+
 <header class="GenericHeader">
 	<nav class="navbar navbar-expand-lg border-bottom mb-5 ">
 		<img class="d-sm-none d-lg-block" src="{% static 'img/logo.png' %}"
@@ -6,7 +7,6 @@
           <div class="container-fluid, PageTitle">
               PONG THAT PANG
           </div>
-			<!-- Navbar here -->
         
 		  <button
           class="navbar-toggler"
@@ -20,18 +20,10 @@
 		  <span class="navbar-toggler-icon"></span>
 		  </button>
         
-		  <div class="collapse navbar-collapse" id="navbarUser">
-			  <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-				  <li class="nav-item">
-					  <a class="nav-link" href="">Home</a>
-				  </li>
-				  <li class="nav-item">
-					  <a class="nav-link" href="">Rankings</a>
-				  </li>
-			  </ul>
+		  <div class="collapse navbar-collapse navbarHome">
 
 			  <button
-				  class="btn btn-outline-success"
+				  class="btn"
 				  type="submit"
 				  onclick="Router.changePage('/register')"
 				  >
@@ -39,7 +31,7 @@
 			  </button>
 
 			  <button
-				  class="btn btn-outline-success"
+				  class="btn"
 				  type="submit"
 				  onclick="Router.changePage('/login')"
 				  >
@@ -47,49 +39,9 @@
 			  </button>
 		  </div>
 	</nav>
-<nav>
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#"> Icon </a>
-    
-        </div>
-</nav>
-
+</header>
 <main>
-    {% load static %}
-    <div class="container">
-        <h1>Welcome home !!!</h1>
-        <div class="row justify-content-center">
-            <div class="col-sm-4">
-                <div class="card">
-                    <div class="card-body">
-						<button
-							class="btn btn-outline-success"
-							type="submit"
-							onclick="Router.changePage('/login')"
-							>
-							1v1 Game
-						</button>
-					</div>
-				</div>
-
-            <div class="col-sm-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">User</h5>
-                        <p class="card-text">This is some text within a card body.</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">User</h5>
-                        <p class="card-text">This is some text within a card body.</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+	<div class="container Middle">
+		<img class="d-sm-none d-lg-block" src="{% static 'img/pong.png' %}" width="800" height="500" alt="Pong logo">
+	</div>
 </main>
