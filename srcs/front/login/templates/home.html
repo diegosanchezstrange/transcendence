@@ -1,8 +1,14 @@
 <!-- {% include "navbar/navbarHome.html" %} -->
-<nav>
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#"> Icon </a>
-        <button
+<header class="GenericHeader">
+	<nav class="navbar navbar-expand-lg border-bottom mb-5 ">
+		<img class="d-sm-none d-lg-block" src="{% static 'img/logo.png' %}"
+        width="50" height="50" alt="Pong logo">
+          <div class="container-fluid, PageTitle">
+              PONG THAT PANG
+          </div>
+			<!-- Navbar here -->
+        
+		  <button
           class="navbar-toggler"
           type="button"
           data-bs-toggle="collapse"
@@ -10,60 +16,63 @@
           aria-controls="navbarUser"
           aria-expanded="false"
           aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
+		  >
+		  <span class="navbar-toggler-icon"></span>
+		  </button>
+        
+		  <div class="collapse navbar-collapse" id="navbarUser">
+			  <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+				  <li class="nav-item">
+					  <a class="nav-link" href="">Home</a>
+				  </li>
+				  <li class="nav-item">
+					  <a class="nav-link" href="">Rankings</a>
+				  </li>
+			  </ul>
+
+			  <button
+				  class="btn btn-outline-success"
+				  type="submit"
+				  onclick="Router.changePage('/register')"
+				  >
+				  Register
+			  </button>
+
+			  <button
+				  class="btn btn-outline-success"
+				  type="submit"
+				  onclick="Router.changePage('/login')"
+				  >
+				  Login
+			  </button>
+		  </div>
+	</nav>
+<nav>
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#"> Icon </a>
     
-        <div class="collapse navbar-collapse" id="navbarUser">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link" href="">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="">Rankings</a>
-            </li>
-          </ul>
-          <button
-            class="btn btn-outline-success"
-            type="submit"
-            onclick="Router.changePage('/register')"
-          >
-            Register
-          </button>
-          <button
-            class="btn btn-outline-success"
-            type="submit"
-            onclick="Router.changePage('/login')"
-          >
-            Login
-          </button>
         </div>
-    </div>
 </nav>
 
 <main>
     {% load static %}
     <div class="container">
         <h1>Welcome home !!!</h1>
-        <div class="row justify-content-center m-3">
-            <img src="{% static 'login/img/pong.png' %}"
-                 alt="profile"
-                 class="img-fluid col-sm-6" />
-            <div class="col-4">
-                <h2>The best place</h2>
-            </div>
-        </div>
         <div class="row justify-content-center">
-            <div class="col-sm-3">
+            <div class="col-sm-4">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">User</h5>
-                        <p class="card-text">This is some text within a card body.</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-3">
+						<button
+							class="btn btn-outline-success"
+							type="submit"
+							onclick="Router.changePage('/login')"
+							>
+							1v1 Game
+						</button>
+					</div>
+				</div>
+
+            <div class="col-sm-4">
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">User</h5>
