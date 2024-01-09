@@ -90,14 +90,52 @@ def accept_friend_request(request, *args, **kwargs):
 
     friend_request = get_object_or_404(FriendRequest, sender=sender, receiver=receiver)
 
-    send_friend_request_notification(
-        sender=friend_request.receiver,
-        receiver=friend_request.sender,
-        ntype=NotificationType.ACCEPTED
-    )
 
     friend_request.delete()
     Friendship.objects.create(user1=request.user, user2=friend_request.sender)
+
+    try:
+        send_friend_request_notification(
+            sender=friend_request.receiver,
+            receiver=friend_request.sender,
+            ntype=NotificationType.ACCEPTED
+        )
+    except:
+        #TODO: Exception handling
+        pass
+
+    return JsonResponse({
+        "detail": "OK"
+    }, status=201)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def reject_friend_request(request, *args, **kwargs):
+    receiver = request.user
+    sender_name = request.data.get("sender")
+    sender = User.objects.get(username=sender_name)
+
+    if not sender:
+        return JsonResponse({
+            "detail": "Sender does not exist"
+        }, status=404)
+
+    if not sender:
+        return JsonResponse({}, status=400)
+
+    friend_request = get_object_or_404(FriendRequest, sender=sender, receiver=receiver)
+
+    friend_request.delete()
+
+    try:
+        send_friend_request_notification(
+            sender=friend_request.receiver,
+            receiver=friend_request.sender,
+            ntype=NotificationType.REJECTED
+        )
+    except:
+        # TODO: Exception handling
+        pass
 
     return JsonResponse({
         "detail": "OK"

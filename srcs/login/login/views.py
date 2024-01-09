@@ -61,7 +61,7 @@ def create_user(request, *args, **kwargs):
             "password": password
         }
 
-        url = f"http://{settings.USERS_SERVICE_HOST}/users/create/"
+        url = f"{settings.USERS_SERVICE_HOST}/users/create/"
 
         headers = {
             "Authorization": os.getenv('MICROSERVICE_API_TOKEN')
@@ -86,7 +86,7 @@ def create_user(request, *args, **kwargs):
 @api_view(['POST'])
 def login_oauth(request, *args, **kwargs):
     access_token = request.data.get('access_token')
-    url = "https://api.intra.42.fr/v2/me"
+    url = f"{settings.API_INTRA_URL}/v2/me"
     headers = {
         "Authorization": f"Bearer {access_token}"
     }
@@ -110,7 +110,7 @@ def login_oauth(request, *args, **kwargs):
     body = {
         "username": username
     }
-    url = f"http://{settings.USERS_SERVICE_HOST}/users/create/42/"
+    url = f"{settings.USERS_SERVICE_HOST}/users/create/42/"
 
     response = requests.post(url, headers=headers, data=body)
     if response.status_code not in (200, 201):
