@@ -38,8 +38,7 @@ function send_friend_request(e) {
     }),
   })
     .then(async function (response) {
-      if (!response.ok) 
-      {
+      if (!response.ok) {
         let res = await response.json();
         throw new Error(res["detail"]);
       }
@@ -49,8 +48,8 @@ function send_friend_request(e) {
       console.log(json["detail"]);
     })
     .catch(function (error) {
-            let container = document.getElementById("friends_requests");
-        addAlertBox("Error: " + error.message, "danger", container);
+      let container = document.getElementById("friends_requests");
+      addAlertBox("Error: " + error.message, "danger", container);
     });
 }
 
@@ -73,10 +72,7 @@ function accept_friend_req(e) {
     }),
   })
     .then(function (response) {
-      return response.json();
-    })
-    .then(function (json) {
-      console.log(json);
+      if (response.ok) fill_friends_list(USERS_SERVICE_HOST + "/friends/");
     })
     .catch(function (error) {
       console.log(error);
@@ -102,10 +98,7 @@ function reject_friend_req(e) {
     }),
   })
     .then(function (response) {
-      return response.json();
-    })
-    .then(function (json) {
-        fill_friends_list(USERS_SERVICE_HOST + "/friends/");
+      if (response.ok) fill_friends_list(USERS_SERVICE_HOST + "/friends/");
     })
     .catch(function (error) {
       console.log(error);
@@ -152,12 +145,10 @@ function fill_friends_list(friends_list_url) {
           friend_li.appendChild(reject_button);
           friend_req_list.appendChild(friend_li);
         });
+      } else {
+        let friend_req_list = document.getElementById("friends_requests");
+        friend_req_list.innerHTML = "";
       }
-        else
-        {
-            let friend_req_list = document.getElementById("friends_requests");
-            friend_req_list.innerHTML = "";
-        }
     })
     .catch(function (error) {
       console.log(error);
@@ -172,22 +163,20 @@ function fill_friends_list(friends_list_url) {
       return response.json();
     })
     .then(function (json) {
-            console.log(json);
+      console.log(json);
       if (json["detail"].length === 0) {
         friends_list.innerHTML = "You have no friends :(";
-      }
-      else
-      {
+      } else {
         friends_list.innerHTML = "";
         json["detail"].forEach(function (friend) {
-            let friend_li = document.createElement("li");
-            let friend_name = document.createElement("p");
+          let friend_li = document.createElement("li");
+          let friend_name = document.createElement("p");
 
-            friend_name.innerHTML = friend;
-            friend_li.appendChild(friend_name);
-            friends_list.appendChild(friend_li);
+          friend_name.innerHTML = friend;
+          friend_li.appendChild(friend_name);
+          friends_list.appendChild(friend_li);
         });
-            }
+      }
     })
     .catch(function (error) {
       console.log(error);
