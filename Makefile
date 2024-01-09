@@ -34,7 +34,8 @@ game login matchmaking users: build-commons
 	docker-compose -f ./srcs/docker-compose.yml up -d $@
 
 # Services that don't need commons
-front database endpoint:
+
+front database endpoint redis:
 	docker-compose -f ./srcs/docker-compose.yml up -d $@
 
 db:

@@ -18,6 +18,6 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'notifications.settings')
 application = ProtocolTypeRouter(
     {
         "http": get_asgi_application(),
-        "websocket": URLRouter(websocket_urlpatterns),
+        "websocket": URLRouter(websocket_urlpatterns)
     }
 )
