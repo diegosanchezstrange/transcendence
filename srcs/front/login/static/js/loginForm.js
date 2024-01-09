@@ -13,7 +13,6 @@
   return csrfToken;
 }
 
-
 // /*
 //  * Function to add an alert box to the page
 //  * @param {string} message - The message to display in the alert box
@@ -71,7 +70,8 @@ function formSubmitLogin(e) {
     .then((text) => {
       // console.log(text);
       localStorage.setItem("token", text.access);
-      notficationsWebSocket = new NotificationsWebsocket();
+      if (!notficationsWebSocket)
+        notficationsWebSocket = new NotificationsWebsocket();
       Router.changePage("/home/");
     })
     .catch((error) => {
