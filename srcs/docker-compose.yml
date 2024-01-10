@@ -21,8 +21,8 @@ services:
     networks:
       - "internal_microservice"
 
-    environment:
-      LOGIN_42: ${LOGIN_42}
+    env_file:
+      - "./.env.dockerized" # All the environment, for facilitating development
 
     restart: on-failure
 
