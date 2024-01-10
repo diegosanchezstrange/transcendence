@@ -1,4 +1,4 @@
-function getCsrfToken() {
+ function getCsrfToken() {
   let csrfToken = null;
   if (document.cookie && document.cookie !== "") {
     const cookies = document.cookie.split(";");
@@ -13,29 +13,29 @@ function getCsrfToken() {
   return csrfToken;
 }
 
-/*
- * Function to add an alert box to the page
- * @param {string} message - The message to display in the alert box
- * @param {string} type - The type of alert box to display
- * @param {string} container - The container to add the alert box to
- * @return {void}
- * */
-function addAlertBox(message, type, container) {
-  let alert = document.createElement("div");
-
-  if (document.getElementById("alert")) {
-    document.getElementById("alert").remove();
-  }
-
-  alert.className = "alert alert-" + type;
-  alert.id = "alert";
-  alert.innerHTML = message;
-  container.prepend(alert);
-}
+// /*
+//  * Function to add an alert box to the page
+//  * @param {string} message - The message to display in the alert box
+//  * @param {string} type - The type of alert box to display
+//  * @param {string} container - The container to add the alert box to
+//  * @return {void}
+//  * */
+// function addAlertBox(message, type, container) {
+//   let alert = document.createElement("div");
+//
+//   if (document.getElementById("alert")) {
+//     document.getElementById("alert").remove();
+//   }
+//
+//   alert.className = "alert alert-" + type;
+//   alert.id = "alert";
+//   alert.innerHTML = message;
+//   container.prepend(alert);
+// }
 
 /*
  * Function for the login form submit event
- * @return {boolean} - void
+ * @return {boolean} - voiSd
  * */
 function formSubmitLogin(e) {
   e.preventDefault();
@@ -63,18 +63,16 @@ function formSubmitLogin(e) {
   })
     .then((response) => {
       if (response.ok) {
-        return response.text();
+        return response.json();
       }
       throw new Error("Network response was not ok.");
     })
     .then((text) => {
-      console.log(text);
+      // console.log(text);
+      localStorage.setItem("token", text.access);
+      if (!notficationsWebSocket)
+        notficationsWebSocket = new NotificationsWebsocket();
       Router.changePage("/home/");
-      // addAlertBox(
-      //   "Login successful!",
-      //   "success",
-      //   document.getElementById("loginBox")
-      // );
     })
     .catch((error) => {
       console.log(error);
@@ -96,6 +94,12 @@ function formSubmitRegister(e) {
 
   // Validate password
   if (password.value != passwordConfirm.value) {
+    addAlertBox(
+      "Passwords do not match!",
+      "danger",
+      document.getElementById("registerBox")
+    );
+    return;
   }
 
   let formData = new FormData(this);
@@ -104,6 +108,7 @@ function formSubmitRegister(e) {
 
   formData.forEach((value, key) => {
     if (key === "csrfmiddlewaretoken") csrfToken = value;
+    if (key === "passwordRepeat") return;
     body[key] = value;
   });
 
@@ -127,12 +132,12 @@ function formSubmitRegister(e) {
     })
     .then((text) => {
       console.log(text);
-      Router.changePage("/home/");
-      // addAlertBox(
-      //   "Registration successful!",
-      //   "success",
-      //   document.getElementById("registerBox")
-      // );
+      addAlertBox(
+        "Registration successful!",
+        "success",
+        document.getElementById("registerBox")
+      );
+      Router.changePage("/login/");
     })
     .catch((error) => {
       console.log(error);

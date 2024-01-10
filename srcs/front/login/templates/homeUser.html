@@ -1,17 +1,26 @@
-<header>{% include "partials/navbar/navbarUser.html" %}</header>
+<header>{% include "navbar/navbarUser.html" %}</header>
 <main>
   {% load static %}
   <div class="container">
-	  <div class="col-sm-4">
-		  <div class="card">
-					<button
-						class="btn btn-outline-success"
-						type="submit"
-						onclick="Router.changePage('/login')"
-						>
-							1v1 Game
-					</button>
-		  </div>
+    <h1>Welcome {{ user_info.username }} !!!</h1>
+    <div class="row justify-content-center m-3">
+	    <div class="col-sm-4">
+		    <div class="card">
+		  			<button
+		  				class="btn btn-outline-success"
+		  				type="submit"
+		  				onclick="Router.changePage('/login')"
+		  				>
+		  					1v1 Game
+		  			</button>
+		    </div>
+      </div>
 	  </div>
+      <img
+        src="{% static 'img/pong.png' %}"
+        alt="profile"
+        class="img-fluid col-sm-6"
+      />
+    </div>
   </div>
 </main>

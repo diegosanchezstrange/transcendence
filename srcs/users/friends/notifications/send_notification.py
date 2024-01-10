@@ -23,7 +23,7 @@ def send_friend_request_notification(sender, receiver, ntype):
 
     # TODO: check if fails
     notifications_host = os.getenv('NOTIFICATIONS_SERVICE_HOST')
-    response = requests.post(f"http://{notifications_host}/notifications/send/",
+    response = requests.post(f"{notifications_host}/notifications/send/", 
                              json=data,
                              headers={"Authorization": MICROSERVICE_API_TOKEN})
 
