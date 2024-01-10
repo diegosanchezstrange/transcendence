@@ -20,6 +20,10 @@ services:
 
     networks:
       - "internal_microservice"
+    env_file:
+      - "./.env.dockerized" # All the environment, for facilitating development
+    depends_on:
+      - database
 
     environment:
       LOGIN_42: ${LOGIN_42}
