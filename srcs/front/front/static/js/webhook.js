@@ -5,9 +5,8 @@ function addNotificationBox(title, info, message) {
 
   newToast.id = "liveToast" + Math.floor(Math.random() * 1000);
   newToast.querySelector(".toast-body").innerHTML = message;
-    newToast.querySelector(".toast-header-title").innerHTML = title;
-    newToast.querySelector(".toast-header-info").innerHTML = info;
-
+  newToast.querySelector(".toast-header-title").innerHTML = title;
+  newToast.querySelector(".toast-header-info").innerHTML = info;
 
   document.querySelector(".toast-container").appendChild(newToast);
 
@@ -28,16 +27,14 @@ class NotificationsWebsocket {
 
     // Add the token to the url as a query parameter
     this.socket = new WebSocket(
-      NOTIFICATIONS_SOCKETS_HOST + "/ws/notifications/?token=" + token,
+      NOTIFICATIONS_SOCKETS_HOST + "/ws/notifications/?token=" + token
     );
 
     this.socket.onopen = () => {
       console.log("WebSocket Client Connected");
     };
     this.socket.onmessage = (message) => {
-      console.log(message);
       let data = JSON.parse(message.data);
-      console.log(data);
       addNotificationBox("New friend request", data["sender"], data["message"]);
       fill_friends_list(USERS_SERVICE_HOST + "/friends/");
     };

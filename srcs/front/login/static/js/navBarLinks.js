@@ -45,7 +45,7 @@ function send_friend_request(e) {
       return response.json();
     })
     .then(function (json) {
-      console.log(json["detail"]);
+      // console.log(json["detail"]);
     })
     .catch(function (error) {
       let container = document.getElementById("friends_requests");
@@ -189,7 +189,6 @@ function fill_friends_list(friends_list_url) {
       return response.json();
     })
     .then(function (json) {
-      console.log(json);
       if (json["detail"].length === 0) {
         friends_list.innerHTML = "You have no friends :(";
       } else {
