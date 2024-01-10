@@ -12,15 +12,17 @@ import jwt
 
 # Create your views here.
 
+context = {
+    'LOGIN_SERVICE_HOST': settings.LOGIN_SERVICE_HOST,
+    'USERS_SERVICE_HOST': settings.USERS_SERVICE_HOST,
+    'NOTIFICATIONS_SERVICE_HOST': settings.NOTIFICATIONS_SERVICE_HOST,
+    'NOTIFICATIONS_SOCKETS_HOST': settings.NOTIFICATIONS_SOCKETS_HOST,
+}
+
 @never_cache
 @api_view(['GET'])
 def profile(request):
-    context = {
-        'PATH': 'profile',
-        'USERS_SERVICE_HOST': settings.USERS_SERVICE_HOST,
-    }
-
-    print(context)
+    context['PATH'] = 'profile'
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         if request.user.is_authenticated:

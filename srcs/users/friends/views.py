@@ -39,27 +39,23 @@ class FriendView(APIView):
         Removes a friend from your friend list
 
         """
-        receiver = request.user
-        sender_name = request.data.get("friend_name")
-        sender = User.objects.get(username=sender_name)
+        sender = request.user
+        receiver_name = request.data.get("friend_name")
+        receiver = User.objects.get(username=receiver_name)
 
         if not sender:
             return JsonResponse({
                 "detail": "Not friend with this user"
             }, status=404)
 
-        print(sender, receiver)
-
-        friendship = get_object_or_404(Friendship, user1=sender, user2=receiver)
-
-        print(friendship)
+        friendship = get_object_or_404(Friendship, Q(user1=sender, user2=receiver) | Q(user1=receiver, user2=sender))
 
         friendship.delete()
 
         try:
             send_friend_request_notification(
-                sender=friendship.user1,
-                receiver=friendship.user2,
+                sender=sender,
+                receiver=receiver,
                 ntype=NotificationType.REMOVED
             )
         except:

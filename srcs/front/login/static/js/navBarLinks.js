@@ -105,6 +105,32 @@ function reject_friend_req(e) {
     });
 }
 
+function remove_friend_req(e) {
+  let friend_name = e.target.parentElement.firstChild.innerHTML;
+
+  let headers = {
+    "X-Requested-With": "XMLHttpRequest",
+    "Content-Type": "application/json",
+  };
+
+  if (Router.getJwt()) headers["Authorization"] = "Bearer " + Router.getJwt();
+
+  fetch(this.action, {
+    method: "DELETE",
+    // credentials: "include",
+    headers: headers,
+    body: JSON.stringify({
+      friend_name: friend_name,
+    }),
+  })
+    .then(function (response) {
+      if (response.ok) fill_friends_list(USERS_SERVICE_HOST + "/friends/");
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+}
+
 function fill_friends_list(friends_list_url) {
   let friends_list = document.getElementById("friends_list");
   // let friends;
@@ -171,9 +197,14 @@ function fill_friends_list(friends_list_url) {
         json["detail"].forEach(function (friend) {
           let friend_li = document.createElement("li");
           let friend_name = document.createElement("p");
+          let remove_button = document.createElement("button");
 
+          remove_button.classList = ["btn btn-danger"];
+          remove_button.action = friends_list_url;
+          remove_button.addEventListener("click", remove_friend_req);
           friend_name.innerHTML = friend;
           friend_li.appendChild(friend_name);
+          friend_li.appendChild(remove_button);
           friends_list.appendChild(friend_li);
         });
       }
