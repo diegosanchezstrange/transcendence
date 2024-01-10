@@ -6,6 +6,26 @@ const containers = {
   body: document.querySelector("body"),
 };
 
+/*
+ * Function to add an alert box to the page
+ * @param {string} message - The message to display in the alert box
+ * @param {string} type - The type of alert box to display
+ * @param {string} container - The container to add the alert box to
+ * @return {void}
+ * */
+function addAlertBox(message, type, container) {
+  let alert = document.createElement("div");
+
+  if (document.getElementById("alert")) {
+    document.getElementById("alert").remove();
+  }
+
+  alert.className = "alert alert-" + type;
+  alert.id = "alert";
+  alert.innerHTML = message;
+  container.prepend(alert);
+}
+
 class Router {
   constructor() {
     this.routes = {};
@@ -19,6 +39,8 @@ class Router {
     let parser = new DOMParser();
     let doc = parser.parseFromString(html, "text/html");
 
+    let chidlScrips = [];
+
     Array.from(doc.body.children).forEach((child) => {
       if (
         child.nodeType === Node.ELEMENT_NODE &&
@@ -26,14 +48,33 @@ class Router {
         child.tagName.toLowerCase() in containers
       ) {
         // Replace the content of the container with the new content
+        child.childNodes.forEach((node) => {
+          if (
+            node.nodeType === Node.ELEMENT_NODE &&
+            node.tagName === "SCRIPT"
+          ) {
+            let newScript = document.createElement("script");
+
+            //remove the script from the child
+            node.remove();
+
+            if (node.src) newScript.src = node.src;
+            else newScript.textContent = node.textContent;
+
+            // document.body.appendChild(newScript);
+            chidlScrips.push(newScript);
+          }
+        });
         containers[child.tagName.toLowerCase()].innerHTML = child.innerHTML;
+        chidlScrips.forEach((node) => document.body.appendChild(node));
       } else if (child.tagName === "SCRIPT") {
         let newScript = document.createElement("script");
 
         if (child.src) newScript.src = child.src;
         else newScript.textContent = child.textContent;
 
-        containers["body"].appendChild(newScript);
+        // containers["body"].appendChild(newScript);
+        document.body.appendChild(newScript);
       }
     });
   }
@@ -51,9 +92,9 @@ class Router {
       headers: headers,
     })
       .then((response) => {
-        // if (response.status === 401) {
-        //   throw new Error(response.status);
-        // }
+        if (response.status === 401) {
+          throw new Error(response.status);
+        }
         return response.text();
       })
       .then((html) => {
@@ -64,11 +105,11 @@ class Router {
       })
       .catch((error) => {
         console.log(error.message);
-        // let errorCode = parseInt(error.message);
-        // if (errorCode === 401) {
-        //   localStorage.removeItem("token");
-        //   Router.changePage("/login");
-        // }
+        let errorCode = parseInt(error.message);
+        if (errorCode === 401) {
+          localStorage.removeItem("token");
+          Router.changePage("/login");
+        }
       });
   }
 }

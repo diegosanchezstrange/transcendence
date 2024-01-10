@@ -16,18 +16,18 @@ import jwt
 @api_view(['GET'])
 def profile(request):
     context = {
-        'PATH': 'profile'
+        'PATH': 'profile',
+        'USERS_SERVICE_HOST': settings.USERS_SERVICE_HOST,
     }
 
+    print(context)
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         if request.user.is_authenticated:
             auth = request.headers.get('Authorization')
-            user_response = requests.get(settings.USER_URL + "/profile/", headers={'Authorization': auth})
-            print(user_response.json())
+            user_response = requests.get(settings.USERS_SERVICE_HOST + "/profile/", headers={'Authorization': auth})
             context['user_info'] = user_response.json()['detail']
 
-            print("profile view")
             return render(request, 'userProfile.html', context)
         else:
             # Redirect to login page with a 302 status
