@@ -25,8 +25,8 @@ services:
     env_file:
       - "./.env.dockerized" # All the environment, for facilitating development
 
-    env_file:
-      - "./.env.dockerized" # All the environment, for facilitating development
+    environment:
+      LOGIN_42: ${LOGIN_42}
 
     depends_on:
       database:
