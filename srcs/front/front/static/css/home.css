@@ -21,8 +21,7 @@
 	justify-content: center;
 	color: #B12E4E;
 	text-align: center;
-	font-feature-settings: 'clig' off, 'liga' off;
-	font-family: Fira Code;
+	font-family: Verdana, Geneva, Tahoma, sans-serif;
 	font-size: 36px;
 	font-style: normal;
 	font-weight: 700;
