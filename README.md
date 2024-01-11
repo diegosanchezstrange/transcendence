@@ -1,60 +1,34 @@
 # transcendence
 Soon you will know that you’ve already known things that you thought you didn’t know
 
-## Local setup (provisional)
+## Install dependencies
 ### Ubuntu
-##### Virtualenv
- ```
- sudo apt install python3-virtualenv
- ```
+```
+sudo apt install python3-virtualenv
+```
 ```
 virtualenv -p /usr/bin/python3 transcendence
 ```
 ```
 source transcendence/bin/activate
 ```
-
-##### Django
 ```
 sudo apt install -Y python3-pip
 ```
+
+### MacOS
+
+Homebrew
 ```
-pip3 install Django
+curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C ~/.brew
 ```
+Python
 ```
-python manage.py migrate
-```
-```
-python manage.py runserver
+brew install python
 ```
 
-##### PostgreSQL
+## Usage
 ```
-sudo sh -c 'echo "deb https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
-```
-```
-wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-```
-```
-sudo apt-get update
-```
-```
-sudo apt-get -y install postgresql
-```
-```
-pip install psycopg2-binary
-```
-
-##### Gettext
-```
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
-```
-(echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> ~/.bashrc
-```
-```
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-```
-```
-brew install gettext
+cd srcs
+docker-compose --env-file .env.dockerized up --build
 ```
