@@ -4,23 +4,17 @@
   <div class="container">
     <h1>Welcome {{ user_info.username }} !!!</h1>
     <div class="row justify-content-center m-3">
-	    <div class="col-sm-4">
-		    <div class="card">
-		  			<button
-		  				class="btn btn-outline-success"
-		  				type="submit"
-		  				onclick="Router.changePage('/login')"
-		  				>
-		  					1v1 Game
-		  			</button>
-		    </div>
+	    <div class="col-sm-4 GameCard" type="submit" onclick="Router.changePage('/home')">
+		  	<h2 class="GameCardText">
+        1v1 Game
+        </h2>
+      </div>
+      <div class="col-sm-4 GameCard" type="submit" onclick="Router.changePage('/home')">
+		  	<h2 class="GameCardText">
+        Tournament
+        </h2>
       </div>
 	  </div>
-      <img
-        src="{% static 'img/pong.png' %}"
-        alt="profile"
-        class="img-fluid col-sm-6"
-      />
     </div>
   </div>
 </main>
