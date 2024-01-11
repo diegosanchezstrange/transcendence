@@ -1,6 +1,7 @@
-body {
+html, body {
 	background: linear-gradient(180deg, #3D3D5B 24.92%, #5E3957 45.34%, #6C3744 63.65%, #B12E4E 96.97%);
 	height: 100%;
+	width: 100%;
 	margin: 0;
 	background-repeat: no-repeat;
 	background-attachment: fixed;

@@ -1,0 +1,34 @@
+.Middle {
+    position: absolute;
+	top: 40%;
+    left: 40%;
+    margin-top: -50px;
+    margin-left: -50px;
+}
+
+.GameCard {
+	width: 486px;
+	height: 184px;
+	background: rgba(20, 56, 113, 0.50);
+	box-shadow: 0px 4px 5px 1px #B12E4E;
+}
+
+.GameCardText {
+	display: flex;
+	width: 264px;
+	height: 102px;
+	flex-direction: column;
+	justify-content: center;
+	color: #B12E4E;
+	text-align: center;
+	font-family: Verdana, Geneva, Tahoma, sans-serif;
+	font-size: 36px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 130%; /* 62.4px */
+	letter-spacing: 4.32px;
+}
+
+.navbarHome {
+	padding-left: 70%;
+}

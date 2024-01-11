@@ -1,0 +1,18 @@
+.GameBoard {
+	width: 1196px;
+	height: 658px;
+	background: #3D3D5B;
+	box-shadow: 0px 4px 4px 3px #FFF;
+}
+
+.BoardLineV {
+	width: 4px;
+	height: 658px;
+	background: rgba(177, 46, 78, 0.50);
+}
+
+.BoardLineH {
+	width: 1195.998px;
+	height: 2px;
+	background: rgba(255, 255, 255, 0.50);
+}
