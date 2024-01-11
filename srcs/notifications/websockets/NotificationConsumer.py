@@ -3,9 +3,11 @@ from .auth.jwt import validate_jwt_and_get_user_id
 import json
 # import re
 from django.contrib.auth.models import User
+
 import requests
 from urllib.parse import parse_qs
 from channels.db import database_sync_to_async
+
 
 
 class NotificationConsumer(AsyncWebsocketConsumer):
@@ -29,7 +31,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         # user = User.objects.get(pk=user_id)
 
         user = await database_sync_to_async(User.objects.get)(pk=user_id)
-
         self.id = user_id
 
         # Create a group named "group_<user_id>"
