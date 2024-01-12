@@ -7,10 +7,13 @@ services:
     image: endpoint
 
     ports:
+      - "443:443"
       - "80:80"
     networks:
       - "internal_microservice"
-
+    
+    depends_on:
+      - front
     restart: on-failure
 
   front:
@@ -20,9 +23,15 @@ services:
 
     networks:
       - "internal_microservice"
+    env_file:
+      - "./.env.dockerized" # All the environment, for facilitating development
 
     environment:
       LOGIN_42: ${LOGIN_42}
+
+    depends_on:
+      database:
+        condition: service_healthy
 
     restart: on-failure
 
@@ -99,14 +108,21 @@ services:
       - "5432:5432"
     networks:
       - "internal_microservice"
-    # environment:
-    #   POSTGRES_DB: ${DB_NAME}
-    #   POSTGRES_USER: ${DB_USERNAME}
-    #   POSTGRES_PASSWORD: ${DB_PASSWORD}
-    #
-    #    # Data persistance commented for development purposes
-    #    volumes:
-    #      - 'database:/var/lib/postgresql/data'
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+
+      #    # Data persistance commented for development purposes
+      #    volumes:
+      #      - 'database:/var/lib/postgresql/data'
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
     restart: on-failure
 
 networks:

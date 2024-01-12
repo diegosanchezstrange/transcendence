@@ -1,19 +1,31 @@
 <header>{% include "navbar/navbarUser.html" %}</header>
 <main>
   {% load static %}
-  <div class="container">
+  <div class="container h-25">
+    <div class="row justify-content-center m-3 w-100 h-100">
     <!-- Show the user avatar -->
-    <div class="row justify-content-center m-3">
-      <div class="col-4">
+      <div class="w-50 h-100 profileimg">
         <img
           src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
           alt="profile"
           class="img-fluid"
-          style="width: 180px; border-radius: 10px"
+          style="width: 100%; border-radius: 10px"
         />
       </div>
-      <div class="col-4">
-        <h1>{{ user_info.username }}</h1>
+      <section class="col-sm-1 w-50 h-100">
+        <h2 class="username d-none d-md-block text-left h-25 px-5">{{ user_info.username }}</h2>
+        <p class="userdata d-none d-md-block text-left h-75 px-5">
+          Total games:
+          <br>
+          Wins:
+          <br>
+          Loses:
+        </p>
+      </div>
+    </div>
+    <div class="row mt-5 ml-1 w-50">
+      <div class="col-12">
+        <h2 class="username d-block d-md-none text-left h-100">{{ user_info.username }}</h2>
       </div>
     </div>
   </div>
