@@ -93,8 +93,12 @@ env = Env()
 Env.read_env()
 
 # 42 API
-LOGIN_42 = env('LOGIN_42')
-# REDIRECT_URI = env('REDIRECT_URI')
+LOGIN_42 = os.getenv('LOGIN_42')
+LOGIN_42_URL = os.getenv('LOGIN_42_URL')
+
+LOGIN_42_REDIRECT_URI = os.getenv('REDIRECT_URI')
+LOGIN_42_CLIENT = os.getenv('LOGIN_42_CLIENT')
+LOGIN_42_SECRET = os.getenv('LOGIN_42_SECRET')
 # CLIENT_ID = env('CLIENT_ID')
 # SECRET_KEY = env('SECRET_KEY')
 
