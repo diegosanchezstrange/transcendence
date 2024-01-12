@@ -1,4 +1,4 @@
-.Middle {
+.middle {
     position: absolute;
 	top: 40%;
     left: 40%;
@@ -11,7 +11,7 @@
 	left: 5%;
 }
 
-.GameCard {
+.game-card {
 	width: 486px;
 	height: 184px;
 	background: rgba(20, 56, 113, 0.50);
@@ -19,7 +19,7 @@
 	margin: 5%;
 }
 
-.GameCardText {
+.game-card-text {
 	display: flex;
 	width: 264px;
 	height: 102px;
