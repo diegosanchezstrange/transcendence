@@ -2,8 +2,8 @@
 <main>
   {% load static %}
   <div class="container">
-    <h1>Welcome {{ user_info.username }} !!!</h1>
-    <div class="row justify-content-center m-3">
+    <h1 class="welcome-message">Welcome {{ user_info.username }}</h1>
+    <div class="row justify-content-center">
 	    <div class="col-sm-4 GameCard" type="submit" onclick="Router.changePage('/home')">
 		  	<h2 class="GameCardText">
         1v1 Game

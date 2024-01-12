@@ -6,11 +6,17 @@
     margin-left: -50px;
 }
 
+.welcome-message {
+	position: absolute;
+	left: 5%;
+}
+
 .GameCard {
 	width: 486px;
 	height: 184px;
 	background: rgba(20, 56, 113, 0.50);
 	box-shadow: 0px 4px 5px 1px #B12E4E;
+	margin: 5%;
 }
 
 .GameCardText {
