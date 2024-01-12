@@ -22,9 +22,7 @@ context = {
 @never_cache
 @api_view(['GET'])
 def profile(request):
-
     context['PATH'] = 'profile'
-    print(context)
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         if request.user.is_authenticated:

@@ -60,10 +60,10 @@ services:
     container_name: matchmaking
     build: ./matchmaking/
     image: matchmaking
-    
+
     networks:
       - "internal_microservice"
-    
+
     restart: on-failure
 
   users:
@@ -101,9 +101,11 @@ services:
     container_name: database
     build: ./database/
     image: database
+    env_file:
+      - "./.env.dockerized" # All the environment, for facilitating development
       # dev only port. TODO: DELETE it on release
     ports:
-      - '5432:5432'
+      - "5432:5432"
     networks:
       - "internal_microservice"
     environment:
@@ -126,7 +128,7 @@ services:
 networks:
   internal_microservice:
     driver: bridge
-    name: 'internal_microservice'
+    name: "internal_microservice"
 
 volumes:
   database:
