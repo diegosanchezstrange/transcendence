@@ -15,3 +15,16 @@ end_button.addEventListener("click", function() {
   end_button.style.display = "none";
   edit_button.style.display = "inline";
 } )
+
+function edit_username(e) {
+  e.preventDefault();
+  let new_username = username.value;
+  let headers = {
+    "X-Requested-With": "XMLHttpRequest",
+    "Content-Type": "application/json",
+  };
+
+  if (Router.getJwt()) headers["Authorization"] = "Bearer " + Router.getJwt();
+}
+
+end_button.addEventListener("submit", edit_username);
