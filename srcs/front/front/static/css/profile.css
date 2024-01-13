@@ -5,6 +5,7 @@ main {
 .user-profile {
     position: absolute;
     left: 10%;
+    ;
 }
 
 #img-edit-button {
@@ -14,7 +15,7 @@ main {
     height: 25px;
     position: absolute;
     left: 32%;
-    top: 95%;
+    top: 60%;
 } 
 
 #name-edit-button {
@@ -27,10 +28,22 @@ main {
     top: 6%;
 }
 
-.username {
+#confirm-name-edit-button {
+    background: transparent;
+    border: none!important;
+    color: lightgreen;
+    display: none;
+    width: 25px;
+    height: 25px;
+    position: absolute;
+    left: 34%;
+    top: 6%;
+}
+
+#profile-username {
     color: whitesmoke;
     text-shadow: 3px 0 #513b40, -3px 0 #513b40, 0 3px #513b40, 0 -3px #513b40;
-    font-size: calc(.6rem + 4vw);
+    font-size: calc(.6rem + 2vw);
     font-family: Verdana, Geneva, Tahoma, sans-serif!important;
     font-weight: bold;
     margin-bottom: 0%;
@@ -52,7 +65,7 @@ main {
 
 .userdata {
     color: whitesmoke;
-    font-size: calc(.6rem + .6vw);
+    font-size: calc(.4rem + .6vw);
     font-family: Verdana, Geneva, Tahoma, sans-serif!important;
     font-weight: 600;
     line-height: 2;
