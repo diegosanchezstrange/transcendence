@@ -2,14 +2,15 @@
 <header>{% include "navbar/navbarUser.html" %}</header>
 <main>
   <div class="container h-50 user-profile">
-    <section class="row m-3 w-100 h-100">
+    <div class="row m-3 w-100 h-100">
     <!-- Show the user avatar -->
-      <div class="col-5 h-100 profileimg">
+      <section class="col-5 h-100 profileimg">
         <img
           src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
           alt="profile"
           class="img-fluid"
           style="width: 100%; border-radius: 10px"
+          id="user-profile-avatar"
         />
         <button id="img-edit-button">
           <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-pen ml-5" viewBox="0 0 16 16">
