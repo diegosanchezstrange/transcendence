@@ -31,8 +31,8 @@ function edit_username(e) {ƒ
   body = JSON.stringify(body);
 
   let headers = {
-    "X-CSRFToken": csrfToken,
-    Accept: "application/json",
+    //"X-CSRFToken": csrfToken,
+    "X-Requested-With": "XMLHttpRequest",
     "Content-Type": "application/json",
   };
 
@@ -40,7 +40,7 @@ function edit_username(e) {ƒ
 
   fetch(this.getAttribute("action"), {
     method: "PUT",
-    credentials: "include",
+    //credentials: "include",
     headers: headers,
     body: body,
   })
