@@ -3,7 +3,6 @@
 const username = document.getElementById("profile-username");
 const edit_username_button = document.getElementById("name-edit-button");
 const end_button = document.getElementById("confirm-name-edit-button");
-const avatar = document.getElementById("user-profile-avatar");
 
 edit_username_button.addEventListener("click", function() {
   edit_username_button.style.display = "none";
@@ -12,23 +11,17 @@ edit_username_button.addEventListener("click", function() {
   username.style.backgroundColor = "rgba(54, 54, 71, 0.711)";
 } );
 
-end_button.addEventListener("click", function() {
+end_button.addEventListener("click", function(e) {
+  e.preventDefault();
   username.contentEditable = false;
   username.style.background = "transparent";
   end_button.style.display = "none";
   edit_username_button.style.display = "inline";
 } )
 
-function edit_username(e) {ƒ
+end_button.addEventListener("click", function(e) {
   e.preventDefault();
   let new_username = username.value;
-
-  formData.forEach((value, key) => {
-    if (key === "csrfmiddlewaretoken") csrfToken = value;
-    body[key] = value;
-  });
-
-  body = JSON.stringify(body);
 
   let headers = {
     //"X-CSRFToken": csrfToken,
@@ -38,11 +31,11 @@ function edit_username(e) {ƒ
 
   if (Router.getJwt()) headers["Authorization"] = "Bearer " + Router.getJwt();
 
-  fetch(this.getAttribute("action"), {
+  // console.log(headers);
+  fetch(USERS_SERVICE_HOST + "/profile/edit/", {
     method: "PUT",
     //credentials: "include",
     headers: headers,
-    body: body,
   })
     .then((response) => {
       if (response.ok) {
@@ -50,12 +43,12 @@ function edit_username(e) {ƒ
       }
       throw new Error("Network response was not ok.");
     })
-  }
+  })
 
-end_button.addEventListener("submit", edit_username);
 
 // Edit profile image
 
+const avatar = document.getElementById("user-profile-avatar");
 const edit_avatar_button = document.getElementById("img-edit-button");
 
 edit_avatar_button.addEventListener("click", function() {
