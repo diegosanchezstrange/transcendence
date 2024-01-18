@@ -129,7 +129,7 @@ def get_or_create_user_oauth(request, *args, **kwargs):
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
-def change_user_data(request, *args, **kwargs):
+def change_user_name(request, *args, **kwargs):
     username = request.data.get('username') or request.user.username
 
     if not username:

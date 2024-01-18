@@ -8,7 +8,7 @@ from django.dispatch import receiver
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     login = models.TextField(max_length=50, blank=True, default=None, null=True)
-    profile_pic = models.ImageField(default='default.jpeg',
+    profile_pic = models.ImageField(default='default.webp',
                                     upload_to='profile_pictures', blank=True, null=True)
 
 

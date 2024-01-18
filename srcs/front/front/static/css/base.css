@@ -12,7 +12,7 @@ html, body {
 	padding-left: 1%;
 }
 
-.PageTitle {
+.page-title {
 	color: #FFF;
 	font-feature-settings: 'clig' off, 'liga' off;
 	font-size: 48px;
@@ -24,5 +24,5 @@ html, body {
 	flex-direction: column;
 	justify-content: center;
 	flex-shrink: 0;
-	padding-left: 3%;
+	padding-right: 3%;
 }

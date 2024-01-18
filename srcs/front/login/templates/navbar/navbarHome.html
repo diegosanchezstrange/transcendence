@@ -2,19 +2,49 @@
 
 <!-- Path: navbarHome.html -->
 
-<div class="container-fluid">
-    <a class="navbar-brand" href="#"> Icon </a>
+{% load static %}
+<nav class="navbar navbar-expand-lg border-bottom border-3 mb-5">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">
+      <img class="d-sm-none d-lg-block"
+               src="{% static 'img/logo.png' %}"
+               width="50"
+               height="50"
+               alt="Pong logo">
+    </a>
+    <h1 class="container-fluid, page-title">PONG THAT PANG</h1>
     <button
       class="navbar-toggler"
       type="button"
       data-bs-toggle="collapse"
-      data-bs-target="#navbarUser"
-      aria-controls="navbarUser"
+      data-bs-target="#navbarHome"
+      aria-controls="navbarHome"
       aria-expanded="false"
       aria-label="Toggle navigation"
     >
       <span class="navbar-toggler-icon"></span>
     </button>
+    <div class="collapse navbar-collapse" id="navbarHome">
+      <button
+        class="btn"
+        type="submit"
+        onclick="Router.changePage('/register')"
+      >
+        Register
+      </button>
+      <button
+        class="btn"
+        type="submit"
+        onclick="Router.changePage('/login')"
+      >
+        Login
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- <div class="container-fluid">
+
 
     <div class="collapse navbar-collapse" id="navbarUser">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
@@ -25,19 +55,6 @@
           <a class="nav-link" href="">Rankings</a>
         </li>
       </ul>
-      <button
-        class="btn btn-outline-success"
-        type="submit"
-        onclick="Router.changePage('/register')"
-      >
-        Register
-      </button>
-      <button
-        class="btn btn-outline-success"
-        type="submit"
-        onclick="Router.changePage('/login')"
-      >
-        Login
-      </button>
+      
     </div>
-</div>
+</div> -->
