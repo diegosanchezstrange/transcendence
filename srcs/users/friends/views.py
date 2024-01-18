@@ -28,11 +28,13 @@ class FriendView(APIView):
                 friends_info.append({
                     "username": friend.user2.username,
                     "id": friend.user2.id,
+                    "is_online": friend.user2.userprofile.is_online,
                 })
             elif friend.user2 == user:
                 friends_info.append({
                     "username": friend.user1.username,
                     "id": friend.user1.id,
+                    "is_online": friend.user1.userprofile.is_online,
                 })
 
         return JsonResponse({

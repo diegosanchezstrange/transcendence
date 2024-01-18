@@ -40,8 +40,8 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
 
-        # Send a message to your friends that you are online
 
+        # Send a message to your friends that you are online
         headers = {
             "Authorization": f"Bearer {jwt_token}"
         }
