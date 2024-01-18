@@ -24,17 +24,14 @@ end_button.addEventListener("click", function(e) {
   let new_username = username.value;
 
   let headers = {
-    //"X-CSRFToken": csrfToken,
     "X-Requested-With": "XMLHttpRequest",
     "Content-Type": "application/json",
   };
 
   if (Router.getJwt()) headers["Authorization"] = "Bearer " + Router.getJwt();
 
-  // console.log(headers);
   fetch(USERS_SERVICE_HOST + "/profile/edit/", {
     method: "PUT",
-    //credentials: "include",
     headers: headers,
   })
     .then((response) => {
