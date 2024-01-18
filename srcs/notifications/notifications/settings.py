@@ -31,6 +31,9 @@ ALLOWED_HOSTS = ['*']
 CORS_ALLOW_ALL_ORIGINS = True
 
 
+USERS_SERVICE_HOST = os.getenv('USERS_SERVICE_HOST')
+
+
 # Application definition
 
 INSTALLED_APPS = [

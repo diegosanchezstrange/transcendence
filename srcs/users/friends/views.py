@@ -22,15 +22,21 @@ class FriendView(APIView):
         user = request.user
         friends = Friendship.objects.filter(Q(user1=user) | Q(user2=user))
 
-        names = []
+        friends_info = []
         for friend in friends:
             if friend.user1 == user:
-                names.append(friend.user2.username)
+                friends_info.append({
+                    "username": friend.user2.username,
+                    "id": friend.user2.id,
+                })
             elif friend.user2 == user:
-                names.append(friend.user1.username)
+                friends_info.append({
+                    "username": friend.user1.username,
+                    "id": friend.user1.id,
+                })
 
         return JsonResponse({
-            "detail": names
+            "detail": friends_info
         })
 
 

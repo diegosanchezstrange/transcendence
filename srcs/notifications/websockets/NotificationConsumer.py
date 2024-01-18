@@ -5,6 +5,7 @@ import json
 from django.contrib.auth.models import User
 
 import requests
+from notifications import settings
 from urllib.parse import parse_qs
 from channels.db import database_sync_to_async
 
@@ -38,6 +39,22 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             f'group_{self.id}',
             self.channel_name
         )
+
+        # Send a message to your friends that you are online
+
+        headers = {
+            "Authorization": f"Bearer {jwt_token}"
+        }
+        friends = requests.get(settings.USERS_SERVICE_HOST + f"/friends/", headers=headers).json()["detail"]
+
+        for friend in friends:
+            await self.channel_layer.group_send(
+                f'group_{friend["id"]}',
+                {
+                    'type': 'send_message',
+                    'message': f'{user.username} is online'
+                }
+            )
 
         await self.accept()
 
