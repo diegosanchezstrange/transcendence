@@ -45,7 +45,7 @@
         >
           <i class="fa-solid fa-user-group fa-2x"></i>
         </button>
-        <div class="dropdown-menu dropdown-menu-end">
+        <div class="dropdown-menu dropdown-menu-end" id="friends-panel">
           <form
             id="send_friend_request_form"
             action="{{ USERS_SERVICE_HOST }}/friends/requests/send/"
@@ -58,7 +58,7 @@
               placeholder="Add friend"
               aria-label="Search"
             />
-            <button class="" type="submit">
+            <button id="friend-request-button" type="submit">
               <i class="fa-solid fa-arrow-right"></i>
             </button>
           </form>
