@@ -123,6 +123,18 @@ window.addEventListener("popstate", (event) => {
 document.addEventListener("DOMContentLoaded", async function () {
   // TODO: Check where the token should be safely stored
   // const token = localStorage.getItem("token");
+  //
+  // Get the token from the cookie and store it in localStorage
+  let token = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith("token="));
+
+  if (token) {
+    token = token.split("=")[1];
+    localStorage.setItem("token", token);
+    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  }
+
   if (path) Router.changePage("/" + path);
   else Router.changePage("/home");
 });
