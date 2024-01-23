@@ -26,6 +26,33 @@ dot.style.top = `${dotY}px`;
 
 const step = 12; 
 
+
+const gameSocket = new WebSocket(
+    'ws://'
+    + 'localhost:8000'
+    + '/ws/game/test/');
+
+gameSocket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    // read dgame state dictionary from data to generate relative
+    // positions of the game elements considering the values as percentages
+    // of the court size
+    // update the game elements positions
+
+    console.log(data);
+};
+
+gameSocket.onclose = function(e) {
+    console.error('Game socket closed unexpectedly');
+}
+
+document.querySelector('#send').addEventListener('click', function(e) {
+    const message = "Hello World";
+    gameSocket.send(JSON.stringify({
+        'message': message
+    }));
+});
+/* 
 function moveRectangleRight(dx) {
 
   if (!dotKicked || rectRightPos + dx < court.offsetTop || rectRightPos + dx + rectangle_right.offsetHeight > court.offsetTop + pongCourtHeight) {
@@ -42,7 +69,7 @@ function moveRectangleLeft(dx) {
   rectangle_left.style.top = `${rectLeftPos}px`;
 }
 
-
+*/
 function kickDot() {
   if (!dotKicked && !start){
     dotX = pongCourtWidth / 2 + court.offsetLeft - dot.offsetWidth / 2;

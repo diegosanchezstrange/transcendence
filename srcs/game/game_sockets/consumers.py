@@ -20,6 +20,7 @@ class LobbyConsumer(WebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.game_state = {
+            'type'
             'paddle_positions': {
                 'player1': 50,
                 'player2': 50,
