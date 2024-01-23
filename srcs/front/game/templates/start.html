@@ -8,43 +8,42 @@
 <style>
   #dot {
     position: absolute;
-    width: 40px;
-    height: 40px;
+    width: 5vmin;
+    height: 5vmin;
     background-color: blue;
     border-radius: 50%;
-    top: 80px; /* Start at a fixed vertical position */
+    top: 50%;
+    transform: translate(-50%, -50%); /* Start in the middle of the screen */
+    left: 50% /* Start at a fixed vertical position */
   }
   #rectangle-left {
     position: absolute;
-    height: 150px;
-    width: 30px;
+    height: 30%;
+    width: 3%;
     background-color: white;
-    left:22%;
-    top: 45%; /* Start in the middle of the screen */
+    left:5%;
+    top: 50%;
+    transform: translate(-50%, -50%); /* Start in the middle of the screen */
   }
   #rectangle-right {
     position: absolute;
-    width: 30px;
-    height: 150px;
+    width: 3%;
+    height: 30%;
     background-color: white;
-    right:22%;
-    top: 45%; /* Start in the middle of the screen */
+    right:2%;
+    top: 50%; /* Start in the middle of the screen */
+    transform: translate(-50%, -50%); /* Start in the middle of the screen */
   }
   #court {
-    position: absolute;
-    width: 60%;
-    height: 60%;
-    top:20%;
-    left:0;
-    right:0;
-    margin-left: auto;
-    margin-right: auto;
+    position: relative;
+    width: 90vmin;
+    height: 60vmin;
     background-color: gray;
     border-color: black;
     border-style: dashed;
     border-width: 5px;
   }
-#court::after {
+court::after {
     content: '';
     position: absolute;
     top: 0;
@@ -54,16 +53,24 @@
     transform: translateX(-50%);
 }
 
+  #parent-container {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+}
 </style>
 </head>
 <body>
-  <div id="court"></div>
+  <div id="parent-container">
+  <div id="court">
 <div id="rectangle-left"></div>
 <div id="rectangle-right"></div>
 <div id="dot"></div>
-
+</div>
+</div>
 <button id="send">Send</button>
         <script src="{% static 'game/game.js' %}"></script>
-        <script src="{% static 'game/sockets.js' %}"></script>
 </body>
 </html>

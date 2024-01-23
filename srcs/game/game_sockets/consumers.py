@@ -19,33 +19,27 @@ class LobbyConsumer(WebsocketConsumer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.game_state = {
-            'type'
-            'paddle_positions': {
-                'player1': 50,
-                'player2': 50,
-            },
-            'ball_position': {
-                'x': 50,
-                'y': 50,
-            },
-            'ball_speed': {
-                'x': 5.5*random.choice([-1, 1]),
-                'y': 5.5*random.choice([-1, 1]),
-            },
-        }
-        self.send_game_state()
         self.running_game_loop = False
         self.connections = 0
-        self.dx = 5
-        self.paddle_offset = 0
+        self.dx = 2
+        self.paddle_right = 50
+        self.paddle_left = 50
         self.court_top = 0
         self.court_bottom = 0
         # The following attributes ar4e for the ball
-        self.speed = 5.5
-        self.dotX = 0
-        self.dotY = 0
+        self.dotX = 50
+        self.dotY = 50
+        ## send the initial state to the front to render the game
+
+        self.speedX= 5.5*random.choice([-1, 1])
+        self.speedY= 5.5*random.choice([-1, 1])
         self.dotKicked = False
+        self.start = False
+        self.game_state = {
+            'paddle_right': self.paddle_left,
+            'paddle_left': self.paddle_right,
+            'ball':[self.dotX,self.dotY] 
+        }
  
     def connect(self):
         """
@@ -69,20 +63,22 @@ class LobbyConsumer(WebsocketConsumer):
         text_data_json = json.loads(text_data)
         message = text_data_json["message"]
         if message == "W" or message == "S":
-            self.update_paddle_position("player1", message)
+            self.update_paddle_position("left", message)
         if message == "UP" or message == "DOWN":
-            self.update_paddle_position("player2", message)
+            self.update_paddle_position("right", message)
+        #if message == "Enter":
+            #self.kick_dot()
         # Send message to room group
         async_to_sync(self.channel_layer.group_send)(
-            self.room_group_name, {"type": "chat.message", "message": message}
+            self.room_group_name, {"type": "chat.message", "game_dict": self.game_state}
         )
 
     # Receive message from room group
     def chat_message(self, event):
-        message = event["message"]
+        message = event["game_dict"]
 
         # Send message to WebSocket
-        self.send(text_data=json.dumps({"message": message}))
+        self.send(text_data=json.dumps({"game_dict": self.game_state}))
  
     def disconnect(self, message, **kwargs):
         """
@@ -91,49 +87,60 @@ class LobbyConsumer(WebsocketConsumer):
         async_to_sync(self.channel_layer.group_discard)(self.room_group_name, self.channel_name)
     
     async def game_loop(self):
-        while self.running_game_loop:
+        await self.send_game_state()  # Broadcast the updated game state to all clients
+        #while self.running_game_loop:
             # Simulate ball movement, collision detection, and other game logic here
-            self.update_ball_position()  # Update ball position
-            await self.send_game_state()  # Broadcast the updated game state to all clients
-            await asyncio.sleep(0.016)  # Sleep for 16ms (60 FPS)
+            #self.update_ball_position()  # Update ball position
+            #await asyncio.sleep(0.016)  # Sleep for 16ms (60 FPS)
 
     async def send_game_state(self):
         await self.send(json.dumps({'game_state': self.game_state}))
-    """
-    function moveRectangleRight(dx) {
 
-    if (!dotKicked || rectRightPos + dx < court.offsetTop || rectRightPos + dx + rectangle_right.offsetHeight > court.offsetTop + pongCourtHeight) {
-        return;
-    }
-    rectRightPos += dx;
-    rectangle_right.style.top = `${rectRightPos}px`;
-    }
-    function moveRectangleLeft(dx) {
-    if (!dotKicked || rectLeftPos + dx < court.offsetTop || rectLeftPos + dx + rectangle_left.offsetHeight > court.offsetTop + pongCourtHeight) {
-        return;
-    }
-    rectLeftPos += dx;
-    rectangle_left.style.top = `${rectLeftPos}px`;
-    }
-    """
     def update_paddle_position(self, player, action):
-        if (self.game_state['paddle_positions'][player] + self.dx < self.court_top or
-                self.game_state['paddle_positions'][player] + self.dx + self.paddle_offset> self.court_bottom):
-            return
-        if player == "player1":
-            if action == "W":
-                self.game_state['paddle_positions'][player] -= self.dx
-            if action == "S":
-                self.game_state['paddle_positions'][player] += self.dx
-        if player == "player2":
-            if action == "UP":
-                self.game_state['paddle_positions'][player] -= self.dx
-            if action == "DOWN":
-                self.game_state['paddle_positions'][player] += self.dx
+        if action == "W" or action == "UP":
+            if self.game_state['paddle_'+player] - self.dx-15 < 1:
+                return
+            self.game_state['paddle_'+player] -= self.dx
+        elif action == "S" or action == "DOWN":
+                if self.game_state['paddle_'+player] + self.dx + 15 > 99:
+                    return
+                self.game_state['paddle_'+player] += self.dx
         ## Sent to the clients the new positions to update the front
          
         # Implement paddle position update logic here based on player input
         # Update self.game_state['paddle_positions'][player] accordingly
+    """
+    function kickDot() {
+    if (!dotKicked && !start){
+        dotX = pongCourtWidth / 2 + court.offsetLeft - dot.offsetWidth / 2;
+        dotY = pongCourtHeight / 2 +court.offsetTop- dot.offsetHeight / 2;
+        dot.style.left = `${dotX}px`;
+        dot.style.top = `${dotY}px`;
+        dotSpeedX = vel * [1, -1].sample();
+        dotSpeedY = vel* [1, -1].sample();
+        rectangle_right.style.top = `${top_rect}px`;
+        rectangle_left.style.top = `${top_rect}px`;
+        rectRightPos = top_rect;
+        rectLeftPos = top_rect;
+        start = true
+        return;
+    }
+    if (!dotKicked && start) {
+        dotKicked = true;
+        animateDot();
+    }
+    }
+    """
+    def kick_dot(self):
+        if not self.dotKicked and not self.start:
+            self.start = True
+        elif not self.dotKicked and self.start:
+            self.dotKicked = True
+            self.update_ball_position()
 
     def update_ball_position(self):
-        # Implement ball movement and collis
+        if not self.dotKicked:
+            return
+        
+
+        # Implement ball movement and collitions logic here

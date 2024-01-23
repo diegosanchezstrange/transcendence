@@ -1,47 +1,28 @@
-const dot = document.getElementById('dot');
-const court = document.getElementById('court');
-const rectangle_right = document.getElementById('rectangle-right');
-const rectangle_left = document.getElementById('rectangle-left');
-let pongCourtWidth = court.getBoundingClientRect().width;
-let pongCourtHeight = court.getBoundingClientRect().height;
-// center the dot inside the court
-var dotX = pongCourtWidth / 2 + court.offsetLeft - dot.offsetWidth / 2;
-var dotY = pongCourtHeight / 2 +court.offsetTop- dot.offsetHeight / 2;
-let rectLeftPos = rectangle_left.getBoundingClientRect().top;
-let rectRightPos = rectangle_right.getBoundingClientRect().top;
-let top_rect = rectangle_left.getBoundingClientRect().top;
-let dotKicked = false;
-let start = true
-let vel = 5.5;
-Array.prototype.sample = function(){
-  return this[Math.floor(Math.random()*this.length)];
-}
-var dirX = [1, -1].sample();
-var dirY = [1, -1].sample();
-let dotSpeedX = vel *dirX;
-let dotSpeedY = vel*dirY;
-
-dot.style.left = `${dotX}px`;
-dot.style.top = `${dotY}px`;
-
-const step = 12; 
-
-
+dx = 1;
 const gameSocket = new WebSocket(
     'ws://'
     + 'localhost:8000'
     + '/ws/game/test/');
 
 gameSocket.onmessage = function(e) {
-    const data = JSON.parse(e.data);
+    const data = JSON.parse(e.data)["game_dict"];
+    console.log(data);
     // read dgame state dictionary from data to generate relative
     // positions of the game elements considering the values as percentages
     // of the court size
     // update the game elements positions
-
-    console.log(data);
+    parse_state(data);
 };
-
+function parse_state(data){
+  let rectangle_left = document.getElementById('rectangle-left');
+  let rectangle_right = document.getElementById('rectangle-right');
+  absolute_pos_left = data['paddle_left'];
+  absolute_pos_right = data['paddle_right'];
+  console.log(absolute_pos_left);
+  console.log(absolute_pos_right);
+  rectangle_left.style.top = `${absolute_pos_left}%`;
+  rectangle_right.style.top = `${absolute_pos_right}%`;
+}
 gameSocket.onclose = function(e) {
     console.error('Game socket closed unexpectedly');
 }
@@ -52,7 +33,7 @@ document.querySelector('#send').addEventListener('click', function(e) {
         'message': message
     }));
 });
-/* 
+
 function moveRectangleRight(dx) {
 
   if (!dotKicked || rectRightPos + dx < court.offsetTop || rectRightPos + dx + rectangle_right.offsetHeight > court.offsetTop + pongCourtHeight) {
@@ -69,7 +50,6 @@ function moveRectangleLeft(dx) {
   rectangle_left.style.top = `${rectLeftPos}px`;
 }
 
-*/
 function kickDot() {
   if (!dotKicked && !start){
     dotX = pongCourtWidth / 2 + court.offsetLeft - dot.offsetWidth / 2;
@@ -160,19 +140,27 @@ function animateDot() {
 window.addEventListener('keydown', function(event) {
   switch(event.key) {
     case 'ArrowUp':
-      moveRectangleRight(-step);
+        gameSocket.send(JSON.stringify({
+            'message': "UP"
+        }));
       break;
     case 'ArrowDown':
-      moveRectangleRight(step);
+        gameSocket.send(JSON.stringify({
+            'message': "DOWN"
+        }));
       break;
     case 'Enter':
       kickDot();
       break;
     case 'w':
-      moveRectangleLeft(-step);
+      gameSocket.send(JSON.stringify({
+          'message': "W"
+      }));
       break;
     case 's':
-      moveRectangleLeft(step);
+      gameSocket.send(JSON.stringify({
+          'message': "S"
+      }));
       break;
   }
 });
