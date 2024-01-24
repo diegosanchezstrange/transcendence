@@ -154,22 +154,31 @@ function fill_friends_list(friends_list_url) {
       if (json["detail"].length != 0) {
         let friend_req_list = document.getElementById("friends_requests");
         json["detail"].forEach(function (friend) {
-          let friend_li = document.createElement("li");
-          let friend_name = document.createElement("p");
+          // Accept button
           let accept_button = document.createElement("button");
-          let reject_button = document.createElement("button");
-
-          accept_button.classList = ["btn btn-success"];
+          accept_button.classList = ["btn btn-success p-1 m-2"];
+          accept_button.textContent = "Accept";
           accept_button.action = friends_list_url + "requests/accept/";
           accept_button.addEventListener("click", accept_friend_req);
-          reject_button.classList = ["btn btn-danger"];
+
+          // Reject button
+          let reject_button = document.createElement("button");
+          reject_button.classList = ["btn btn-danger p-1 m-2"];
+          reject_button.textContent = "Decline";
           reject_button.action = friends_list_url + "requests/reject/";
           reject_button.addEventListener("click", reject_friend_req);
+          
+          // Friend name
+          let friend_request = document.createElement("span");
+          let friend_name = document.createElement("p");
+          friend_request.id = "friend-request";
+          reject_button.id = "reject-button";
+          friend_name.id = "friend-request-name";
           friend_name.innerHTML = friend;
-          friend_li.appendChild(friend_name);
-          friend_li.appendChild(accept_button);
-          friend_li.appendChild(reject_button);
-          friend_req_list.appendChild(friend_li);
+          friend_request.appendChild(friend_name);
+          friend_request.appendChild(accept_button);
+          friend_request.appendChild(reject_button);
+          friend_req_list.appendChild(friend_request);
         });
       } else {
         let friend_req_list = document.getElementById("friends_requests");
@@ -194,7 +203,7 @@ function fill_friends_list(friends_list_url) {
       } else {
         friends_list.innerHTML = "";
         json["detail"].forEach(function (friend) {
-          let friend_li = document.createElement("li");
+          let friend_request = document.createElement("li");
           let friend_name = document.createElement("p");
           let remove_button = document.createElement("button");
 
@@ -202,9 +211,9 @@ function fill_friends_list(friends_list_url) {
           remove_button.action = friends_list_url;
           remove_button.addEventListener("click", remove_friend_req);
           friend_name.innerHTML = friend;
-          friend_li.appendChild(friend_name);
-          friend_li.appendChild(remove_button);
-          friends_list.appendChild(friend_li);
+          friend_request.appendChild(friend_name);
+          friend_request.appendChild(remove_button);
+          friends_list.appendChild(friend_request);
         });
       }
     })
