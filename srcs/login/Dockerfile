@@ -1,21 +1,25 @@
 # syntax=docker/dockerfile:1.4
 
-FROM python AS builder
+FROM python:3.9-alpine
 
-EXPOSE 8080
+EXPOSE 80
 
 WORKDIR /app 
 
 COPY requirements.txt /app
 
-RUN apt-get update
+#COPY ./tcommons-1.0.0-py3-none-any.whl /app
 
-RUN apt-get install git
+RUN apk update
+
+RUN apk add git postgresql-client
 
 RUN pip3 install -r requirements.txt --no-cache-dir
 
-COPY . /app 
+ENV PYTHONUNBUFFERED=1
 
-ENTRYPOINT ["python3"] 
+#RUN pip3 install tcommons-1.0.0-py3-none-any.whl
 
-CMD ["manage.py", "runserver", "0.0.0.0:8080"]
+COPY . /app
+
+CMD ["sh", "start.sh"]

@@ -1,0 +1,11 @@
+[
+  {
+    "model": "tcommons.user",
+    "pk": 1,
+    "fields": {
+      "username": "admin",
+      "avatar": "avatar/init.png",
+      "is_online": false
+    }
+  }
+]
