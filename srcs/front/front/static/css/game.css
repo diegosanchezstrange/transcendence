@@ -1,3 +1,58 @@
+#dot {
+    position: absolute;
+    width: 5vmin;
+    height: 5vmin;
+    background-color: blue;
+    border-radius: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%); /* Start in the middle of the screen */
+    left: 50% /* Start at a fixed vertical position */
+  }
+  #rectangle-left {
+    position: absolute;
+    height: 30%;
+    width: 3%;
+    background-color: white;
+    left:5%;
+    top: 50%;
+    transform: translate(-50%, -50%); /* Start in the middle of the screen */
+  }
+  #rectangle-right {
+    position: absolute;
+    width: 3%;
+    height: 30%;
+    background-color: white;
+    right:2%;
+    top: 50%; /* Start in the middle of the screen */
+    transform: translate(-50%, -50%); /* Start in the middle of the screen */
+  }
+  #court {
+    position: relative;
+    width: 90vmin;
+    height: 60vmin;
+    background-color: gray;
+    border-color: black;
+    border-style: dashed;
+    border-width: 5px;
+  }
+court::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    border-left: 5px dashed black; /* Adjust the thickness and color as needed */
+    transform: translateX(-50%);
+}
+
+  #parent-container {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+}
+
 .game-board {
 	width: 1196px;
 	height: 658px;
