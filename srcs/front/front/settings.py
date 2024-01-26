@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('JWT_SECRET')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = bool(os.getenv('DEBUG'))
 
 ALLOWED_HOSTS = [ "*" ]
 
@@ -104,7 +104,11 @@ LOGIN_42_SECRET = os.getenv('LOGIN_42_SECRET')
 
 # Microservices URL's
 LOGIN_SERVICE_HOST = os.getenv('LOGIN_SERVICE_HOST')
+LOGIN_SERVICE_HOST_INTERNAL = os.getenv('LOGIN_SERVICE_HOST_INTERNAL')
+
 USERS_SERVICE_HOST = os.getenv('USERS_SERVICE_HOST')
+USERS_SERVICE_HOST_INTERNAL = os.getenv('USERS_SERVICE_HOST_INTERNAL')
+
 USER_URL = os.getenv('USERS_SERVICE_HOST')
 NOTIFICATIONS_SERVICE_HOST = os.getenv('NOTIFICATIONS_SERVICE_HOST')
 NOTIFICATIONS_SOCKETS_HOST = os.getenv('NOTIFICATIONS_SOCKETS_HOST')
