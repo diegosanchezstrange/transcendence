@@ -11,6 +11,8 @@ services:
       - "80:80"
     networks:
       - "internal_microservice"
+    volumes:
+      - ./static:/static
     
     depends_on:
       - front
