@@ -1,8 +1,10 @@
 from django.shortcuts import render
 
-# Create your views here.
+context = {}
+
 def start(request):
-    return render(request, 'start.html')
+    context['PATH'] = 'pong'
+    return render(request, 'start.html', context)
 
 # class LobbyView(TemplateView):
 #     template_name = 'lobby.html'
