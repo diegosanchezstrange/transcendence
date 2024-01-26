@@ -1,46 +1,22 @@
 <header>{% include "navbar/navbarUser.html" %}</header>
 <main>
   {% load static %}
-  <div class="container">
-    <h1>Welcome {{ user_info.username }} !!!</h1>
-    <div class="row justify-content-center m-3">
-      <img
-        src="{% static 'img/pong.png' %}"
-        alt="profile"
-        class="img-fluid col-sm-6"
-      />
-      <div class="col-4">
-        <h2>The best place</h2>
-      </div>
+  <div class="flex-container mx-5">
+    <div class="row justify-content-left">
+      <h1>Welcome {{ user_info.username }}</h1>
     </div>
     <div class="row justify-content-center">
-      <div class="col-sm-3">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">User</h5>
-            <p class="card-text">This is some text within a card body.</p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
-          </div>
-        </div>
+	    <div class="col-sm-4 game-card" type="submit" onclick="Router.changePage('/home')">
+		  	<h2 class="game-card-text">
+        1v1 Game
+        </h2>
       </div>
-      <div class="col-sm-3">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">User</h5>
-            <p class="card-text">This is some text within a card body.</p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
-          </div>
-        </div>
+      <div class="col-sm-4 game-card" type="submit" onclick="Router.changePage('/home')">
+		  	<h2 class="game-card-text">
+        Tournament
+        </h2>
       </div>
-      <div class="col-sm-3">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">User</h5>
-            <p class="card-text">This is some text within a card body.</p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
-          </div>
-        </div>
-      </div>
+	  </div>
     </div>
   </div>
 </main>

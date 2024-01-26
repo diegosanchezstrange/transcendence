@@ -3,7 +3,16 @@
 {% load static %}
 <nav class="navbar navbar-expand-lg border-bottom border-3 mb-5">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">Icon</a>
+    <a class="navbar-brand" href="#">
+      <img
+        class="d-sm-none d-lg-block"
+        src="{% static 'img/logo.png' %}"
+        width="50"
+        height="50"
+        alt="Pong logo"
+      />
+    </a>
+    <h1 class="container-fluid, page-title">PONG THAT PANG</h1>
     <button
       class="navbar-toggler"
       type="button"
@@ -21,7 +30,9 @@
           <a onclick="home_link()" class="nav-link" href="#">Home</a>
         </li>
         <li class="nav-item">
-          <a onclick="logout()" class="nav-link">Logout</a>
+          <a onclick="logout()" class="nav-link" href="localhost:8000/home"
+            >Logout</a
+          >
         </li>
       </ul>
       <!-- <a onclick="friends_link()" href="#"><i class="fa-solid fa-user-group fa-2x pe-3"></i></a> -->
@@ -52,11 +63,7 @@
             </button>
           </form>
           <ul id="friends_requests"></ul>
-          <ul id="friends_list">
-            <!-- <li><a class="dropdown-item" href="#">Notification 1</a></li> -->
-            <!-- <li><a class="dropdown-item" href="#">Notification 2</a></li> -->
-            <!-- <li><a class="dropdown-item" href="#">Notification 3</a></li> -->
-          </ul>
+          <ul id="friends_list"></ul>
         </div>
       </div>
       <a onclick="profile_link()" href="#" class="me-5"

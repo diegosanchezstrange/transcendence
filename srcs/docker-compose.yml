@@ -12,7 +12,7 @@ services:
     networks:
       - "internal_microservice"
     volumes:
-      - ./static:/static
+      - './volumes/static:/static'
     
     depends_on:
       - front
@@ -25,11 +25,10 @@ services:
 
     networks:
       - "internal_microservice"
+    volumes:
+      - './volumes/static:/static'
     env_file:
       - "./.env.dockerized" # All the environment, for facilitating development
-
-    environment:
-      LOGIN_42: ${LOGIN_42}
 
     depends_on:
       database:
@@ -62,10 +61,10 @@ services:
     container_name: matchmaking
     build: ./matchmaking/
     image: matchmaking
-    
+
     networks:
       - "internal_microservice"
-    
+
     restart: on-failure
 
   users:
@@ -103,19 +102,16 @@ services:
     container_name: database
     build: ./database/
     image: database
-      # dev only port. TODO: DELETE it on release
-    ports:
-      - '5432:5432'
+
     networks:
       - "internal_microservice"
-    environment:
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_USER: ${DB_USERNAME}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
 
       #    # Data persistance commented for development purposes
       #    volumes:
-      #      - 'database:/var/lib/postgresql/data'
+      #      - './volumes/database:/var/lib/postgresql/data'
+      #
+    env_file:
+      - "./.env.dockerized" # All the environment, for facilitating development
 
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
@@ -128,8 +124,4 @@ services:
 networks:
   internal_microservice:
     driver: bridge
-    name: 'internal_microservice'
-
-volumes:
-  database:
-    name: database
+    name: "internal_microservice"

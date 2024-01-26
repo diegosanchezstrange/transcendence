@@ -74,7 +74,6 @@ SIMPLE_JWT = {
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -105,6 +104,9 @@ WSGI_APPLICATION = 'src.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+LOGIN_42_REDIRECT_URI = os.getenv('REDIRECT_URI')
+LOGIN_42_CLIENT = os.getenv('LOGIN_42_CLIENT')
+LOGIN_42_SECRET = os.getenv('LOGIN_42_SECRET')
 
 # Credentials for local database
 

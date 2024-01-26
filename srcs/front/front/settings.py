@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('JWT_SECRET')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [ "*" ]
 
@@ -93,16 +93,22 @@ env = Env()
 Env.read_env()
 
 # 42 API
-LOGIN_42 = env('LOGIN_42')
-# REDIRECT_URI = env('REDIRECT_URI')
+LOGIN_42 = os.getenv('LOGIN_42')
+LOGIN_42_URL = os.getenv('LOGIN_42_URL')
+
+LOGIN_42_REDIRECT_URI = os.getenv('REDIRECT_URI')
+LOGIN_42_CLIENT = os.getenv('LOGIN_42_CLIENT')
+LOGIN_42_SECRET = os.getenv('LOGIN_42_SECRET')
 # CLIENT_ID = env('CLIENT_ID')
 # SECRET_KEY = env('SECRET_KEY')
 
 # Microservices URL's
-LOGIN_SERVICE_HOST = env('LOGIN_SERVICE_HOST')
+LOGIN_SERVICE_HOST = os.getenv('LOGIN_SERVICE_HOST')
 USERS_SERVICE_HOST = os.getenv('USERS_SERVICE_HOST')
+USER_URL = os.getenv('USERS_SERVICE_HOST')
 NOTIFICATIONS_SERVICE_HOST = os.getenv('NOTIFICATIONS_SERVICE_HOST')
 NOTIFICATIONS_SOCKETS_HOST = os.getenv('NOTIFICATIONS_SOCKETS_HOST')
+
 # GAME_URL = env('GAME_URL')
 # MATCH_URL = env('MATCH_URL')
 
@@ -154,6 +160,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = '/static'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

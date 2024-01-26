@@ -25,12 +25,37 @@ def login(request):
     """
 
     context['PATH'] = 'login'
+    context['LOGIN_42_URL'] = settings.LOGIN_42_URL
     if settings.LOGIN_42:
         context['LOGIN_42'] = settings.LOGIN_42
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return render(request, 'login.html', context)
     else:
         return render(request, '../templates/base.html', context)
+
+@never_cache
+def login_42(request):
+    """
+    This view is used to render the login page.
+    """
+    context['PATH'] = 'home'
+
+    # Get a parameter from the request
+    code = request.GET.get('code')
+
+    if code is None:
+        return HttpResponse('No code provided')
+    
+    token = requests.post(settings.LOGIN_SERVICE_HOST + "/auth/login/42/",
+                          data={'code': code})
+    print(token.json())
+    if token.status_code != 200:
+        return HttpResponse("Invalid code")
+
+    response = render(request, '../templates/base.html', context)
+    response.set_cookie('token', token.json()['token'])
+
+    return response
 
 @never_cache
 def register(request):

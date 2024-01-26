@@ -85,7 +85,42 @@ def create_user(request, *args, **kwargs):
 
 @api_view(['POST'])
 def login_oauth(request, *args, **kwargs):
-    access_token = request.data.get('access_token')
+    # Get 42 access token with the return code
+    code = request.data.get('code')
+    print(code)
+    if not code:
+        return JsonResponse({
+            "detail": "Code missing."
+        }, status=400)
+    url = f"{settings.API_INTRA_URL}/oauth/token"
+    body = {
+        "grant_type": "authorization_code",
+        "client_id": settings.LOGIN_42_CLIENT,
+        "client_secret": settings.LOGIN_42_SECRET,
+        "code": code,
+        "redirect_uri": "http://localhost:3000/login/auth42/"
+    }
+    headers = {
+        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+    }
+    access_token = requests.post(url, data=body, headers=headers)
+
+    print(body)
+
+    print(access_token.headers)
+
+    print(access_token.json())
+
+    if access_token.status_code != 200:
+        return JsonResponse({
+            "detail": "Invalid code."
+        }, status=400)
+
+    access_token = access_token.json().get("access_token")
+
+    print(access_token)
+
+    # Get user info with the access token
     url = f"{settings.API_INTRA_URL}/v2/me"
     headers = {
         "Authorization": f"Bearer {access_token}"
@@ -103,6 +138,7 @@ def login_oauth(request, *args, **kwargs):
             "detail": "Invalid access token."
         }, status=401)
 
+    # Get or create user with the 42 username
     username = response.json().get("login")
     headers = {
         "Authorization": settings.MICROSERVICE_API_TOKEN
@@ -111,7 +147,6 @@ def login_oauth(request, *args, **kwargs):
         "username": username
     }
     url = f"{settings.USERS_SERVICE_HOST}/users/create/42/"
-
     response = requests.post(url, headers=headers, data=body)
     if response.status_code not in (200, 201):
         return JsonResponse({
