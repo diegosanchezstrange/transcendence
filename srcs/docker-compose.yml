@@ -13,7 +13,8 @@ services:
       - "internal_microservice"
     volumes:
       - './volumes/static:/static'
-    
+    env_file:
+      - .env
     depends_on:
       - front
     restart: on-failure
@@ -28,7 +29,7 @@ services:
     volumes:
       - './volumes/static:/static'
     env_file:
-      - "./.env.dockerized" # All the environment, for facilitating development
+      - .env
 
     depends_on:
       database:
@@ -105,13 +106,15 @@ services:
 
     networks:
       - "internal_microservice"
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
 
       #    # Data persistance commented for development purposes
       #    volumes:
       #      - './volumes/database:/var/lib/postgresql/data'
       #
-    env_file:
-      - "./.env.dockerized" # All the environment, for facilitating development
 
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
