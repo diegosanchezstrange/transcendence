@@ -52,7 +52,7 @@ services:
     build: ./login/
     image: login
     env_file:
-      - "./.env.dockerized" # All the environment, for facilitating development
+      - .env
     networks:
       - "internal_microservice"
 
@@ -74,7 +74,7 @@ services:
     image: users
 
     env_file:
-      - "./.env.dockerized" # All the environment, for facilitating development
+      - .env
     networks:
       - "internal_microservice"
     restart: on-failure
@@ -85,7 +85,7 @@ services:
     image: notifications
 
     env_file:
-      - "./.env.dockerized" # All the environment, for facilitating development
+      - .env
     networks:
       - "internal_microservice"
 
