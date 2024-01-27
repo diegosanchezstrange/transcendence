@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('JWT_SECRET')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = bool(os.getenv('DEBUG'))
 
 ALLOWED_HOSTS = [ "*" ]
 
@@ -104,7 +104,11 @@ LOGIN_42_SECRET = os.getenv('LOGIN_42_SECRET')
 
 # Microservices URL's
 LOGIN_SERVICE_HOST = os.getenv('LOGIN_SERVICE_HOST')
+LOGIN_SERVICE_HOST_INTERNAL = os.getenv('LOGIN_SERVICE_HOST_INTERNAL')
+
 USERS_SERVICE_HOST = os.getenv('USERS_SERVICE_HOST')
+USERS_SERVICE_HOST_INTERNAL = os.getenv('USERS_SERVICE_HOST_INTERNAL')
+
 USER_URL = os.getenv('USERS_SERVICE_HOST')
 NOTIFICATIONS_SERVICE_HOST = os.getenv('NOTIFICATIONS_SERVICE_HOST')
 NOTIFICATIONS_SOCKETS_HOST = os.getenv('NOTIFICATIONS_SOCKETS_HOST')
@@ -159,8 +163,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
-STATIC_ROOT = '/static'
+STATIC_URL = 'static/front/'
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+STATIC_ROOT = '/static/front'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

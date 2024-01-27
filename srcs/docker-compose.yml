@@ -1,4 +1,4 @@
-version: "3.9"
+version: '3.9'
 
 services:
   endpoint:
@@ -7,15 +7,19 @@ services:
     image: endpoint
 
     ports:
-      - "443:443"
-      - "80:80"
+      - '443:443'
+      - '80:80'
+
     networks:
-      - "internal_microservice"
+      - 'internal_microservice'
     volumes:
       - './volumes/static:/static'
-    
+    env_file:
+      - .env
+
     depends_on:
       - front
+
     restart: on-failure
 
   front:
@@ -24,11 +28,11 @@ services:
     image: front
 
     networks:
-      - "internal_microservice"
+      - 'internal_microservice'
     volumes:
       - './volumes/static:/static'
     env_file:
-      - "./.env.dockerized" # All the environment, for facilitating development
+      - .env
 
     depends_on:
       database:
@@ -42,7 +46,7 @@ services:
     image: game
 
     networks:
-      - "internal_microservice"
+      - 'internal_microservice'
 
     restart: on-failure
 
@@ -50,10 +54,11 @@ services:
     container_name: login
     build: ./login/
     image: login
-    env_file:
-      - "./.env.dockerized" # All the environment, for facilitating development
+
     networks:
-      - "internal_microservice"
+      - 'internal_microservice'
+    env_file:
+      - .env
 
     restart: on-failure
 
@@ -63,7 +68,7 @@ services:
     image: matchmaking
 
     networks:
-      - "internal_microservice"
+      - 'internal_microservice'
 
     restart: on-failure
 
@@ -72,10 +77,13 @@ services:
     build: ./users/
     image: users
 
-    env_file:
-      - "./.env.dockerized" # All the environment, for facilitating development
     networks:
-      - "internal_microservice"
+      - 'internal_microservice'
+    volumes:
+      - './volumes/static:/static'
+    env_file:
+      - .env
+
     restart: on-failure
 
   notifications:
@@ -83,20 +91,22 @@ services:
     build: ./notifications/
     image: notifications
 
-    env_file:
-      - "./.env.dockerized" # All the environment, for facilitating development
     networks:
-      - "internal_microservice"
+      - 'internal_microservice'
+    env_file:
+      - .env
 
     restart: on-failure
 
   redis: # TODO: Make it secure with credentials
     container_name: redis
     image: redis:7.2.3-alpine
+    
     ports:
-      - "6379:6379"
+      - '6379:6379'
+
     networks:
-      - "internal_microservice"
+      - 'internal_microservice'
 
   database:
     container_name: database
@@ -104,17 +114,19 @@ services:
     image: database
 
     networks:
-      - "internal_microservice"
+      - 'internal_microservice'
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
 
       #    # Data persistance commented for development purposes
       #    volumes:
       #      - './volumes/database:/var/lib/postgresql/data'
       #
-    env_file:
-      - "./.env.dockerized" # All the environment, for facilitating development
 
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
       interval: 5s
       timeout: 5s
       retries: 5
@@ -124,4 +136,4 @@ services:
 networks:
   internal_microservice:
     driver: bridge
-    name: "internal_microservice"
+    name: 'internal_microservice'
