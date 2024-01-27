@@ -19,7 +19,6 @@ pytz==2021.3
 service-identity==23.1.0
 setuptools==68.0.0
 six==1.16.0
-sqlparse @ file:///tmp/build/80754af9/sqlparse_1602184451250/work
 Twisted==23.10.0
 txaio==23.1.1
 typing_extensions==4.9.0
