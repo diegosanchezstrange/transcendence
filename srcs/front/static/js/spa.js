@@ -86,7 +86,7 @@ class Router {
     };
 
     if (Router.getJwt()) headers["Authorization"] = "Bearer " + Router.getJwt();
-
+	
     fetch(url, {
       method: "GET",
       headers: headers,

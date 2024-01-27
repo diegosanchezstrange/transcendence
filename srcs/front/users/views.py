@@ -27,7 +27,7 @@ def profile(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         if request.user.is_authenticated:
             auth = request.headers.get('Authorization')
-            user_response = requests.get(settings.USERS_SERVICE_HOST + "/profile/", headers={'Authorization': auth})
+            user_response = requests.get(settings.USERS_SERVICE_HOST_INTERNAL + "/profile/", headers={'Authorization': auth}, verify=False)
             context['user_info'] = user_response.json()['detail']
 
             return render(request, 'userProfile.html', context)
