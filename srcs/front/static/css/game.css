@@ -2,7 +2,7 @@
     position: absolute;
     width: 5vmin;
     height: 5vmin;
-    background-color: blue;
+    background-color: white;
     border-radius: 50%;
     top: 50%;
     transform: translate(-50%, -50%); /* Start in the middle of the screen */
@@ -30,10 +30,6 @@
     position: relative;
     width: 90vmin;
     height: 60vmin;
-    background-color: gray;
-    border-color: black;
-    border-style: dashed;
-    border-width: 5px;
   }
 court::after {
     content: '';
@@ -54,20 +50,24 @@ court::after {
 }
 
 .game-board {
-	width: 1196px;
-	height: 658px;
 	background: #3D3D5B;
 	box-shadow: 0px 4px 4px 3px #FFF;
 }
 
 .board-line-v {
-	width: 4px;
-	height: 658px;
-	background: rgba(177, 46, 78, 0.50);
+  position: absolute;
+  right: 50%;
+  display: block;
+  width: 4px;
+  height: 100%;
+  background: rgba(177, 46, 78, 0.50);
 }
 
 .board-line-h {
-	width: 1195.998px;
-	height: 2px;
-	background: rgba(255, 255, 255, 0.50);
+  width: 100%;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.50);
+  position: absolute;
+  top: 50%;
+  display: block;
 }
