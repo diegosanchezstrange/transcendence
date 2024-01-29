@@ -1,7 +1,7 @@
 from .constants import notification_messages
 import json
 import requests
-from src.settings import MICROSERVICE_API_TOKEN
+from src.settings import MICROSERVICE_API_TOKEN, NOTIFICATIONS_SERVICE_HOST
 import os
 
 
@@ -19,12 +19,10 @@ def send_friend_request_notification(sender, receiver, ntype):
     }
 
     # print(json.dumps(data, indent=2))
-    # TODO: get hostname from environment
 
     # TODO: check if fails
-    notifications_host = os.getenv('NOTIFICATIONS_SERVICE_HOST')
-    response = requests.post(f"{notifications_host}/notifications/send/", 
+    response = requests.post(f"{NOTIFICATIONS_SERVICE_HOST}/notifications/send/", 
                              json=data,
-                             headers={"Authorization": MICROSERVICE_API_TOKEN})
+                             headers={"Authorization": MICROSERVICE_API_TOKEN}, verify=False)
 
     print(json.dumps(response.json(), indent=2))
