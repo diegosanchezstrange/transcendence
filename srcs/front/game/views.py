@@ -19,6 +19,21 @@ def start(request):
     else:
         return render(request, '../templates/base.html', context)
 
+@never_cache
+def lobby(request):
+    context['PATH'] = 'lobby'
+    # TO DO: request game info from database
+    context['waitlist'] = [
+        "Player 3",
+        "Player 4",
+        "Player 5"
+    ]
+    auth = request.headers.get('Authorization')
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return render(request, 'lobby.html', context)
+    else:
+        return render(request, '../templates/base.html', context)
+
 # class LobbyView(TemplateView):
 #     template_name = 'lobby.html'
  
