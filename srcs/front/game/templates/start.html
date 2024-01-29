@@ -2,6 +2,11 @@
 <header>{% include "navbar/navbarUser.html" %}</header>
 <main>
   <div id="parent-container">
+    <div class="score-panel row justify-content-center">
+      <span class="game-score-text col-3">{{ game_info.player_1 }}</span>
+      <span class="game-score-text col-6">{{ game_info.score_1}} - {{ game_info.score_2 }}</span>
+      <span class="game-score-text col-3">{{ game_info.player_2 }}</span>
+    </div>
     <div class="game-board" id="court">
       <span class="board-line-v"></span>
       <span class="board-line-h"></span>

@@ -42,11 +42,29 @@ court::after {
 }
 
   #parent-container {
+    position: relative;
     display: flex;
     width: 100%;
     height: 100vh;
     justify-content: center;
     align-items: center;
+}
+
+.score-panel {
+  position: absolute;
+  top: 12%;
+  width: 90vmin;
+}
+
+.game-score-text {
+  color: white;
+  text-align: center;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 1vw;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 130%; /* 62.4px */
+  letter-spacing: 4.32px;
 }
 
 .game-board {
