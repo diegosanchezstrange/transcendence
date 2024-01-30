@@ -1,3 +1,7 @@
+# Volumes #
+srcs/volumes/static/
+srcs/volumes/database/
+
 # Django #
 *.log
 *.pot
@@ -67,6 +71,7 @@ wheels/
 *.egg 
 *.manifest 
 *.spec 
+*.whl
 
 # Installer logs 
 pip-log.txt 
@@ -135,3 +140,6 @@ GitHub.sublime-settings
 !.vscode/launch.json 
 !.vscode/extensions.json 
 .history
+
+# JetBrains
+.idea

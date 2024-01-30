@@ -1,0 +1,71 @@
+.game-status-panel {
+    height: 30%;
+    width: 60%;
+    margin: auto;
+    margin-bottom: 4%;
+    background: rgba(20, 56, 113, 0.50);
+}
+
+#game-status-title {
+    margin-top: 6%;
+    color: #B12E4E;
+    text-align: center;
+    font-feature-settings: 'clig' off, 'liga' off;
+    font-family: "Fira Code";
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 130%; /* 41.6px */
+    letter-spacing: 1.92px;
+}
+
+#game-status-text {
+    color: #FFF;
+    text-align: center;
+    font-feature-settings: 'clig' off, 'liga' off;
+    font-family: "Fira Code";
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 130%; /* 31.2px */
+    letter-spacing: 1.44px;
+}
+
+.lobby {
+    height: 60%;
+    width: 80%;
+}
+
+.queue {
+    background: rgba(20, 56, 113, 0.50);
+}
+
+#queue-header {
+    margin-top: 8%;
+    margin-left: 4%;
+    margin-bottom: 4%;
+    color: #B12E4E;
+    font-feature-settings: 'clig' off, 'liga' off;
+    font-family: "Fira Code";
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 180%; /* 41.6px */
+    letter-spacing: 1.92px;
+}
+
+#queue-players {
+    margin-left: 6%;
+    color: #FFF;
+    font-feature-settings: 'clig' off, 'liga' off;
+    font-family: "Fira Code";
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 130%; /* 31.2px */
+    letter-spacing: 1.44px;
+}
+
+.player-name {
+    text-align: left;
+}
