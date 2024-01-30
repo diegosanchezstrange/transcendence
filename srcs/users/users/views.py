@@ -158,7 +158,7 @@ def profile_view(request, *args, **kwargs):
             "id": user.id,
             "username": user.username,
             "login": user.userprofile.login,
-            "profile_pic": f'{request.scheme}://{request.get_host()}{user.userprofile.profile_pic.url}'
+            "profile_pic": f'{settings.IMAGE_HOST}{user.userprofile.profile_pic.url}'
         }
     })
 
