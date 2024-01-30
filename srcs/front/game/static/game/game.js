@@ -1,38 +1,39 @@
 dx = 1;
+let rectangle_left = document.getElementById('rectangle-left');
+let rectangle_right = document.getElementById('rectangle-right');
+let dot = document.getElementById('dot');
 const gameSocket = new WebSocket(
     'ws://'
     + 'localhost:8000'
     + '/ws/game/test/');
-
 gameSocket.onmessage = function(e) {
     const data = JSON.parse(e.data)["game_dict"];
-    console.log(data);
     // read dgame state dictionary from data to generate relative
     // positions of the game elements considering the values as percentages
     // of the court size
     // update the game elements positions
     parse_state(data);
 };
+gameSocket.onopen = function(e)
+{
+  console.log("connection")
+}
 function parse_state(data){
-  let rectangle_left = document.getElementById('rectangle-left');
-  let rectangle_right = document.getElementById('rectangle-right');
   absolute_pos_left = data['paddle_left'];
   absolute_pos_right = data['paddle_right'];
-  console.log(absolute_pos_left);
-  console.log(absolute_pos_right);
+  dotX = data['ball'][0];
+  dotY = data['ball'][1];
   rectangle_left.style.top = `${absolute_pos_left}%`;
   rectangle_right.style.top = `${absolute_pos_right}%`;
+  //console.log(dotX);
+  //console.log(dotY);
+  dot.style.top = `${dotY}%`
+  dot.style.left = `${dotX}%`
 }
 gameSocket.onclose = function(e) {
     console.error('Game socket closed unexpectedly');
 }
 
-document.querySelector('#send').addEventListener('click', function(e) {
-    const message = "Hello World";
-    gameSocket.send(JSON.stringify({
-        'message': message
-    }));
-});
 
 function moveRectangleRight(dx) {
 
@@ -150,8 +151,11 @@ window.addEventListener('keydown', function(event) {
         }));
       break;
     case 'Enter':
-      kickDot();
-      break;
+      console.log("ENTER")
+        gameSocket.send(JSON.stringify({
+            'message': "ENTER"
+        }));
+        break;
     case 'w':
       gameSocket.send(JSON.stringify({
           'message': "W"
