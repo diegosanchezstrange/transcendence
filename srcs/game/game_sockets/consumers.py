@@ -32,7 +32,6 @@ class ClientConsumer(AsyncWebsocketConsumer):
         # pass
         await self.accept()
         self.connections += 1
-        print(self.connections)
         if self.connections >= 1:
             self.running_game_loop = True
             await self.start()
@@ -49,7 +48,6 @@ class ClientConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({"game_dict": game_dict}))
 
     async def start(self):
-        print("START")
         await self.channel_layer.send("game_engine", {"type":"player.start", "message": "start"})
 
     async def movement(self, msg: str):
@@ -83,19 +81,15 @@ class GameConsumer(SyncConsumer):
     def player_start(self, event):
         msg = event.get("message")
         if msg == "start":
-            self.engine.run()
+            self.engine.start()
 
     def player_movement(self, event):
         message = event.get("message")
-        print(message)
         if message == "W" or message == "S":
-            print("right")
             self.engine.update_paddle_position("left", message)
         if message == "UP" or message == "DOWN":
-            print("left")
             self.engine.update_paddle_position("right", message)
         if message == "ENTER":
-            print("ENTER")
             self.engine.kick_dot()
     
         # Runs the engine in a new thread

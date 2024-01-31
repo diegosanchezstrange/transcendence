@@ -112,6 +112,8 @@ services:
     container_name: database
     build: ./database/
     image: database
+    ports: 
+      - '5432:5432'
 
     networks:
       - 'internal_microservice'

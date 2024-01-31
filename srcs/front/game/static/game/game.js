@@ -25,8 +25,6 @@ function parse_state(data){
   dotY = data['ball'][1];
   rectangle_left.style.top = `${absolute_pos_left}%`;
   rectangle_right.style.top = `${absolute_pos_right}%`;
-  //console.log(dotX);
-  //console.log(dotY);
   dot.style.top = `${dotY}%`
   dot.style.left = `${dotX}%`
 }
@@ -51,28 +49,7 @@ function moveRectangleLeft(dx) {
   rectangle_left.style.top = `${rectLeftPos}px`;
 }
 
-function kickDot() {
-  if (!dotKicked && !start){
-    dotX = pongCourtWidth / 2 + court.offsetLeft - dot.offsetWidth / 2;
-    dotY = pongCourtHeight / 2 +court.offsetTop- dot.offsetHeight / 2;
-    dot.style.left = `${dotX}px`;
-    dot.style.top = `${dotY}px`;
-    dotSpeedX = vel * [1, -1].sample();
-    dotSpeedY = vel* [1, -1].sample();
-    rectangle_right.style.top = `${top_rect}px`;
-    rectangle_left.style.top = `${top_rect}px`;
-    rectRightPos = top_rect;
-    rectLeftPos = top_rect;
-    start = true
-    return;
-  }
-  if (!dotKicked && start) {
-    dotKicked = true;
-    animateDot();
-  }
 
-
-}
 
 function animateDot() {
 
@@ -83,7 +60,6 @@ function animateDot() {
   let rectLeftBounds = rectangle_left.getBoundingClientRect();
   if ( dotSpeedX > 0 &&  dotX + dotSpeedX > rectRightBounds.left)
   {
-    console.log(dotSpeedX)
     dotX += dotX + dotSpeedX - rectRightBounds.left;
   }
   else
