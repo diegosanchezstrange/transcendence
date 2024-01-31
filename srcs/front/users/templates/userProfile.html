@@ -31,7 +31,13 @@
       <section class="col-7">
         <div class="d-none d-md-block text-left h-26 px-5">
           <form>
-            <p id="profile-username">{{ user_info.username }}</p>
+            <input
+              id="profile-username"
+              type="text"
+              style="border: 0px; background: transparent"
+              value="{{ user_info.username }}"
+              disabled
+            />
             <button id="confirm-name-edit-button">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
