@@ -35,6 +35,9 @@ def lobby(request):
         "Player 4",
         "Player 5"
     ]
+    context['game_ongoing'] = True
+    context['player_1'] = "Bob"
+    context['player_2'] = "Ross"
     auth = request.headers.get('Authorization')
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return render(request, 'lobby.html', context)

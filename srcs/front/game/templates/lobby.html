@@ -3,14 +3,19 @@
 <main>
     <section class="game-status-panel row">
         <h2 id="game-status-title">GAME STATUS</h2>
-        <p id="game-status-text"></p>
+        <p id="game-status-text">
+            {% if game_ongoing == True %}
+                {{player_1}} and {{player_2}} are currently playing.</p>
+            {% else %}
+                Your turn!
+            {% endif %}
     </section>
     <section class="lobby row">
         <section class="queue col-5">
             <h3 id="queue-header">NEXT IN THE QUEUE</h3>
             <ul id="queue-players">
                 {% for player in waitlist %}
-                    <li class="player-name">player</li>
+                    <li class="player-name">{{player}}</li>
                 {% endfor %}
             </ul>
         </section>
