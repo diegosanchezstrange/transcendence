@@ -1,69 +1,67 @@
 dx = 1;
-let rectangle_left = document.getElementById('rectangle-left');
-let rectangle_right = document.getElementById('rectangle-right');
-let dot = document.getElementById('dot');
-const gameSocket = new WebSocket(
-    'ws://'
-    + 'localhost:8000'
-    + '/ws/game/test/');
-gameSocket.onmessage = function(e) {
-    const data = JSON.parse(e.data)["game_dict"];
-    // read dgame state dictionary from data to generate relative
-    // positions of the game elements considering the values as percentages
-    // of the court size
-    // update the game elements positions
-    parse_state(data);
+let rectangle_left = document.getElementById("rectangle-left");
+let rectangle_right = document.getElementById("rectangle-right");
+let dot = document.getElementById("dot");
+const gameSocket = new WebSocket(GAME_SOCKETS_HOST + "/ws/game/test/");
+gameSocket.onmessage = function (e) {
+  const data = JSON.parse(e.data)["game_dict"];
+  // read dgame state dictionary from data to generate relative
+  // positions of the game elements considering the values as percentages
+  // of the court size
+  // update the game elements positions
+  parse_state(data);
 };
-gameSocket.onopen = function(e)
-{
-  console.log("connection")
-}
-function parse_state(data){
-  absolute_pos_left = data['paddle_left'];
-  absolute_pos_right = data['paddle_right'];
-  dotX = data['ball'][0];
-  dotY = data['ball'][1];
+gameSocket.onopen = function (e) {
+  console.log("connection");
+};
+function parse_state(data) {
+  absolute_pos_left = data["paddle_left"];
+  absolute_pos_right = data["paddle_right"];
+  dotX = data["ball"][0];
+  dotY = data["ball"][1];
   rectangle_left.style.top = `${absolute_pos_left}%`;
   rectangle_right.style.top = `${absolute_pos_right}%`;
-  dot.style.top = `${dotY}%`
-  dot.style.left = `${dotX}%`
+  dot.style.top = `${dotY}%`;
+  dot.style.left = `${dotX}%`;
 }
-gameSocket.onclose = function(e) {
-    console.error('Game socket closed unexpectedly');
-}
-
+gameSocket.onclose = function (e) {
+  console.error("Game socket closed unexpectedly");
+};
 
 function moveRectangleRight(dx) {
-
-  if (!dotKicked || rectRightPos + dx < court.offsetTop || rectRightPos + dx + rectangle_right.offsetHeight > court.offsetTop + pongCourtHeight) {
+  if (
+    !dotKicked ||
+    rectRightPos + dx < court.offsetTop ||
+    rectRightPos + dx + rectangle_right.offsetHeight >
+      court.offsetTop + pongCourtHeight
+  ) {
     return;
   }
   rectRightPos += dx;
   rectangle_right.style.top = `${rectRightPos}px`;
 }
 function moveRectangleLeft(dx) {
-  if (!dotKicked || rectLeftPos + dx < court.offsetTop || rectLeftPos + dx + rectangle_left.offsetHeight > court.offsetTop + pongCourtHeight) {
+  if (
+    !dotKicked ||
+    rectLeftPos + dx < court.offsetTop ||
+    rectLeftPos + dx + rectangle_left.offsetHeight >
+      court.offsetTop + pongCourtHeight
+  ) {
     return;
   }
   rectLeftPos += dx;
   rectangle_left.style.top = `${rectLeftPos}px`;
 }
 
-
-
 function animateDot() {
-
   if (!dotKicked) {
     return;
   }
   let rectRightBounds = rectangle_right.getBoundingClientRect();
   let rectLeftBounds = rectangle_left.getBoundingClientRect();
-  if ( dotSpeedX > 0 &&  dotX + dotSpeedX > rectRightBounds.left)
-  {
+  if (dotSpeedX > 0 && dotX + dotSpeedX > rectRightBounds.left) {
     dotX += dotX + dotSpeedX - rectRightBounds.left;
-  }
-  else
-  {
+  } else {
     dotX += dotSpeedX;
   }
   dotY += dotSpeedY;
@@ -72,40 +70,63 @@ function animateDot() {
   let courtBounds = court.getBoundingClientRect();
   let dotBounds = dot.getBoundingClientRect();
 
-  if (dotBounds.right <= rectLeftBounds.left || dotBounds.left >= rectRightBounds.right) {
+  if (
+    dotBounds.right <= rectLeftBounds.left ||
+    dotBounds.left >= rectRightBounds.right
+  ) {
     dotKicked = false;
     start = false;
   }
   //pegarle de frente IZQ
-  if (dotSpeedX < 0 && dotBounds.left <= rectLeftBounds.right  && dotBounds.top >= rectLeftBounds.top  && dotBounds.bottom <= rectLeftBounds.bottom)
-  {
-    dotSpeedY = (dotSpeedY+ Math.random())*-1;
-    dotSpeedX = (dotSpeedX+ Math.random())*-1;
+  if (
+    dotSpeedX < 0 &&
+    dotBounds.left <= rectLeftBounds.right &&
+    dotBounds.top >= rectLeftBounds.top &&
+    dotBounds.bottom <= rectLeftBounds.bottom
+  ) {
+    dotSpeedY = (dotSpeedY + Math.random()) * -1;
+    dotSpeedX = (dotSpeedX + Math.random()) * -1;
   }
   // pegarle por debajo IZQ
-  else if (dotBounds.top === rectLeftBounds.bottom && dotBounds.left >=  rectLeftBounds.left && dotBounds.left <= rectLeftBounds.right)
-  {
-    dotSpeedY = (dotSpeedY + Math.random()) *-1;
-    dotSpeedX = (dotSpeedX + Math.random())*-1;
+  else if (
+    dotBounds.top === rectLeftBounds.bottom &&
+    dotBounds.left >= rectLeftBounds.left &&
+    dotBounds.left <= rectLeftBounds.right
+  ) {
+    dotSpeedY = (dotSpeedY + Math.random()) * -1;
+    dotSpeedX = (dotSpeedX + Math.random()) * -1;
   }
   //pegarle de frente DER
-  else if ( dotSpeedX > 0 && dotBounds.right >= rectRightBounds.left && dotBounds.top >= rectRightBounds.top && dotBounds.bottom <= rectRightBounds.bottom)
-  {
-    dotSpeedY = (dotSpeedY + Math.random()) *-1;
-    dotSpeedX = (dotSpeedX + Math.random())*-1;
+  else if (
+    dotSpeedX > 0 &&
+    dotBounds.right >= rectRightBounds.left &&
+    dotBounds.top >= rectRightBounds.top &&
+    dotBounds.bottom <= rectRightBounds.bottom
+  ) {
+    dotSpeedY = (dotSpeedY + Math.random()) * -1;
+    dotSpeedX = (dotSpeedX + Math.random()) * -1;
   }
   // pegarle por debajop DER
-  else if (dotBounds.top === rectRightBounds.bottom && dotBounds.right >=  rectLeftBounds.left && dotBounds.right <= rectLeftBounds.right)
-  {
-    dotSpeedY = (dotSpeedY + Math.random()) *-1;
-    dotSpeedX = (dotSpeedX + Math.random())*-1;
+  else if (
+    dotBounds.top === rectRightBounds.bottom &&
+    dotBounds.right >= rectLeftBounds.left &&
+    dotBounds.right <= rectLeftBounds.right
+  ) {
+    dotSpeedY = (dotSpeedY + Math.random()) * -1;
+    dotSpeedX = (dotSpeedX + Math.random()) * -1;
   }
   // Rebotar contra las paredes de arriba o abajo
-  else if ((dotSpeedY < 0 && dotBounds.top <= court.offsetTop) || (dotBounds.bottom>= courtBounds.bottom && dotSpeedY> 0)) {
-    dotSpeedY = (dotSpeedY + Math.random()) *-1;
+  else if (
+    (dotSpeedY < 0 && dotBounds.top <= court.offsetTop) ||
+    (dotBounds.bottom >= courtBounds.bottom && dotSpeedY > 0)
+  ) {
+    dotSpeedY = (dotSpeedY + Math.random()) * -1;
   }
   // salirse del court
-  else if (dotBounds.left  <= courtBounds.left|| dotBounds.left+ dot.offsetWidth >= courtBounds.right) {
+  else if (
+    dotBounds.left <= courtBounds.left ||
+    dotBounds.left + dot.offsetWidth >= courtBounds.right
+  ) {
     dotKicked = false;
     start = false;
   }
@@ -114,39 +135,63 @@ function animateDot() {
   }
 }
 
-window.addEventListener('keydown', function(event) {
-  switch(event.key) {
-    case 'ArrowUp':
-        gameSocket.send(JSON.stringify({
-            'message': "UP"
-        }));
+window.addEventListener("keydown", function (event) {
+  switch (event.key) {
+    case "ArrowUp":
+      gameSocket.send(
+        JSON.stringify({
+          message: "UP",
+        }),
+      );
       break;
-    case 'ArrowDown':
-        gameSocket.send(JSON.stringify({
-            'message': "DOWN"
-        }));
+    case "ArrowDown":
+      gameSocket.send(
+        JSON.stringify({
+          message: "DOWN",
+        }),
+      );
       break;
-    case 'Enter':
-      console.log("ENTER")
-        gameSocket.send(JSON.stringify({
-            'message': "ENTER"
-        }));
-        break;
-    case 'w':
-      gameSocket.send(JSON.stringify({
-          'message': "W"
-      }));
+    case "Enter":
+      console.log("ENTER");
+      gameSocket.send(
+        JSON.stringify({
+          message: "ENTER",
+        }),
+      );
       break;
-    case 's':
-      gameSocket.send(JSON.stringify({
-          'message': "S"
-      }));
+    case "w":
+      gameSocket.send(
+        JSON.stringify({
+          message: "W",
+        }),
+      );
+      break;
+    case "s":
+      gameSocket.send(
+        JSON.stringify({
+          message: "S",
+        }),
+      );
       break;
   }
 });
 
-window.addEventListener("keydown", function(e) {
-  if(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Enter", "A", "S"].indexOf(e.code) > -1) {
+window.addEventListener(
+  "keydown",
+  function (e) {
+    if (
+      [
+        "ArrowUp",
+        "ArrowDown",
+        "ArrowLeft",
+        "ArrowRight",
+        "Enter",
+        "A",
+        "S",
+      ].indexOf(e.code) > -1
+    ) {
       e.preventDefault();
-  }
-}, false);
+    }
+  },
+  false,
+);

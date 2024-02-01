@@ -1,10 +1,16 @@
 import threading
-from asgiref.sync import async_to_sync
 import random
 import time
-import json
+
 from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+
 class GameEngine(threading.Thread):
+
+    playerCount = 0
+
+    players = []
+
     def __init__(self, channel_name, **kwargs):
         super(GameEngine, self).__init__(daemon=True, name="GameEngine", **kwargs)
         self.dx = random.choice([0.5, 1])
@@ -53,13 +59,13 @@ class GameEngine(threading.Thread):
         self.game_state['paddle_left'] = self.paddle_left
         self.game_state['ball'] = [self.dotX, self.dotY]
         self.dotKicked = False
+
     def kick_dot(self):
         if not self.started and not self.dotKicked:
             self.restart_state()
             self.started = True
         elif self.started and not self.dotKicked:
             self.dotKicked = True 
-         
 
     def update_ball_position(self):
         if not self.dotKicked:

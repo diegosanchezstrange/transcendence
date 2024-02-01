@@ -1,4 +1,4 @@
-version: '3.9'
+version: "3.9"
 
 services:
   endpoint:
@@ -7,13 +7,13 @@ services:
     image: endpoint
 
     ports:
-      - '443:443'
-      - '80:80'
+      - "443:443"
+      - "80:80"
 
     networks:
-      - 'internal_microservice'
+      - "internal_microservice"
     volumes:
-      - './volumes/static:/static'
+      - "./volumes/static:/static"
     env_file:
       - .env
 
@@ -28,9 +28,9 @@ services:
     image: front
 
     networks:
-      - 'internal_microservice'
+      - "internal_microservice"
     volumes:
-      - './volumes/static:/static'
+      - "./volumes/static:/static"
     env_file:
       - .env
 
@@ -44,9 +44,25 @@ services:
     container_name: game
     build: ./game/
     image: game
+    env_file:
+      - .env
 
     networks:
-      - 'internal_microservice'
+      - "internal_microservice"
+
+    restart: on-failure
+
+  game_worker:
+    container_name: game_worker
+    build:
+      context: ./game/
+      dockerfile: Dockerfile.worker
+    image: game_worker
+    env_file:
+      - .env
+
+    networks:
+      - "internal_microservice"
 
     restart: on-failure
 
@@ -56,7 +72,7 @@ services:
     image: login
 
     networks:
-      - 'internal_microservice'
+      - "internal_microservice"
     env_file:
       - .env
 
@@ -68,7 +84,7 @@ services:
     image: matchmaking
 
     networks:
-      - 'internal_microservice'
+      - "internal_microservice"
 
     restart: on-failure
 
@@ -78,9 +94,9 @@ services:
     image: users
 
     networks:
-      - 'internal_microservice'
+      - "internal_microservice"
     volumes:
-      - './volumes/static:/static'
+      - "./volumes/static:/static"
     env_file:
       - .env
 
@@ -92,7 +108,7 @@ services:
     image: notifications
 
     networks:
-      - 'internal_microservice'
+      - "internal_microservice"
     env_file:
       - .env
 
@@ -101,22 +117,22 @@ services:
   redis: # TODO: Make it secure with credentials
     container_name: redis
     image: redis:7.2.3-alpine
-    
+
     ports:
-      - '6379:6379'
+      - "6379:6379"
 
     networks:
-      - 'internal_microservice'
+      - "internal_microservice"
 
   database:
     container_name: database
     build: ./database/
     image: database
-    ports: 
-      - '5432:5432'
+    ports:
+      - "5432:5432"
 
     networks:
-      - 'internal_microservice'
+      - "internal_microservice"
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USERNAME}
@@ -128,7 +144,7 @@ services:
       #
 
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -138,4 +154,4 @@ services:
 networks:
   internal_microservice:
     driver: bridge
-    name: 'internal_microservice'
+    name: "internal_microservice"
