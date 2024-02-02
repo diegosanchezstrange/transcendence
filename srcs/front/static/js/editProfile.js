@@ -62,6 +62,8 @@ const profile_picture_form = document.getElementById("profile-picture-form")
 profile_picture_input.addEventListener("change", function(e) {
   e.preventDefault();
 
+  if ( !profile_picture_input.files[0] )
+    return;
   let headers = {
     "X-Requested-With": "XMLHttpRequest",
   };
