@@ -2,9 +2,9 @@ VOL_DIR	= ${HOME}/data
 
 NEEDS_LIB = login game matchmaking users
 
-all: commons
+all: #commons
 	[ -d $(VOL_DIR)/mysql ] || mkdir -p $(VOL_DIR)/mysql
-	docker-compose --env-file ./srcs/.env -f ./srcs/docker-compose.yml up -d
+	docker-compose -f ./srcs/docker-compose.yml up -d
 
 build:
 	docker-compose -f ./srcs/docker-compose.yml --env-file ./srcs/.env build --no-cache
@@ -29,18 +29,14 @@ build-commons:
 	cd srcs/ && python setup.py sdist bdist_wheel
 
 # Services that need commons
-game login matchmaking users: build-commons
-	mv srcs/dist/tcommons-1.0.0-py3-none-any.whl srcs/$@
-	docker-compose -f ./srcs/docker-compose.yml up -d $@
+game  game_worker login matchmaking users:
+	docker-compose -f ./srcs/docker-compose.yml up --build -d $@
 
 # Services that don't need commons
 front database endpoint redis:
-	docker-compose -f ./srcs/docker-compose.yml up -d $@
+	docker-compose -f ./srcs/docker-compose.yml up --build -d $@
 
 db:
-	docker-compose -f ./srcs/docker-compose.yml up -d database
-
-hakim:
-	docker-compose -f ./srcs/docker-compose.yml up --build database redis users login notifications
+	docker-compose -f ./srcs/docker-compose.yml up --build -d database
 
 .PHONY: clean re stop build db all 

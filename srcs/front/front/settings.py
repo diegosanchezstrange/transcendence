@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'game.apps.GameConfig',
     'front',
     'users',
     'login.apps.LoginConfig',
@@ -112,6 +113,8 @@ USERS_SERVICE_HOST_INTERNAL = os.getenv('USERS_SERVICE_HOST_INTERNAL')
 USER_URL = os.getenv('USERS_SERVICE_HOST')
 NOTIFICATIONS_SERVICE_HOST = os.getenv('NOTIFICATIONS_SERVICE_HOST')
 NOTIFICATIONS_SOCKETS_HOST = os.getenv('NOTIFICATIONS_SOCKETS_HOST')
+
+GAME_SOCKETS_HOST = os.getenv('GAME_SOCKETS_HOST')
 
 # GAME_URL = env('GAME_URL')
 # MATCH_URL = env('MATCH_URL')
