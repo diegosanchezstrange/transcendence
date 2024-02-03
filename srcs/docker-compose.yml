@@ -14,6 +14,7 @@ services:
       - 'internal_microservice'
     volumes:
       - './volumes/static:/static'
+      - './volumes/images:/images'
     env_file:
       - .env
 
@@ -81,6 +82,7 @@ services:
       - 'internal_microservice'
     volumes:
       - './volumes/static:/static'
+      - './volumes/images:/images'
     env_file:
       - .env
 
@@ -101,7 +103,7 @@ services:
   redis: # TODO: Make it secure with credentials
     container_name: redis
     image: redis:7.2.3-alpine
-    
+
     ports:
       - '6379:6379'
 
