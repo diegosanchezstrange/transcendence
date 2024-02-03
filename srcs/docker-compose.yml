@@ -13,7 +13,8 @@ services:
     networks:
       - "internal_microservice"
     volumes:
-      - "./volumes/static:/static"
+      - './volumes/static:/static'
+      - './volumes/images:/images'
     env_file:
       - .env
 
@@ -96,7 +97,8 @@ services:
     networks:
       - "internal_microservice"
     volumes:
-      - "./volumes/static:/static"
+      - './volumes/static:/static'
+      - './volumes/images:/images'
     env_file:
       - .env
 

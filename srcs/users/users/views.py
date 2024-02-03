@@ -136,7 +136,7 @@ def change_user_name(request, *args, **kwargs):
         return JsonResponse({
             "detail": "No value provided"
         }, status=304)
-    
+
     user = request.user
 
     request.user.username = username
@@ -158,12 +158,12 @@ def profile_view(request, *args, **kwargs):
             "id": user.id,
             "username": user.username,
             "login": user.userprofile.login,
-            "profile_pic": f'{request.scheme}://{request.get_host()}{user.userprofile.profile_pic.url}'
+            "profile_pic": f'{settings.IMAGE_HOST}{user.userprofile.profile_pic.url}'
         }
     })
 
 
-@api_view(['PUT'])
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def upload_profile_picture(request, *args, **kwargs):
     profile_pic = request.FILES.get('profile_pic')
@@ -194,6 +194,5 @@ def upload_profile_picture(request, *args, **kwargs):
     profile.save()
     return JsonResponse({
         "detail": "Profile pic uploaded.",
-        "url": profile.profile_pic.url
+        "url": f'{settings.IMAGE_HOST}{profile.profile_pic.url}'
     }, status=status_code)
-
