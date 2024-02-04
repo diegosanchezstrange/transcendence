@@ -135,12 +135,19 @@ def change_user_name(request, *args, **kwargs):
     if not username:
         return JsonResponse({
             "detail": "No value provided"
-        }, status=304)
+        }, status=400)
 
     user = request.user
 
-    request.user.username = username
-    user.save()
+    original_name = user.username
+    try:
+        user.username = username
+        user.save()
+    except:
+        return JsonResponse({
+            "detail": "Username already taken",
+            "username": original_name
+        }, status="409")
 
     return JsonResponse({
         "detail": "User updated successfully"
