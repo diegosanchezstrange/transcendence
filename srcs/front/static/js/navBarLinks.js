@@ -42,10 +42,6 @@ function send_friend_request(e) {
         let res = await response.json();
         throw new Error(res["detail"]);
       }
-      return response.json();
-    })
-    .then(function (json) {
-      // console.log(json["detail"]);
     })
     .catch(function (error) {
       let container = document.getElementById("friends_requests");
@@ -54,7 +50,7 @@ function send_friend_request(e) {
 }
 
 function accept_friend_req(e) {
-  let friend_name = e.target.parentElement.firstChild.innerHTML;
+  let friend_id = e.target.parentElement.firstChild.innerHTML;
 
   let headers = {
     "X-Requested-With": "XMLHttpRequest",
@@ -68,7 +64,7 @@ function accept_friend_req(e) {
     // credentials: "include",
     headers: headers,
     body: JSON.stringify({
-      sender: friend_name,
+      sender: friend_id,
     }),
   })
     .then(function (response) {
@@ -151,9 +147,14 @@ function fill_friends_list(friends_list_url) {
       return response.json();
     })
     .then(function (json) {
-      if (json["detail"].length != 0) {
+      if (json["users"].length != 0) {
         let friend_req_list = document.getElementById("friends_requests");
-        json["detail"].forEach(function (friend) {
+        json["users"].forEach(function (friend) {
+          // Friend id (Used for accept and reject request)
+          let friend_id = document.createElement("p");
+          friend_id.innerHTML = friend.id
+          friend_id.style = "display: none;"
+
           // Accept button
           let accept_button = document.createElement("button");
           accept_button.classList = ["btn btn-success p-1 m-2"];
@@ -174,7 +175,9 @@ function fill_friends_list(friends_list_url) {
           friend_request.id = "friend-request";
           reject_button.id = "reject-button";
           friend_name.id = "friend-request-name";
-          friend_name.innerHTML = friend;
+          friend_name.innerHTML = friend.username;
+
+          friend_request.appendChild(friend_id)
           friend_request.appendChild(friend_name);
           friend_request.appendChild(accept_button);
           friend_request.appendChild(reject_button);
@@ -211,6 +214,7 @@ function fill_friends_list(friends_list_url) {
           remove_button.action = friends_list_url;
           remove_button.addEventListener("click", remove_friend_req);
           friend_name.innerHTML = friend;
+
           friend_request.appendChild(friend_name);
           friend_request.appendChild(remove_button);
           friends_list.appendChild(friend_request);
