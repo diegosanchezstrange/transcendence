@@ -102,7 +102,7 @@ function reject_friend_req(e) {
 }
 
 function remove_friend_req(e) {
-  let friend_name = e.target.parentElement.firstChild.innerHTML;
+  let friend_id = e.target.parentElement.firstChild.innerHTML;
 
   let headers = {
     "X-Requested-With": "XMLHttpRequest",
@@ -116,7 +116,7 @@ function remove_friend_req(e) {
     // credentials: "include",
     headers: headers,
     body: JSON.stringify({
-      friend_name: friend_name,
+      friend_id: friend_id,
     }),
   })
     .then(function (response) {
@@ -201,20 +201,25 @@ function fill_friends_list(friends_list_url) {
       return response.json();
     })
     .then(function (json) {
-      if (json["detail"].length === 0) {
+      if (json["users"].length === 0) {
         friends_list.innerHTML = "You have no friends :(";
       } else {
         friends_list.innerHTML = "";
-        json["detail"].forEach(function (friend) {
+        json["users"].forEach(function (friend) {
           let friend_request = document.createElement("li");
           let friend_name = document.createElement("p");
+          let friend_id = document.createElement("p");
           let remove_button = document.createElement("button");
 
           remove_button.classList = ["btn btn-danger"];
           remove_button.action = friends_list_url;
           remove_button.addEventListener("click", remove_friend_req);
-          friend_name.innerHTML = friend;
+          friend_name.innerHTML = friend.username;
 
+          friend_id.innerHTML = friend.id
+          friend_id.style = "display: none;"
+
+          friend_request.appendChild(friend_id);
           friend_request.appendChild(friend_name);
           friend_request.appendChild(remove_button);
           friends_list.appendChild(friend_request);
