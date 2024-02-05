@@ -135,6 +135,12 @@ def accept_friend_request(request, *args, **kwargs):
     """
     receiver = request.user
     sender_id = request.data.get("sender")
+
+    if not sender_id:
+        return JsonResponse({
+            "detail": "No id provided"
+        }, status=400)
+
     try:
         sender = User.objects.get(id=sender_id)
     except:
@@ -171,6 +177,12 @@ def reject_friend_request(request, *args, **kwargs):
     """
     receiver = request.user
     sender_id = request.data.get("sender")
+
+    if not sender_id:
+        return JsonResponse({
+            "detail": "No id provided"
+        }, status=400)
+
     try:
         sender = User.objects.get(id=sender_id)
     except:
