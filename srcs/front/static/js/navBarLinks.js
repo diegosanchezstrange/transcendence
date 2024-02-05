@@ -1,6 +1,7 @@
 function logout() {
   localStorage.removeItem("token");
   Router.changePage("/home/");
+  return false;
 }
 
 function profile_link() {
@@ -167,7 +168,7 @@ function fill_friends_list(friends_list_url) {
           reject_button.textContent = "Decline";
           reject_button.action = friends_list_url + "requests/reject/";
           reject_button.addEventListener("click", reject_friend_req);
-          
+
           // Friend name
           let friend_request = document.createElement("span");
           let friend_name = document.createElement("p");

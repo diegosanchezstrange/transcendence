@@ -8,7 +8,6 @@ from django.views.decorators.cache import never_cache
 from rest_framework.decorators import api_view
 
 import requests
-import jwt
 
 # Create your views here.
 
