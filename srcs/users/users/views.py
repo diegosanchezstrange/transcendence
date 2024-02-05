@@ -9,6 +9,10 @@ from src.settings import MICROSERVICE_API_TOKEN
 from django.core.files.storage import default_storage
 import os
 from src import settings
+from django.db.models import Q
+from friends.models import Friendship, FriendRequest
+from friends.notifications.send_notification import send_friend_request_notification
+from friends.notifications.constants import NotificationType
 
 
 # Private endpoint decorator
@@ -148,6 +152,29 @@ def change_user_name(request, *args, **kwargs):
             "detail": "Username already taken",
             "username": original_name
         }, status="409")
+
+    friend_requests = FriendRequest.objects.filter(sender=user)
+    friend_requests_users = [friend_request.receiver for friend_request in friend_requests]
+
+    friendships = Friendship.objects.filter(Q(user1=user) | Q(user2=user))
+    friends = []
+    for friend in friendships:
+        if friend.user1 == user:
+            friends.append(friend.user2)
+        elif friend.user2 == user:
+            friends.append(friend.user1)
+    users = friends + friend_requests_users
+    
+    try:
+        for receiver in users:
+            send_friend_request_notification(
+                sender=user,
+                receiver=receiver,
+                ntype=NotificationType.NAME_CHANGED
+            )
+    except:
+        # TODO: Exception handling
+        pass
 
     return JsonResponse({
         "detail": "User updated successfully"

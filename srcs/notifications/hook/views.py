@@ -21,7 +21,6 @@ def private_microservice_endpoint(f):
 @private_microservice_endpoint
 def notification_hook(request, *args, **kwargs):
     message: dict = dict(request.data)
-    print(message)
 
     user_id = message['receiver']['id']
     group_name = f'group_{user_id}'
@@ -31,7 +30,8 @@ def notification_hook(request, *args, **kwargs):
         group_name,
         {
             "type": "send_message",
-            "message": message['message']
+            "ntype": message["ntype"],
+            "message": message['message'],
         }
     )
     return JsonResponse({

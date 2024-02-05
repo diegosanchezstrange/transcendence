@@ -149,6 +149,7 @@ function fill_friends_list(friends_list_url) {
     .then(function (json) {
       if (json["users"].length != 0) {
         let friend_req_list = document.getElementById("friends_requests");
+        friend_req_list.innerHTML = "";
         json["users"].forEach(function (friend) {
           // Friend id (Used for accept and reject request)
           let friend_id = document.createElement("p");

@@ -35,7 +35,10 @@ class NotificationsWebsocket {
     };
     this.socket.onmessage = (message) => {
       let data = JSON.parse(message.data);
-      addNotificationBox("New friend request", data["sender"], data["message"]);
+      if (data["ntype"] === 5) {
+      } else {
+        addNotificationBox("New friend request", data["sender"], data["message"]);
+      }
       fill_friends_list(USERS_SERVICE_HOST + "/friends/");
     };
   }

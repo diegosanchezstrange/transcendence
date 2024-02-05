@@ -15,7 +15,8 @@ def send_friend_request_notification(sender, receiver, ntype):
             "id": receiver.id,
             "username": receiver.username
         },
-        "message": f"{sender.username} {notification_messages[ntype]}"
+        "message": f"{sender.username} {notification_messages[ntype]}",
+        "ntype": ntype.value
     }
 
     # print(json.dumps(data, indent=2))
