@@ -59,18 +59,6 @@ def dev_view_list_users(request, *args, **kwargs):
     })
 
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def get_user_by_username(request, username, *args, **kwargs):
-    user = get_object_or_404(User, username=username)
-    return JsonResponse({
-        "id": user.id,
-        "username": user.username,
-        "login": user.userprofile.login,
-        "profile_pic": f'{request.scheme}://{request.get_host()}{user.userprofile.profile_pic.url}'
-    })
-
-
 @api_view(['POST'])
 @private_microservice_endpoint
 def create_user(request, *args, **kwargs):
@@ -187,6 +175,19 @@ def profile_view(request, *args, **kwargs):
     user = request.user
     UserProfile.objects.get_or_create(user=user)
 
+    return JsonResponse({
+        "detail": {
+            "id": user.id,
+            "username": user.username,
+            "login": user.userprofile.login,
+            "profile_pic": f'{settings.IMAGE_HOST}{user.userprofile.profile_pic.url}'
+        }
+    })
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_by_username(request, id, *args, **kwargs):
+    user = get_object_or_404(User, id=id)
     return JsonResponse({
         "detail": {
             "id": user.id,

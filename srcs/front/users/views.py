@@ -37,6 +37,24 @@ def profile(request):
             return redirect("/login/")
     else:
         return render(request, 'base.html', context)
+
+@never_cache
+@api_view(['GET'])
+def user_profile(request, id):
+    context['PATH'] = f'profile/{id}';
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        if request.user.is_authenticated:
+            auth = request.headers.get('Authorization')
+            user_response = requests.get(settings.USERS_SERVICE_HOST_INTERNAL + f"/profile/user/{id}/", headers={'Authorization': auth}, verify=False)
+            context['user_info'] = user_response.json()['detail']
+
+            return render(request, 'userProfileNonEditable.html', context)
+        else:
+            # Redirect to login page with a 302 status
+            return redirect("/login/")
+    else:
+        return render(request, 'base.html', context)
         
         
         
