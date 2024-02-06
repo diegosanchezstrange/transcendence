@@ -47,6 +47,8 @@ def user_profile(request, id):
         if request.user.is_authenticated:
             auth = request.headers.get('Authorization')
             user_response = requests.get(settings.USERS_SERVICE_HOST_INTERNAL + f"/profile/user/{id}/", headers={'Authorization': auth}, verify=False)
+            if user_response.status_code == 404:
+                return render(request, 'userNotFound.html', context)
             context['user_info'] = user_response.json()['detail']
 
             return render(request, 'userProfileNonEditable.html', context)
@@ -55,7 +57,3 @@ def user_profile(request, id):
             return redirect("/login/")
     else:
         return render(request, 'base.html', context)
-        
-        
-        
-        
