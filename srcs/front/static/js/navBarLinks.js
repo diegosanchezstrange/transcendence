@@ -176,6 +176,7 @@ function fill_friends_list(friends_list_url) {
           friend_request.id = "friend-request";
           reject_button.id = "reject-button";
           friend_name.id = "friend-request-name";
+          friend_name.className = `change_name_${friend.id}`
           friend_name.innerHTML = friend.username;
 
           friend_request.appendChild(friend_id)
@@ -216,6 +217,7 @@ function fill_friends_list(friends_list_url) {
           remove_button.action = friends_list_url;
           remove_button.addEventListener("click", remove_friend_req);
           friend_name.innerHTML = friend.username;
+          friend_name.className = `change_name_${friend.id}`
 
           friend_id.innerHTML = friend.id
           friend_id.style = "display: none;"

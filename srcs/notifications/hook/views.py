@@ -30,8 +30,7 @@ def notification_hook(request, *args, **kwargs):
         group_name,
         {
             "type": "send_message",
-            "ntype": message["ntype"],
-            "message": message['message'],
+            "message": message,
         }
     )
     return JsonResponse({

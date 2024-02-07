@@ -158,7 +158,8 @@ def change_user_name(request, *args, **kwargs):
             send_friend_request_notification(
                 sender=user,
                 receiver=receiver,
-                ntype=NotificationType.NAME_CHANGED
+                ntype=NotificationType.NAME_CHANGED,
+                message=user.username
             )
     except:
         # TODO: Exception handling

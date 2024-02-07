@@ -1,4 +1,4 @@
-function addNotificationBox(title, info, message) {
+function addNotificationBox(title, message) {
   const toastLiveExample = document.getElementById("liveToast");
 
   const newToast = toastLiveExample.cloneNode(true);
@@ -6,7 +6,6 @@ function addNotificationBox(title, info, message) {
   newToast.id = "liveToast" + Math.floor(Math.random() * 1000);
   newToast.querySelector(".toast-body").innerHTML = message;
   newToast.querySelector(".toast-header-title").innerHTML = title;
-  newToast.querySelector(".toast-header-info").innerHTML = info;
 
   document.querySelector(".toast-container").appendChild(newToast);
 
@@ -17,6 +16,21 @@ function addNotificationBox(title, info, message) {
   let toast = new bootstrap.Toast(newToast);
 
   toast.show();
+}
+
+const NotificationType = {
+    Sent: 1,
+    Accepted: 2,
+    Rejected: 3,
+    Removed: 4,
+    NameChanged: 5,
+}
+
+function changeNames(userId, newName) {
+  const namesToChange = document.getElementsByClassName(`change_name_${userId}`);
+  for (let i = 0; i < namesToChange.length; i++) {
+    namesToChange[i].innerText = newName
+  }
 }
 
 class NotificationsWebsocket {
@@ -34,12 +48,17 @@ class NotificationsWebsocket {
       console.log("WebSocket Client Connected");
     };
     this.socket.onmessage = (message) => {
-      let data = JSON.parse(message.data);
-      if (data["ntype"] === 5) {
-      } else {
-        addNotificationBox("New friend request", data["sender"], data["message"]);
+      let data = JSON.parse(message.data)["message"];
+      console.log(data)
+      switch (data["ntype"]) {
+        case NotificationType.NameChanged:
+          changeNames(data["sender"]["id"],data["message"])
+          break;
+        default:
+          addNotificationBox("New friend request", data["message"]);
+          fill_friends_list(USERS_SERVICE_HOST + "/friends/");
+          break;
       }
-      fill_friends_list(USERS_SERVICE_HOST + "/friends/");
     };
   }
 

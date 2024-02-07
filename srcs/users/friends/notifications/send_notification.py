@@ -5,7 +5,9 @@ from src.settings import MICROSERVICE_API_TOKEN, NOTIFICATIONS_SERVICE_HOST
 import os
 
 
-def send_friend_request_notification(sender, receiver, ntype):
+def send_friend_request_notification(sender, receiver, ntype, message=None):
+    if message == None:
+        message = f"{sender.username} {notification_messages[ntype]}"
     data = {
         "sender": {
             "id": sender.id,
@@ -15,7 +17,7 @@ def send_friend_request_notification(sender, receiver, ntype):
             "id": receiver.id,
             "username": receiver.username
         },
-        "message": f"{sender.username} {notification_messages[ntype]}",
+        "message": message,
         "ntype": ntype.value
     }
 

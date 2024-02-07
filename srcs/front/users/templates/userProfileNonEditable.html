@@ -23,13 +23,13 @@
       <!-- Show the user data -->
       <section class="col-7">
         <div class="d-none d-md-block text-left h-26 px-5">
-          <input
+          <p
             id="profile-username"
-            type="text"
+            class="change_name_{{ user_info.id }}"
             style="border: 0px; background: transparent"
-            value="{{ user_info.username }}"
-            disabled
-          />
+          >
+            {{ user_info.username }}
+          </p>
         </div>
         <p class="userstatus d-none d-md-block text-left h-3 px-5">online</p>
         <p class="userdata d-none d-md-block text-left h-75 px-5">
@@ -40,13 +40,6 @@
           Loses:
         </p>
       </section>
-    </div>
-    <div class="row mt-5 ml-1 w-50">
-      <div class="col-12">
-        <h2 class="username d-block d-md-none text-left h-100">
-          {{ user_info.username }}
-        </h2>
-      </div>
     </div>
   </div>
 </main>
