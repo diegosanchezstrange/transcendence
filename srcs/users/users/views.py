@@ -217,6 +217,19 @@ def upload_profile_picture(request, *args, **kwargs):
     path = default_storage.save(save_to, profile_pic)
     profile.profile_pic = path
     profile.save()
+
+    try:
+        receiver = SimpleNamespace(id=-1, username='broadcast')
+        send_friend_request_notification(
+            sender=request.user,
+            receiver=receiver,
+            ntype=NotificationType.IMG_CHANGED,
+            message=f'{settings.IMAGE_HOST}{profile.profile_pic.url}'
+        )
+    except:
+        # TODO: Exception handling
+        pass
+
     return JsonResponse({
         "detail": "Profile pic uploaded.",
         "url": f'{settings.IMAGE_HOST}{profile.profile_pic.url}'

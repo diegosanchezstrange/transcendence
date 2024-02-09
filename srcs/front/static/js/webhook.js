@@ -24,12 +24,22 @@ const NotificationType = {
     Rejected: 3,
     Removed: 4,
     NameChanged: 5,
+    ImgChanged: 6,
 }
 
 function changeNames(userId, newName) {
   const namesToChange = document.getElementsByClassName(`change_name_${userId}`);
   for (let i = 0; i < namesToChange.length; i++) {
     namesToChange[i].innerText = newName
+  }
+}
+
+function changeImgs(userId, newUrl) {
+  const imgsToChange = document.getElementsByClassName(`change_img_${userId}`);
+  console.log("LLega 3");
+  for (let i = 0; i < imgsToChange.length; i++) {
+    let timestamp = new Date().getTime();
+    imgsToChange[i].src = newUrl + "?t=" + timestamp;
   }
 }
 
@@ -49,9 +59,14 @@ class NotificationsWebsocket {
     };
     this.socket.onmessage = (message) => {
       let data = JSON.parse(message.data)["message"];
+      console.log("LLega 1");
       switch (data["ntype"]) {
         case NotificationType.NameChanged:
           changeNames(data["sender"]["id"],data["message"])
+          break;
+        case NotificationType.ImgChanged:
+          console.log("LLega 2");
+          changeImgs(data["sender"]["id"], data["message"])
           break;
         default:
           addNotificationBox("New friend request", data["message"]);

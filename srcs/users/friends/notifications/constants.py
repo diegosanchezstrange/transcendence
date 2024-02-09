@@ -7,6 +7,7 @@ class NotificationType(Enum):
     REJECTED = 3
     REMOVED = 4
     NAME_CHANGED = 5
+    IMG_CHANGED = 6
 
 
 notification_messages = {
@@ -14,5 +15,6 @@ notification_messages = {
     NotificationType.ACCEPTED: " has accepted your friend request.",
     NotificationType.REJECTED: " has rejected your friend request.",
     NotificationType.REMOVED: " has removed you from their friends list.",
-    NotificationType.NAME_CHANGED: ""
+    NotificationType.NAME_CHANGED: "",
+    NotificationType.IMG_CHANGED: ""
 }
