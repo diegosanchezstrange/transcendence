@@ -68,7 +68,7 @@ def create_user(request, *args, **kwargs):
         }
         
         response = requests.post(url, data=body, headers=headers, verify=False)
-        print(headers)
+
         if response.status_code != 201:
             raise Exception("bad")
 

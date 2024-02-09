@@ -9,6 +9,11 @@ from src.settings import MICROSERVICE_API_TOKEN
 from django.core.files.storage import default_storage
 import os
 from src import settings
+from django.db.models import Q
+from friends.models import Friendship, FriendRequest
+from friends.notifications.send_notification import send_friend_request_notification
+from friends.notifications.constants import NotificationType
+from types import SimpleNamespace
 
 
 # Private endpoint decorator
@@ -52,18 +57,6 @@ def dev_view_list_users(request, *args, **kwargs):
 
     return JsonResponse({
         "detail": usernames
-    })
-
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def get_user_by_username(request, username, *args, **kwargs):
-    user = get_object_or_404(User, username=username)
-    return JsonResponse({
-        "id": user.id,
-        "username": user.username,
-        "login": user.userprofile.login,
-        "profile_pic": f'{request.scheme}://{request.get_host()}{user.userprofile.profile_pic.url}'
     })
 
 
@@ -135,12 +128,31 @@ def change_user_name(request, *args, **kwargs):
     if not username:
         return JsonResponse({
             "detail": "No value provided"
-        }, status=304)
+        }, status=400)
 
     user = request.user
 
-    request.user.username = username
-    user.save()
+    original_name = user.username
+    try:
+        user.username = username
+        user.save()
+    except:
+        return JsonResponse({
+            "detail": "Username already taken",
+            "username": original_name
+        }, status="409")
+
+    try:
+        receiver = SimpleNamespace(id=-1, username='broadcast')
+        send_friend_request_notification(
+            sender=user,
+            receiver=receiver,
+            ntype=NotificationType.NAME_CHANGED,
+            message=user.username
+        )
+    except:
+        # TODO: Exception handling
+        pass
 
     return JsonResponse({
         "detail": "User updated successfully"
@@ -153,6 +165,19 @@ def profile_view(request, *args, **kwargs):
     user = request.user
     UserProfile.objects.get_or_create(user=user)
 
+    return JsonResponse({
+        "detail": {
+            "id": user.id,
+            "username": user.username,
+            "login": user.userprofile.login,
+            "profile_pic": f'{settings.IMAGE_HOST}{user.userprofile.profile_pic.url}'
+        }
+    })
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_by_username(request, id, *args, **kwargs):
+    user = get_object_or_404(User, id=id)
     return JsonResponse({
         "detail": {
             "id": user.id,
@@ -192,6 +217,19 @@ def upload_profile_picture(request, *args, **kwargs):
     path = default_storage.save(save_to, profile_pic)
     profile.profile_pic = path
     profile.save()
+
+    try:
+        receiver = SimpleNamespace(id=-1, username='broadcast')
+        send_friend_request_notification(
+            sender=request.user,
+            receiver=receiver,
+            ntype=NotificationType.IMG_CHANGED,
+            message=f'{settings.IMAGE_HOST}{profile.profile_pic.url}'
+        )
+    except:
+        # TODO: Exception handling
+        pass
+
     return JsonResponse({
         "detail": "Profile pic uploaded.",
         "url": f'{settings.IMAGE_HOST}{profile.profile_pic.url}'

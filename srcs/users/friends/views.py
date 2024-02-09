@@ -22,15 +22,21 @@ class FriendView(APIView):
         user = request.user
         friends = Friendship.objects.filter(Q(user1=user) | Q(user2=user))
 
-        names = []
+        users = []
         for friend in friends:
             if friend.user1 == user:
-                names.append(friend.user2.username)
+                users.append({
+                    "username": friend.user2.username,
+                    "id": friend.user2.id
+                })
             elif friend.user2 == user:
-                names.append(friend.user1.username)
+                users.append({
+                    "username": friend.user1.username,
+                    "id": friend.user1.id
+                })
 
         return JsonResponse({
-            "detail": names
+            "users": users
         })
 
 
@@ -40,12 +46,18 @@ class FriendView(APIView):
 
         """
         sender = request.user
-        receiver_name = request.data.get("friend_name")
-        receiver = User.objects.get(username=receiver_name)
+        receiver_id = request.data.get("friend_id")
 
-        if not sender:
+        if not receiver_id:
             return JsonResponse({
-                "detail": "Not friend with this user"
+                "detail": "No id provided"
+            }, status=404)
+
+        try:
+            receiver = User.objects.get(id=receiver_id)
+        except:
+            return JsonResponse({
+                "detail": "Receiver does not exist"
             }, status=404)
 
         friendship = get_object_or_404(Friendship, Q(user1=sender, user2=receiver) | Q(user1=receiver, user2=sender))
@@ -117,10 +129,10 @@ def friend_requests_list(request):
     """
     friend_requests = FriendRequest.objects.filter(receiver=request.user)
 
-    result = [friend_request.sender.username for friend_request in friend_requests if friend_request]
+    result = [{"username": friend_request.sender.username, "id": friend_request.sender.id} for friend_request in friend_requests if friend_request]
 
     return JsonResponse({
-        "detail": result
+        "users": result
     })
 
 
@@ -134,16 +146,19 @@ def accept_friend_request(request, *args, **kwargs):
 
     """
     receiver = request.user
-    sender_name = request.data.get("sender")
-    sender = User.objects.get(username=sender_name)
+    sender_id = request.data.get("sender")
 
-    if not sender:
+    if not sender_id:
+        return JsonResponse({
+            "detail": "No id provided"
+        }, status=400)
+
+    try:
+        sender = User.objects.get(id=sender_id)
+    except:
         return JsonResponse({
             "detail": "Sender does not exist"
         }, status=404)
-
-    if not sender:
-        return JsonResponse({}, status=400)
 
     friend_request = get_object_or_404(FriendRequest, sender=sender, receiver=receiver)
 
@@ -173,16 +188,19 @@ def reject_friend_request(request, *args, **kwargs):
 
     """
     receiver = request.user
-    sender_name = request.data.get("sender")
-    sender = User.objects.get(username=sender_name)
+    sender_id = request.data.get("sender")
 
-    if not sender:
+    if not sender_id:
+        return JsonResponse({
+            "detail": "No id provided"
+        }, status=400)
+
+    try:
+        sender = User.objects.get(id=sender_id)
+    except:
         return JsonResponse({
             "detail": "Sender does not exist"
         }, status=404)
-
-    if not sender:
-        return JsonResponse({}, status=400)
 
     friend_request = get_object_or_404(FriendRequest, sender=sender, receiver=receiver)
 
