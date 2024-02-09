@@ -15,6 +15,8 @@ context = {
     'USERS_SERVICE_HOST': settings.USERS_SERVICE_HOST,
     'NOTIFICATIONS_SERVICE_HOST': settings.NOTIFICATIONS_SERVICE_HOST,
     'NOTIFICATIONS_SOCKETS_HOST': settings.NOTIFICATIONS_SOCKETS_HOST,
+    'GAME_SOCKETS_HOST': settings.GAME_SOCKETS_HOST,
+    'BASE_URL': settings.BASE_URL,
 }
 
 @never_cache
@@ -83,7 +85,7 @@ def home(request):
     auth = request.headers.get('Authorization')
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         if auth is not None and request.user.is_authenticated:
-            user_response = requests.get(settings.USERS_SERVICE_HOST + "/profile/", headers={'Authorization': auth})
+            user_response = requests.get(settings.USERS_SERVICE_HOST_INTERNAL + "/profile/", headers={'Authorization': auth}, verify=False)
             context['user_info'] = user_response.json()['detail']
             response = render(request, 'homeUser.html', context)
         else:

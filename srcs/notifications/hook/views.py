@@ -21,17 +21,17 @@ def private_microservice_endpoint(f):
 @private_microservice_endpoint
 def notification_hook(request, *args, **kwargs):
     message: dict = dict(request.data)
-    print(message)
 
     user_id = message['receiver']['id']
-    group_name = f'group_{user_id}'
 
+    group_name = f'group_{user_id}' if int(user_id) != -1 else "broadcast";
+    print(group_name);
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(
         group_name,
         {
             "type": "send_message",
-            "message": message['message']
+            "message": message,
         }
     )
     return JsonResponse({

@@ -1,3 +1,8 @@
+# Volumes #
+srcs/volumes/static/
+srcs/volumes/database/
+srcs/volumes/images/
+
 # Django #
 *.log
 *.pot

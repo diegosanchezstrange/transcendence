@@ -67,8 +67,8 @@ def create_user(request, *args, **kwargs):
             "Authorization": os.getenv('MICROSERVICE_API_TOKEN')
         }
         
-        response = requests.post(url, data=body, headers=headers)
-        print(headers)
+        response = requests.post(url, data=body, headers=headers, verify=False)
+
         if response.status_code != 201:
             raise Exception("bad")
 

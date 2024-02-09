@@ -1,0 +1,45 @@
+{% load static %}
+<header>{% include "navbar/navbarUser.html" %}</header>
+<main>
+  <div class="container h-50 user-profile">
+    <div class="row m-3 w-100 h-100">
+      <!-- Show the user avatar -->
+      <section class="col-5 h-100 profileimg">
+        <img
+          src="{{ user_info.profile_pic }}"
+          alt="profile"
+          class="img-fluid change_img_{{ user_info.id }}"
+          style="width: 100%; border-radius: 10px"
+          id="user-profile-avatar"
+        />
+        <input
+          type="file"
+          accept=".png,.jpg,.jpeg"
+          name="profile_pic"
+          style="display: none"
+          id="profile-picture-input"
+        />
+      </section>
+      <!-- Show the user data -->
+      <section class="col-7">
+        <div class="d-none d-md-block text-left h-26 px-5">
+          <p
+            id="profile-username"
+            class="change_name_{{ user_info.id }}"
+            style="border: 0px; background: transparent"
+          >
+            {{ user_info.username }}
+          </p>
+        </div>
+        <p class="userstatus d-none d-md-block text-left h-3 px-5">online</p>
+        <p class="userdata d-none d-md-block text-left h-75 px-5">
+          Total games:
+          <br />
+          Wins:
+          <br />
+          Loses:
+        </p>
+      </section>
+    </div>
+  </div>
+</main>

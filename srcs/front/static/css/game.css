@@ -1,0 +1,91 @@
+#dot {
+    position: absolute;
+    width: 5vmin;
+    height: 5vmin;
+    background-color: white;
+    border-radius: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%); /* Start in the middle of the screen */
+    left: 50% /* Start at a fixed vertical position */
+  }
+  #rectangle-left {
+    position: absolute;
+    height: 30%;
+    width: 3%;
+    background-color: white;
+    left:5%;
+    top: 50%;
+    transform: translate(-50%, -50%); /* Start in the middle of the screen */
+  }
+  #rectangle-right {
+    position: absolute;
+    width: 3%;
+    height: 30%;
+    background-color: white;
+    right:2%;
+    top: 50%; /* Start in the middle of the screen */
+    transform: translate(-50%, -50%); /* Start in the middle of the screen */
+  }
+  #court {
+    position: relative;
+    width: 90vmin;
+    height: 60vmin;
+  }
+court::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    border-left: 5px dashed black; /* Adjust the thickness and color as needed */
+    transform: translateX(-50%);
+}
+
+  #parent-container {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+}
+
+.score-panel {
+  position: absolute;
+  top: 12%;
+  width: 90vmin;
+}
+
+.game-score-text {
+  color: white;
+  text-align: center;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 1vw;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 130%; /* 62.4px */
+  letter-spacing: 4.32px;
+}
+
+.game-board {
+	background: #3D3D5B;
+	box-shadow: 0px 4px 4px 3px #FFF;
+}
+
+.board-line-v {
+  position: absolute;
+  right: 50%;
+  display: block;
+  width: 4px;
+  height: 100%;
+  background: rgba(177, 46, 78, 0.50);
+}
+
+.board-line-h {
+  width: 100%;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.50);
+  position: absolute;
+  top: 50%;
+  display: block;
+}

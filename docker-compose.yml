@@ -1,0 +1,159 @@
+version: "3.9"
+
+services:
+  endpoint:
+    container_name: endpoint
+    build: ./srcs/endpoint/
+    image: endpoint
+
+    ports:
+      - "443:443"
+      - "80:80"
+
+    networks:
+      - "internal_microservice"
+    volumes:
+      - './srcs/volumes/static:/static'
+      - './srcs/volumes/images:/images'
+    env_file:
+      - .env
+
+    depends_on:
+      - front
+
+    restart: on-failure
+
+  front:
+    container_name: front
+    build: ./srcs/front/
+    image: front
+
+    networks:
+      - "internal_microservice"
+    volumes:
+      - "./srcs/volumes/static:/static"
+    env_file:
+      - .env
+
+    depends_on:
+      database:
+        condition: service_healthy
+
+    restart: on-failure
+
+  game:
+    container_name: game
+    build: ./srcs/game/
+    image: game
+    env_file:
+      - .env
+
+    networks:
+      - "internal_microservice"
+
+    restart: on-failure
+
+  game_worker:
+    container_name: game_worker
+    build:
+      context: ./srcs/game/
+      dockerfile: Dockerfile.worker
+    image: game_worker
+    env_file:
+      - .env
+
+    networks:
+      - "internal_microservice"
+
+    restart: on-failure
+
+  login:
+    container_name: login
+    build: ./srcs/login/
+    image: login
+
+    networks:
+      - "internal_microservice"
+    env_file:
+      - .env
+
+    restart: on-failure
+
+  matchmaking:
+    container_name: matchmaking
+    build: ./srcs/matchmaking/
+    image: matchmaking
+
+    networks:
+      - "internal_microservice"
+
+    restart: on-failure
+
+  users:
+    container_name: users
+    build: ./srcs/users/
+    image: users
+
+    networks:
+      - "internal_microservice"
+    volumes:
+      - './srcs/volumes/static:/static'
+      - './srcs/volumes/images:/images'
+    env_file:
+      - .env
+
+    restart: on-failure
+
+  notifications:
+    container_name: notifications
+    build: ./srcs/notifications/
+    image: notifications
+
+    networks:
+      - "internal_microservice"
+    env_file:
+      - .env
+
+    restart: on-failure
+
+  redis: # TODO: Make it secure with credentials
+    container_name: redis
+    image: redis:7.2.3-alpine
+
+    ports:
+      - "6379:6379"
+
+    networks:
+      - "internal_microservice"
+
+  database:
+    container_name: database
+    build: ./srcs/database/
+    image: database
+    ports:
+      - "5432:5432"
+
+    networks:
+      - "internal_microservice"
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+
+      #    # Data persistance commented for development purposes
+      #    volumes:
+      #      - './srcs/volumes/database:/var/lib/postgresql/data'
+      #
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+    restart: on-failure
+
+networks:
+  internal_microservice:
+    driver: bridge
+    name: "internal_microservice"

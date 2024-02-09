@@ -34,6 +34,8 @@ ALLOWED_HOSTS = ['*']
 CORS_ALLOW_ALL_ORIGINS = True
 
 
+NOTIFICATIONS_SERVICE_HOST = os.getenv('NOTIFICATIONS_SERVICE_HOST_INTERNAL')
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -153,7 +155,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Own
 
 MICROSERVICE_API_TOKEN = os.getenv('MICROSERVICE_API_TOKEN')
-
+IMAGE_HOST = os.getenv('IMAGE_HOST')
 
 MEDIA_URL = '/profile_pics/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = '/images/profile_pics'
