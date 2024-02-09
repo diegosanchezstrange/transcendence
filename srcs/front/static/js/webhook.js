@@ -49,7 +49,6 @@ class NotificationsWebsocket {
     };
     this.socket.onmessage = (message) => {
       let data = JSON.parse(message.data)["message"];
-      console.log(data)
       switch (data["ntype"]) {
         case NotificationType.NameChanged:
           changeNames(data["sender"]["id"],data["message"])

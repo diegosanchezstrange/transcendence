@@ -13,6 +13,7 @@ from django.db.models import Q
 from friends.models import Friendship, FriendRequest
 from friends.notifications.send_notification import send_friend_request_notification
 from friends.notifications.constants import NotificationType
+from types import SimpleNamespace
 
 
 # Private endpoint decorator
@@ -141,26 +142,14 @@ def change_user_name(request, *args, **kwargs):
             "username": original_name
         }, status="409")
 
-    friend_requests = FriendRequest.objects.filter(sender=user)
-    friend_requests_users = [friend_request.receiver for friend_request in friend_requests]
-
-    friendships = Friendship.objects.filter(Q(user1=user) | Q(user2=user))
-    friends = []
-    for friend in friendships:
-        if friend.user1 == user:
-            friends.append(friend.user2)
-        elif friend.user2 == user:
-            friends.append(friend.user1)
-    users = friends + friend_requests_users
-    
     try:
-        for receiver in users:
-            send_friend_request_notification(
-                sender=user,
-                receiver=receiver,
-                ntype=NotificationType.NAME_CHANGED,
-                message=user.username
-            )
+        receiver = SimpleNamespace(id=-1, username='broadcast')
+        send_friend_request_notification(
+            sender=user,
+            receiver=receiver,
+            ntype=NotificationType.NAME_CHANGED,
+            message=user.username
+        )
     except:
         # TODO: Exception handling
         pass
