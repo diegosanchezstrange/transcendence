@@ -66,3 +66,7 @@
   font-size: large;
   font-weight: bold;
 }
+
+#friend-request-name:hover {
+  cursor: pointer;
+}

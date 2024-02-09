@@ -18,6 +18,11 @@ function friends_link() {
   return false;
 }
 
+function user_link(id) {
+  Router.changePage(`/profile/${id}`);
+  return false;
+}
+
 function send_friend_request(e) {
   e.preventDefault();
   let username_input = document.getElementById("username_input");
@@ -178,6 +183,7 @@ function fill_friends_list(friends_list_url) {
           friend_name.id = "friend-request-name";
           friend_name.className = `change_name_${friend.id}`
           friend_name.innerHTML = friend.username;
+          friend_name.onclick = function () {user_link(friend.id) }
 
           friend_request.appendChild(friend_id)
           friend_request.appendChild(friend_name);
@@ -218,7 +224,8 @@ function fill_friends_list(friends_list_url) {
           remove_button.addEventListener("click", remove_friend_req);
           friend_name.innerHTML = friend.username;
           friend_name.className = `change_name_${friend.id}`
-
+          friend_name.id = "friend-request-name";
+          friend_name.onclick = function () {user_link(friend.id) };
           friend_id.innerHTML = friend.id
           friend_id.style = "display: none;"
 
