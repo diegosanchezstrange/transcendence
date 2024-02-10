@@ -234,3 +234,14 @@ def upload_profile_picture(request, *args, **kwargs):
         "detail": "Profile pic uploaded.",
         "url": f'{settings.IMAGE_HOST}{profile.profile_pic.url}'
     }, status=status_code)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def set_user_status(request, *args, **kwargs):
+    status = request.data.get("is_online")
+
+    profile = request.user.userprofile
+    profile.is_online = True if status else False # This line hurts
+    profile.save()
+
+    return JsonResponse({}, status=200)

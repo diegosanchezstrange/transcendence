@@ -8,6 +8,7 @@ import requests
 from notifications import settings
 from urllib.parse import parse_qs
 from channels.db import database_sync_to_async
+from django.http import JsonResponse
 
 
 
@@ -21,18 +22,19 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             jwt_token = query_dict["token"][0]
         except:
             await self.close()
-            raise Exception("Token not found")
+            return JsonResponse({"detail": "No token provider."}, status=400)
 
         # Find the user from the token in the database
         user_id = await validate_jwt_and_get_user_id(jwt_token)
         if not user_id:
             await self.close()
-            return
+            return JsonResponse({"detail": "Bad token provided."}, status=400)
 
         # user = User.objects.get(pk=user_id)
 
         user = await database_sync_to_async(User.objects.get)(pk=user_id)
         self.id = user_id
+        self.username = user.username
 
         # Create a group named "group_<user_id>"
         await self.channel_layer.group_add(
@@ -50,24 +52,47 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         headers = {
             "Authorization": f"Bearer {jwt_token}"
         }
-        friends = requests.get(settings.USERS_SERVICE_HOST + f"/friends/", headers=headers).json()["detail"]
+        self.headers = headers
+        body = {"is_online": True}
+        requests.put(settings.USERS_SERVICE_HOST_INTERNAL + "/users/status/",json=body, headers=headers, verify=False)
+        friends = requests.get(settings.USERS_SERVICE_HOST_INTERNAL + f"/friends/", headers=headers, verify=False).json()["users"]
 
         for friend in friends:
             await self.channel_layer.group_send(
                 f'group_{friend["id"]}',
                 {
                     'type': 'send_message',
-                    'message': f'{user.username} is online'
+                    'message': {
+                        "message": f'{self.username} is online'
+                    }
                 }
             )
 
         await self.accept()
 
     async def disconnect(self, code):
-        self.channel_layer.group_discard(
-            f'group_{self.id}',
-            self.channel_name
-        )
+        try:
+            body = {"is_online": False}
+            requests.put(settings.USERS_SERVICE_HOST_INTERNAL + "/users/status/",json=body, headers=self.headers, verify=False)
+            friends = requests.get(settings.USERS_SERVICE_HOST_INTERNAL + f"/friends/", headers=self.headers, verify=False).json()["users"]
+
+            for friend in friends:
+                await self.channel_layer.group_send(
+                    f'group_{friend["id"]}',
+                    {
+                        'type': 'send_message',
+                        'message': {
+                            "message": f'{self.username} is offline'
+                        }
+                    }
+                )
+
+            self.channel_layer.group_discard(
+                f'group_{self.id}',
+                self.channel_name
+            )
+        except:
+            pass
 
     async def send_message(self, event):
 

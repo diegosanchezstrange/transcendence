@@ -21,7 +21,7 @@ class FriendView(APIView):
         """
         user = request.user
         friends = Friendship.objects.filter(Q(user1=user) | Q(user2=user))
-
+        print(user.userprofile)
 
 
         users = []
