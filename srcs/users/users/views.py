@@ -183,6 +183,7 @@ def get_user_by_username(request, id, *args, **kwargs):
             "id": user.id,
             "username": user.username,
             "login": user.userprofile.login,
+            "is_online": user.userprofile.is_online,
             "profile_pic": f'{settings.IMAGE_HOST}{user.userprofile.profile_pic.url}'
         }
     })
