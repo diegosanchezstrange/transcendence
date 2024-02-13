@@ -1,22 +1,24 @@
-<header>{% include "navbar/navbarUser.html" %}</header>
+<header>
+    {% include "navbar/navbarUser.html" %}
+</header>
 <main>
-  {% load static %}
-  <div class="flex-container mx-5">
-    <div class="row justify-content-left">
-      <h1>Welcome {{ user_info.username }}</h1>
+    {% load static %}
+    <div class="flex-container mx-5">
+        <div class="row justify-content-left">
+            <h1>Welcome {{ user_info.username }}</h1>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-sm-4 game-card"
+                 type="submit"
+                 onclick="Router.changePage('/pong')">
+                <h2 class="game-card-text">1v1 Game</h2>
+            </div>
+            <div class="col-sm-4 game-card"
+                 type="submit"
+                 onclick="Router.changePage('/lobby')">
+                <h2 class="game-card-text">Tournament</h2>
+            </div>
+        </div>
     </div>
-    <div class="row justify-content-center">
-	    <div class="col-sm-4 game-card" type="submit" onclick="Router.changePage('/home')">
-		  	<h2 class="game-card-text">
-        <a href="/pong">1v1 Game</a> 
-        </h2>
-      </div>
-      <div class="col-sm-4 game-card" type="submit" onclick="Router.changePage('/home')">
-		  	<h2 class="game-card-text">
-        <a href="/lobby">Tournament</a>
-        </h2>
-      </div>
-	  </div>
-    </div>
-  </div>
+</div>
 </main>

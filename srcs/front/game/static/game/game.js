@@ -1,19 +1,109 @@
-dx = 1;
-let rectangle_left = document.getElementById("rectangle-left");
-let rectangle_right = document.getElementById("rectangle-right");
-let dot = document.getElementById("dot");
-const gameSocket = new WebSocket(GAME_SOCKETS_HOST + "/ws/game/test/");
-gameSocket.onmessage = function (e) {
-  const data = JSON.parse(e.data)["game_dict"];
-  // read dgame state dictionary from data to generate relative
-  // positions of the game elements considering the values as percentages
-  // of the court size
-  // update the game elements positions
-  parse_state(data);
-};
-gameSocket.onopen = function (e) {
-  console.log("connection");
-};
+// Check the token and redirect to the login page if it's not valid
+let token = Router.getJwt();
+
+if (!token) {
+  addAlertBox("You need to be logged in to play", "danger", document.body);
+  setTimeout(() => {
+    Router.redirect("/login");
+  }, 2000);
+}
+let dx;
+let rectangle_left;
+let rectangle_right;
+let dot;
+let dotX;
+let dotY;
+
+async function getGames() {
+  let headers = {
+    "X-Requested-With": "XMLHttpRequest",
+    "Content-Type": "application/json",
+    Authorization: "Bearer " + token,
+  };
+
+  //Get the oponent from the URL query param
+  let url = new URL(window.location.href);
+  let oponent = url.searchParams.get("oponent");
+
+  if (!oponent) {
+    addAlertBox(
+      "Oponent not found",
+      "danger",
+      document.getElementsByTagName("main")[0],
+    );
+    setTimeout(() => {
+      Router.changePage("/home");
+    }, 2000);
+  }
+
+  // Get current games from the user
+
+  return fetch(
+    GAME_SERVICE_HOST +
+      new URLSearchParams({
+        oponent: oponent,
+      }),
+    {
+      method: "GET",
+      headers: headers,
+    },
+  )
+    .then((response) => {
+      if (response.status === 401) {
+        throw new Error(response.status);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      if (data["detail"].length === 0) {
+        addAlertBox(
+          "No games found",
+          "danger",
+          document.getElementsByTagName("main")[0],
+        );
+        setTimeout(() => {
+          Router.changePage("/home");
+        }, 2000);
+      } else {
+        console.log(data["detail"]);
+      }
+    })
+    .catch((error) => {
+      console.log(error.message);
+      let errorCode = parseInt(error.message);
+      if (errorCode === 401) {
+        localStorage.removeItem("token");
+        Router.changePage("/login");
+      }
+    });
+}
+
+function createGame() {
+  dx = 1;
+  rectangle_left = document.getElementById("rectangle-left");
+  rectangle_right = document.getElementById("rectangle-right");
+  dot = document.getElementById("dot");
+  dotX = 0;
+  dotY = 0;
+
+  let gameSocket = new WebSocket(
+    GAME_SOCKETS_HOST + "/ws/game" + "" + "/?token=" + token,
+  );
+
+  gameSocket.onmessage = function (e) {
+    const data = JSON.parse(e.data)["game_dict"];
+    parse_state(data);
+  };
+
+  gameSocket.onopen = function (e) {
+    console.log("connection");
+  };
+
+  gameSocket.onclose = function (e) {
+    console.error("Game socket closed unexpectedly");
+  };
+}
+
 function parse_state(data) {
   absolute_pos_left = data["paddle_left"];
   absolute_pos_right = data["paddle_right"];
@@ -24,9 +114,6 @@ function parse_state(data) {
   dot.style.top = `${dotY}%`;
   dot.style.left = `${dotX}%`;
 }
-gameSocket.onclose = function (e) {
-  console.error("Game socket closed unexpectedly");
-};
 
 function moveRectangleRight(dx) {
   if (
@@ -195,3 +282,10 @@ window.addEventListener(
   },
   false,
 );
+
+async function main() {
+  await getGames();
+  createGame();
+}
+
+main();

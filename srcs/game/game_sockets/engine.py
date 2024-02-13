@@ -5,14 +5,9 @@ import time
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
-class GameEngine(threading.Thread):
-
-    playerCount = 0
-
-    players = []
-
-    def __init__(self, channel_name, **kwargs):
-        super(GameEngine, self).__init__(daemon=True, name="GameEngine", **kwargs)
+class Game():
+    def __init__(self, playerLeft, playerRight):
+        # Game status
         self.dx = random.choice([0.5, 1])
         self.group_name = channel_name  
         self.dy = random.choice([0.5, 1])
@@ -24,22 +19,47 @@ class GameEngine(threading.Thread):
         # The following attributes ar4e for the ball
         self.dotX = 50
         self.dotY = 50
-        ## send the initial state to the front to render the game
 
         self.speedX= self.dx*random.choice([-1, 1])
         self.speedY= self.dy*random.choice([-1, 1])
         self.started = True
         self.dotKicked = False
-        #self.start = False
+
         self.game_state = {
             'paddle_right': self.paddle_left,
             'paddle_left': self.paddle_right,
             'ball':[self.dotX,self.dotY] 
         }
 
+        self.status = self.GameStatus.WAITING
+        self.palyerLeftStatus = self.PlayerStatus.WAITING
+        self.playerRightStatus = self.PlayerStatus.WAITING
+
+    class GameStatus():
+        WAITING = "waiting"
+        PLAYING = "playing"
+        FINISHED = "finished"
+    class PlayerStatus():
+        WAITING = "waiting"
+        PLAYING = "playing"
+        DISCONNECTED = "disconnected"
+
+
+
+class GameEngine(threading.Thread):
+
+    playerCount = 0
+
+    players = []
+
+    def __init__(self, channel_name, **kwargs):
+        super(GameEngine, self).__init__(daemon=True, name="GameEngine", **kwargs)
+        self.group_name = "pong"
+        self.games = []
+
     def run(self) -> None:
         while True:
-            self.update_ball_position()  # Update ball position
+            # self.update_ball_position()  # Update ball position
             self.broadcast_state()
             time.sleep(0.016)
 
@@ -47,7 +67,8 @@ class GameEngine(threading.Thread):
         async_to_sync(self.channel_layer.group_send)(
             self.group_name, {"type": "game_update", "game_dict": self.game_state}
         )
-    def restart_state(self):
+
+    def restart_state(self, index):
         self.dotX = 50
         self.dotY = 50
         self.speedX = self.dx*random.choice([-1, 1])
@@ -60,14 +81,14 @@ class GameEngine(threading.Thread):
         self.game_state['ball'] = [self.dotX, self.dotY]
         self.dotKicked = False
 
-    def kick_dot(self):
+    def kick_dot(self, index):
         if not self.started and not self.dotKicked:
             self.restart_state()
             self.started = True
         elif self.started and not self.dotKicked:
             self.dotKicked = True 
 
-    def update_ball_position(self):
+    def update_ball_position(self, index):
         if not self.dotKicked:
             return
         # loosing because of coliision with the left wall
@@ -101,7 +122,7 @@ class GameEngine(threading.Thread):
             self.dotX += self.speedX
         self.game_state['ball'] = [self.dotX, self.dotY] 
 
-    def update_paddle_position(self, player, action):
+    def update_paddle_position(self, player, action, index):
         if action == "W" or action == "UP":
             if self.game_state['paddle_'+player] - self.dx-15 < 1:
                 return

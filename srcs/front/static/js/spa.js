@@ -35,6 +35,17 @@ class Router {
     return localStorage.getItem("token");
   }
 
+  static getUsername() {
+    let token = localStorage.getItem("token");
+    if (token) {
+      let payload = token.split(".")[1];
+      payload = atob(payload);
+      payload = JSON.parse(payload);
+      return payload.username;
+    }
+    return null;
+  }
+
   static insertHtml(html) {
     let parser = new DOMParser();
     let doc = parser.parseFromString(html, "text/html");
