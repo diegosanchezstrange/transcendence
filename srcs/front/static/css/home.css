@@ -35,11 +35,33 @@
 }
 
 #friends-panel {
-  right: 0;
-  top: 100px;
-  width: 220px;
   background: rgba(20, 56, 113, 0.2);
   box-shadow: 0px 3px 6px 9px #B12E4E;
+}
+
+
+
+@media only screen and (min-width: 600px) {
+  #friends-panel {
+    right: 0;
+    top: 100px;
+    width: 220px;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  #friends-panel {
+    top: 600px;
+    right: 20%;
+    position: absolute;
+  }
+  }
+  #profile-icon {
+    right: 15%;
+  }
+  #friends-icon {
+
+  }
 }
 
 #username_input {
@@ -69,11 +91,3 @@
 #friend-request-name:hover {
   cursor: pointer;
 }
-
-#friends-icon {
-  
-}
-
-#profile-icon {
-
-} 
