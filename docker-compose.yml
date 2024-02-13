@@ -3,7 +3,7 @@ version: "3.9"
 services:
   endpoint:
     container_name: endpoint
-    build: ./endpoint/
+    build: ./srcs/endpoint/
     image: endpoint
 
     ports:
@@ -13,8 +13,8 @@ services:
     networks:
       - "internal_microservice"
     volumes:
-      - "./volumes/static:/static"
-      - "./volumes/images:/images"
+      - "./srcs/volumes/static:/static"
+      - "./srcs/volumes/images:/images"
     env_file:
       - .env
 
@@ -25,13 +25,13 @@ services:
 
   front:
     container_name: front
-    build: ./front/
+    build: ./srcs/front/
     image: front
 
     networks:
       - "internal_microservice"
     volumes:
-      - "./volumes/static:/static"
+      - "./srcs/volumes/static:/static"
     env_file:
       - .env
 
@@ -43,7 +43,7 @@ services:
 
   game:
     container_name: game
-    build: ./game/
+    build: ./srcs/game/
     image: game
 
     networks:
@@ -61,7 +61,7 @@ services:
   game_worker:
     container_name: game_worker
     build:
-      context: ./game/
+      context: ./srcs/game/
       dockerfile: Dockerfile.worker
     image: game_worker
     env_file:
@@ -80,7 +80,7 @@ services:
 
   login:
     container_name: login
-    build: ./login/
+    build: ./srcs/login/
     image: login
 
     networks:
@@ -96,7 +96,7 @@ services:
 
   matchmaking:
     container_name: matchmaking
-    build: ./matchmaking/
+    build: ./srcs/matchmaking/
     image: matchmaking
 
     networks:
@@ -106,14 +106,14 @@ services:
 
   users:
     container_name: users
-    build: ./users/
+    build: ./srcs/users/
     image: users
 
     networks:
       - "internal_microservice"
     volumes:
-      - "./volumes/static:/static"
-      - "./volumes/images:/images"
+      - "./srcs/volumes/static:/static"
+      - "./srcs/volumes/images:/images"
     env_file:
       - .env
 
@@ -127,7 +127,7 @@ services:
 
   notifications:
     container_name: notifications
-    build: ./notifications/
+    build: ./srcs/notifications/
     image: notifications
 
     networks:
@@ -153,7 +153,7 @@ services:
 
   database:
     container_name: database
-    build: ./database/
+    build: ./srcs/database/
     image: database
     ports:
       - "5432:5432"
@@ -167,7 +167,7 @@ services:
 
       #    # Data persistance commented for development purposes
       #    volumes:
-      #      - './volumes/database:/var/lib/postgresql/data'
+      #      - './srcs/volumes/database:/var/lib/postgresql/data'
       #
 
     healthcheck:

@@ -43,12 +43,25 @@ end_button.addEventListener("click", function(e) {
     body: body
   })
     .then((response) => {
-      if (response.ok) {
-        return response.text();
-      }
-      throw new Error("Network response was not ok.");
+      if (!response.ok) {
+        response.json().then((json) => {
+          username.value = json.username;
+          addAlertBox(
+            json.detail,
+            "danger",
+            document.getElementById("username-form")
+        );
+        })} else {
+          response.json().then((json) => {
+            addAlertBox(
+              "Username changed!",
+              "success",
+              document.getElementById("username-form")
+            );
+          })
+        }
     })
-  })
+})
 
 
 // Edit profile image
