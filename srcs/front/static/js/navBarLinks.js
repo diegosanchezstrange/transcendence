@@ -222,23 +222,20 @@ function fill_friends_list(friends_list_url) {
           let friend_request = document.createElement("li");
           let friend_name = document.createElement("p");
 
-          let online_status = document.createElement("span");
           let friend_id = document.createElement("p");
           let remove_button = document.createElement("button");
 
           if (friend["is_online"]) {
-            online_status.classList = ["badge badge-success"];
-            online_status.innerHTML = "Online";
+            friend_name.innerHTML = "🟢 ";
           } else {
-            online_status.classList = ["badge badge-danger"];
-            online_status.innerHTML = "Offline";
+            friend_name.innerHTML = "⭕ ";
           }
 
           remove_button.classList = ["btn btn-danger"];
           remove_button.action = friends_list_url;
           remove_button.addEventListener("click", remove_friend_req);
 
-          friend_name.innerHTML = friend.username;
+          friend_name.innerHTML += friend.username;
           friend_name.className = `change_name_${friend.id}`
           friend_name.id = "friend-request-name";
           friend_name.onclick = function () {user_link(friend.id) };
@@ -247,7 +244,6 @@ function fill_friends_list(friends_list_url) {
 
           friend_request.appendChild(friend_id);
           friend_request.appendChild(friend_name);
-          friend_request.appendChild(online_status);
           friend_request.appendChild(remove_button);
           friends_list.appendChild(friend_request);
         });
