@@ -9,7 +9,19 @@ from notifications import settings
 from urllib.parse import parse_qs
 from channels.db import database_sync_to_async
 from django.http import JsonResponse
+from enum import Enum
 
+class NotificationType(Enum):
+    SENT = 1
+    ACCEPTED = 2
+    REJECTED = 3
+    REMOVED = 4
+    NAME_CHANGED = 5
+    IMG_CHANGED = 6
+    USER_ONLINE = 7
+    USER_OFFLINE = 8
+    USER_ONLINE_NOTIFICATION = 9
+    USER_OFFLINE_NOTIFICATION = 10
 
 
 class NotificationConsumer(AsyncWebsocketConsumer):
@@ -63,10 +75,28 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                 {
                     'type': 'send_message',
                     'message': {
-                        "message": f'{self.username} is online'
+                        "message": f'{self.username} is online',
+                        "ntype": NotificationType.USER_ONLINE_NOTIFICATION.value,
+                        "sender": {
+                            "id": self.id,
+                            "username": self.username
+                        },
                     }
                 }
             )
+        await self.channel_layer.group_send(
+            'broadcast',
+            {
+                'type': 'send_message',
+                'message': {
+                    "ntype": NotificationType.USER_ONLINE.value,
+                    "sender": {
+                        "id": self.id,
+                        "username": self.username
+                    },
+                },
+            }
+        )
 
         await self.accept()
 
@@ -76,23 +106,38 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             requests.put(settings.USERS_SERVICE_HOST_INTERNAL + "/users/status/",json=body, headers=self.headers, verify=False)
             friends = requests.get(settings.USERS_SERVICE_HOST_INTERNAL + f"/friends/", headers=self.headers, verify=False).json()["users"]
 
+            print("Antes de enviar a los amigos")
+            await self.channel_layer.group_send(
+                'broadcast',
+                {
+                    'type': 'send_message',
+                    'message': {
+                        "ntype": NotificationType.USER_OFFLINE.value,
+                        "sender": {
+                            "id": self.id,
+                            "username": self.username
+                        },
+                    },
+                }
+            )
             for friend in friends:
                 await self.channel_layer.group_send(
                     f'group_{friend["id"]}',
                     {
                         'type': 'send_message',
                         'message': {
+                            "ntype": NotificationType.USER_OFFLINE_NOTIFICATION.value,
                             "message": f'{self.username} is offline'
                         }
                     }
                 )
-
             self.channel_layer.group_discard(
                 f'group_{self.id}',
                 self.channel_name
             )
         except:
             pass
+
 
     async def send_message(self, event):
 

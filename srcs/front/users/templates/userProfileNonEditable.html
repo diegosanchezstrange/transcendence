@@ -32,9 +32,9 @@
           </p>
         </div>
         {% if user_info.is_online %}
-          <p class="userstatus d-none d-md-block text-left h-3 px-5" style="color: rgb(150, 200, 150);">online</p>
+          <p class="change_status_{{ user_info.id }} userstatus d-none d-md-block text-left h-3 px-5" style="color: rgb(150, 200, 150);">online</p>
         {% else %}
-          <p class="userstatus d-none d-md-block text-left h-3 px-5" style="color: rgb(105, 105, 105);">offline</p>
+          <p class="change_status_{{ user_info.id }} userstatus d-none d-md-block text-left h-3 px-5" style="color: rgb(105, 105, 105);">offline</p>
         {% endif %}
         <p class="userdata d-none d-md-block text-left h-75 px-5">
           Total games:
