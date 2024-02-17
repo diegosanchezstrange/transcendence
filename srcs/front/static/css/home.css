@@ -11,6 +11,10 @@
   left: 5%;
 }
 
+#game-card-space {
+  padding-right: 15%;
+}
+
 .game-card {
   width: calc(200px + 10vw + 10vh);
   height: calc(100px + 3vw + 2vh);
@@ -37,6 +41,7 @@
 #friends-panel {
   background: rgba(20, 56, 113, 0.2);
   box-shadow: 0px 3px 6px 9px #B12E4E;
+  margin: 2rem;
 }
 
 #friends-icon {
@@ -47,14 +52,20 @@
   position: absolute;
 }
 
-@media only screen and (min-width: 1000px) {
+#game-card-space {
+  padding-right: 15%;
+}
+
+@media only screen and (min-width: 990px) {
   #friends-panel {
     right: 0;
     top: 100px;
-    width: 220px;
+    width: 15rem;
   }
   #friends-icon {
     right: 2%;
+    height: 30px;
+    top: 2px;
   }
   #profile-icon {
     right: 4rem;
@@ -62,10 +73,11 @@
   }
 }
 
-@media only screen and (max-width: 1000px) {
+@media only screen and (max-width: 990px) {
   #friends-panel {
     top: 600px;
-    right: 20%;
+    left: 0%;
+    margin: 6%;
     position: absolute;
   }
   #friends-icon {
