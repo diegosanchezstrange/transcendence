@@ -219,7 +219,8 @@ function fill_friends_list(friends_list_url) {
           let friend_id = document.createElement("p");
           let remove_button = document.createElement("button");
 
-          remove_button.classList = ["btn btn-danger"];
+          remove_button.classList = ["btn btn-danger p-1 m-2"];
+          remove_button.textContent = "Unfriend";
           remove_button.action = friends_list_url;
           remove_button.addEventListener("click", remove_friend_req);
           friend_name.innerHTML = friend.username;
