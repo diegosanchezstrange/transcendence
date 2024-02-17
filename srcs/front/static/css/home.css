@@ -30,12 +30,16 @@
   color: #b12e4e;
   text-align: center;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-size: 36px;
+  font-size: x-large;
   font-style: normal;
   font-weight: 700;
   line-height: 140%;
   letter-spacing: 4.32px;
-  padding: 3.4vw
+  padding: 3vw;
+  margin: 1rem;
+  position: relative;
+  bottom: 10%;
+  height: 100%;
 }
 
 #friends-panel {
@@ -70,6 +74,9 @@
   #profile-icon {
     right: 4rem;
     top: 58%;
+  }
+  .game-card-text {
+    font-size: xx-large;
   }
 }
 
