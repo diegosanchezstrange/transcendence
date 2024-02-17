@@ -2,11 +2,6 @@ main {
   height: 75%;
 }
 
-.user-profile {
-  position: absolute;
-  left: 10%;
-}
-
 #img-edit-button {
   background: transparent;
   border: none !important;

@@ -1,7 +1,7 @@
 {% load static %}
 <header>{% include "navbar/navbarUser.html" %}</header>
 <main>
-  <div class="container h-50 user-profile">
+  <div class="container h-50">
     <div class="row m-3 w-100 h-100">
       <!-- Show the user avatar -->
       <section class="col-12 col-md-5 profileimg">
@@ -85,13 +85,6 @@
           Loses:
         </p>
       </section>
-    </div>
-    <div class="row mt-5 ml-1 w-50">
-      <div class="col-12">
-        <h2 class="username d-block d-md-none text-left h-100">
-          {{ user_info.username }}
-        </h2>
-      </div>
     </div>
   </div>
 </main>
