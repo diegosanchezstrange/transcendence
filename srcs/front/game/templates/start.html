@@ -1,20 +1,24 @@
 {% load static %}
-<header>{% include "navbar/navbarUser.html" %}</header>
+<header>
+    {% include "navbar/navbarUser.html" %}
+</header>
 <main>
-  <div id="parent-container">
-    <div class="score-panel row justify-content-center">
-      <span class="game-score-text col-4">{{ game_info.player_1 }}</span>
-      <span class="game-score-text col-4">{{ game_info.score_1}} - {{ game_info.score_2 }}</span>
-      <span class="game-score-text col-4">{{ game_info.player_2 }}</span>
+    <div id="parent-container">
+        <div class="score-panel row justify-content-center">
+            <span class="game-score-text col-4">{{ game_info.player_1 }}</span>
+            <span id="scoreLeft" class="game-score-text col-4">{{ game_info.score_1 }}</span>
+            <span class="game-score-text col-4">-</span>
+            <span id="scoreRight" class="game-score-text col-4">{{ game_info.score_2 }}</span>
+            <span class="game-score-text col-4">{{ game_info.player_2 }}</span>
+        </div>
+        <div class="game-board" id="court">
+            <span class="board-line-v"></span>
+            <span class="board-line-h"></span>
+            <div id="rectangle-left"></div>
+            <div id="rectangle-right"></div>
+            <div id="dot"></div>
+        </div>
     </div>
-    <div class="game-board" id="court">
-      <span class="board-line-v"></span>
-      <span class="board-line-h"></span>
-      <div id="rectangle-left"></div>
-      <div id="rectangle-right"></div>
-      <div id="dot"></div>
-    </div>
-  </div>
-  <button id="send">Send</button>
-  <script src="{% static 'game/game.js' %}"></script>
+    <button id="send">Send</button>
+    <script src="{% static 'game/game.js' %}"></script>
 </main>

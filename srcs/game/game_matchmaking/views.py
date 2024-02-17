@@ -21,19 +21,33 @@ def challenge_user(request):
         print('opponent is required')
         return JsonResponse({'error': 'opponent is required'}, status=400)
 
+    # Check if a Game already exists for the user and are waiting, IN_PROGRESS or PAUSED
     try:
-        opponentObj = User.objects.get(username=opponent)
-    except User.DoesNotExist:
-        return JsonResponse({'error': 'opponent does not exist'}, status=404)
-    except:
+        game = Game.objects.filter(Q(playerLeft=request.user) | Q(playerRight=request.user)).filter(Q(status=Game.GameStatus.WAITING) | Q(status=Game.GameStatus.IN_PROGRESS) | Q(status=Game.GameStatus.PAUSED))
+        if game.exists():
+            return JsonResponse({'error': 'game already exists'}, status=409)
+    except Exception as e:
+        print(e)
         return JsonResponse({'error': 'error while querying the database'}, status=500)
 
-    #Check if the user has any gamees in progress or waiting
-    # game = Game.objects.filter(Q(playerLeft=request.user) | Q(playerRight=request.user)).filter(Q(status=Game.GameStatus.WAITING) | Q(status=Game.GameStatus.IN_PROGRESS))
+    try:
+        opponentObj = User.objects.get(id=opponent)
+    except User.DoesNotExist:
+        print('opponent does not exist')
+        return JsonResponse({'error': 'opponent does not exist'}, status=404)
+    except Exception as e:
+        print(e)
+        return JsonResponse({'error': 'error while querying the database'}, status=500)
 
-    # game = Game.objects.create(playerLeft=request.user, playerRight=opponentObj)
-    # game.save()
-    invite = GameInvite.objects.create(game=None, sender=request.user, receiver=opponentObj)
+    try:
+        oldInvite = GameInvite.objects.filter(sender=request.user, receiver=opponentObj).filter(status=GameInvite.InviteStatus.PENDING)
+        if oldInvite.exists():
+            return JsonResponse({'error': 'invite already sent'}, status=409)
+        invite = GameInvite.objects.create(game=None, sender=request.user, receiver=opponentObj)
+        invite.save()
+    except Exception as e:
+        print(e)
+        return JsonResponse({'error': 'error while creating the invite'}, status=500)
 
     try:
         send_friend_request_notification(request.user, opponentObj, NotificationType.CHALLENGE)
@@ -52,11 +66,19 @@ def get_user_challenges(request):
         return JsonResponse({'error': 'user is required'}, status=400)
 
     inviteStatus = request.query_params.get('status')
+    opponent = request.query_params.get('opponent')
 
     try:
         invites = GameInvite.objects.filter(receiver=user)
+        print('invites', invites)
+        if opponent:
+            opponentObj = User.objects.get(username=opponent)
+            print('opponentObj', opponentObj)
+            invites = GameInvite.objects.filter(receiver=opponentObj, sender=user)
+            print('invites', invites)
         if inviteStatus:
             invites = invites.filter(status=inviteStatus)
+            print('invites', invites)
     except GameInvite.DoesNotExist:
         return JsonResponse({'error': 'no invites found'}, status=404)
     except:
@@ -70,6 +92,7 @@ def get_user_challenges(request):
             'receiver': invite.receiver.username,
             'status': invite.status
         })
+    print(invitesList)
     return JsonResponse({'detail': invitesList}, status=200)
 
 @never_cache
@@ -95,6 +118,9 @@ def accept_challenge(request):
 
     game = Game.objects.create(playerLeft=invite.sender, playerRight=invite.receiver)
     game.save()
+
+    invite.game = game
+    invite.save()
 
     return JsonResponse({'game_id': game.id}, status=201)
 

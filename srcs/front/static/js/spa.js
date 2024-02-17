@@ -24,6 +24,7 @@ function addAlertBox(message, type, container) {
   alert.id = "alert";
   alert.innerHTML = message;
   container.prepend(alert);
+  return alert;
 }
 
 class Router {

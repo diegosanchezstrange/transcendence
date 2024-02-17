@@ -17,7 +17,10 @@ context = {
 @never_cache
 @api_view(['GET'])
 def start(request):
-    context['PATH'] = 'pong'
+    if request.query_params.get('opponent'):
+        context['PATH'] = 'pong/?opponent=' + request.query_params.get('opponent')
+    else:
+        context['PATH'] = 'pong'
     auth = request.headers.get('Authorization')
     # TO DO: request game info from database
     context['game_info'] = {

@@ -4,10 +4,10 @@ NEEDS_LIB = login game matchmaking users
 
 all: #commons
 	[ -d $(VOL_DIR)/mysql ] || mkdir -p $(VOL_DIR)/mysql
-	docker-compose -f ./srcs/docker-compose.yml up -d
+	docker-compose up -d
 
 build:
-	docker-compose -f ./srcs/docker-compose.yml --env-file ./srcs/.env build --no-cache
+	docker-compose --env-file ./srcs/.env build --no-cache
 
 stop:
 	docker stop $(shell docker ps -qa)
@@ -20,7 +20,7 @@ prune:
 	docker volume prune
 
 re:
-	docker-compose -f ./srcs/docker-compose.yml up --force-recreate --no-deps -d
+	docker-compose  up --force-recreate --no-deps -d
 
 commons:
 	cd srcs/ && python setup.py sdist bdist_wheel && pip install --force-reinstall dist/tcommons-1.0.0-py3-none-any.whl
@@ -30,13 +30,13 @@ build-commons:
 
 # Services that need commons
 game  game_worker login matchmaking users:
-	docker-compose -f ./srcs/docker-compose.yml up --build -d $@
+	docker-compose  up --build -d $@
 
 # Services that don't need commons
 front database endpoint redis:
-	docker-compose -f ./srcs/docker-compose.yml up --build -d $@
+	docker-compose  up --build -d $@
 
 db:
-	docker-compose -f ./srcs/docker-compose.yml up --build -d database
+	docker-compose  up --build -d database
 
 .PHONY: clean re stop build db all 

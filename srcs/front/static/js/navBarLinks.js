@@ -134,7 +134,8 @@ function remove_friend_req(e) {
 }
 
 function challenge_friend(e) {
-  let friend_name = e.target.parentElement.firstChild.innerHTML;
+  let friend_id = e.target.parentElement.firstChild.innerHTML;
+  let friend_name = e.target.parentElement.firstChild.nextSibling.innerHTML;
   let headers = {
     "X-Requested-With": "XMLHttpRequest",
     "Content-Type": "application/json",
@@ -147,7 +148,7 @@ function challenge_friend(e) {
     // credentials: "include",
     headers: headers,
     body: JSON.stringify({
-      opponent: friend_name,
+      opponent: friend_id,
     }),
   })
     .then(function (response) {
@@ -161,7 +162,7 @@ function challenge_friend(e) {
 }
 
 function accept_game_req(e) {
-  let invite_id = e.target.parentElement.firstChild.id;
+  let invite_id = e.target.parentElement.id;
 
   let headers = {
     "X-Requested-With": "XMLHttpRequest",
@@ -187,7 +188,7 @@ function accept_game_req(e) {
 }
 
 function reject_game_req(e) {
-  let invite_id = e.target.parentElement.firstChild.id;
+  let invite_id = e.target.parentElement.id;
 
   let headers = {
     "X-Requested-With": "XMLHttpRequest",
@@ -292,6 +293,7 @@ function fill_friends_list(friends_list_url) {
     .then(function (json) {
       if (json["detail"].length != 0) {
         let games_list = document.getElementById("games_requests");
+        games_list.innerHTML = "";
         json["detail"].forEach(function (game) {
           // Accept button
           let accept_button = document.createElement("button");
@@ -379,33 +381,4 @@ function fill_friends_list(friends_list_url) {
     .catch(function (error) {
       console.log(error);
     });
-
-  // for (let i = 0; i < friends.length; i++) {
-  //     let friend = friends[i];
-  //     let friend_li = document.createElement("li");
-  //     let friend_link = document.createElement("a");
-  //
-  //     friend_link.href = "/profile/" + friend.username + "/";
-  //     friend_link.innerHTML = friend.username;
-  //
-  //     friend_li.appendChild(friend_link);
-  //     friends_list.appendChild(friend_li);
-  // }
 }
-
-// window.onload = function () {
-//   let profile_link = document.getElementById("profile_link");
-//
-//   let fiends_link = document.getElementById("fiends_link");
-//
-//   profile_link.onclick = function () {
-//     Router.changePage("/profile/");
-//
-//     return false;
-//   };
-//
-//   fiends_link.onclick = function () {
-//     Router.changePage("/friends/");
-//     return false;
-//   };
-// };
