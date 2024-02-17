@@ -8,8 +8,7 @@ main {
   width: 25px;
   height: 25px;
   position: relative;
-  left: calc(22rem + 2.5vw);
-  top: 0rem;
+  top: 1rem;
   &:hover {
     cursor: pointer;
   }
@@ -82,8 +81,7 @@ main {
     width: 25px;
     height: 25px;
     position: relative;
-    left: 16rem;
-    bottom: 3rem
+    bottom: 3rem;
   }
 
   #confirm-name-edit-button {
@@ -104,22 +102,27 @@ main {
     font-size: calc(4rem + 1vw);
     font-family: Verdana, Geneva, Tahoma, sans-serif !important;
     font-weight: bold;
-    margin-bottom: 0%;
-    margin-left: 5%;
+    margin: 4rem;
+    margin-bottom: 2rem;
+    margin-left: auto;
   }
   
   #user-profile-avatar {
-    height: 400px;
-    width: 400px;
+    width: 80%;
+    height: auto;
   }
   
+  #img-edit-button {
+    margin-left: 3rem;
+}
+
   .profileimg {
     max-width: 400px;
   }
   
   .userstatus {
     color: rgb(150, 200, 150);
-    font-size: calc(1rem + 0.6vw);
+    font-size: calc(1.2rem + 1vw);
     font-family: Verdana, Geneva, Tahoma, sans-serif !important;
     font-weight: 600;
     line-height: 2;
@@ -128,7 +131,7 @@ main {
   
   .userdata {
     color: whitesmoke;
-    font-size: calc(0.8rem + 0.6vw);
+    font-size: calc(1.2rem + 1vw);
     font-family: Verdana, Geneva, Tahoma, sans-serif !important;
     font-weight: 600;
     line-height: 2;
@@ -140,4 +143,7 @@ main {
   #img-edit-button {
     left: calc(16rem + 2.5vw);
 }
+  #profile-username {
+    font-size: calc(3.5rem + 1.2vw);
+  }
 }
