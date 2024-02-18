@@ -73,6 +73,7 @@ class NotificationsWebsocket {
       switch (data["ntype"]) {
         case NotificationType.NameChanged:
           changeNames(data["sender"]["id"],data["message"])
+          fill_friends_list(USERS_SERVICE_HOST + "/friends/");
           break;
         case NotificationType.ImgChanged:
           changeImgs(data["sender"]["id"], data["message"])
