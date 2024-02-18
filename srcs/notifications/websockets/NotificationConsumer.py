@@ -106,7 +106,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             requests.put(settings.USERS_SERVICE_HOST_INTERNAL + "/users/status/",json=body, headers=self.headers, verify=False)
             friends = requests.get(settings.USERS_SERVICE_HOST_INTERNAL + f"/friends/", headers=self.headers, verify=False).json()["users"]
 
-            print("Antes de enviar a los amigos")
             await self.channel_layer.group_send(
                 'broadcast',
                 {
