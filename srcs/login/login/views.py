@@ -87,7 +87,6 @@ def create_user(request, *args, **kwargs):
 def login_oauth(request, *args, **kwargs):
     # Get 42 access token with the return code
     code = request.data.get('code')
-    print(code)
     if not code:
         return JsonResponse({
             "detail": "Code missing."
@@ -98,7 +97,7 @@ def login_oauth(request, *args, **kwargs):
         "client_id": settings.LOGIN_42_CLIENT,
         "client_secret": settings.LOGIN_42_SECRET,
         "code": code,
-        "redirect_uri": "http://localhost:3000/login/auth42/"
+        "redirect_uri": f"{settings.BASE_URL}/login/auth42/"
     }
     headers = {
         "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
@@ -147,7 +146,7 @@ def login_oauth(request, *args, **kwargs):
         "username": username
     }
     url = f"{settings.USERS_SERVICE_HOST}/users/create/42/"
-    response = requests.post(url, headers=headers, data=body)
+    response = requests.post(url, headers=headers, data=body, verify=False)
     if response.status_code not in (200, 201):
         return JsonResponse({
             "detail": "Unable to get or create user."
