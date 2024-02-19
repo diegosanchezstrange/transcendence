@@ -55,7 +55,18 @@ def create_user(request, *args, **kwargs):
                 "status": 409,
                 "message": f"User with username '{username}' already exists."
             }, status=409)
-        
+
+        if len(username) > 32:
+            return JsonResponse({
+                "status": 400,
+                "message": "Username cannot be more than 32 characters"
+            }, status=400)
+        if len(password) > 32:
+            return JsonResponse({
+                "status": 400,
+                "message": "Password cannot be more than 32 characters"
+            }, status=400)
+
         body = {
             "username": username,
             "password": password
@@ -66,7 +77,7 @@ def create_user(request, *args, **kwargs):
         headers = {
             "Authorization": os.getenv('MICROSERVICE_API_TOKEN')
         }
-        
+
         response = requests.post(url, data=body, headers=headers, verify=False)
 
         if response.status_code != 201:

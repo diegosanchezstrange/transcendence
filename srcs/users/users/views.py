@@ -137,14 +137,20 @@ def get_or_create_user_oauth(request, *args, **kwargs):
 def change_user_name(request, *args, **kwargs):
     username = request.data.get('username') or request.user.username
 
+    user = request.user
+    original_name = user.username
+
     if not username:
         return JsonResponse({
-            "detail": "No value provided"
+            "detail": "No value provided",
+            "original_name": original_name
+        }, status=400)
+    if len(username) > 32:
+        return JsonResponse({
+            "detail": "Username cannot be more than 32 characters",
+            "original_name": original_name
         }, status=400)
 
-    user = request.user
-
-    original_name = user.username
     try:
         user.username = username
         user.save()
@@ -167,7 +173,9 @@ def change_user_name(request, *args, **kwargs):
         pass
 
     return JsonResponse({
-        "detail": "User updated successfully"
+        "detail": "User updated successfully",
+        "username": username,
+        "original_name": original_name
     }, status=200)
 
 
