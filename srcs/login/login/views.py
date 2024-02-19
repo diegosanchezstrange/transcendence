@@ -104,12 +104,6 @@ def login_oauth(request, *args, **kwargs):
     }
     access_token = requests.post(url, data=body, headers=headers)
 
-    print(body)
-
-    print(access_token.headers)
-
-    print(access_token.json())
-
     if access_token.status_code != 200:
         return JsonResponse({
             "detail": "Invalid code."
@@ -117,7 +111,6 @@ def login_oauth(request, *args, **kwargs):
 
     access_token = access_token.json().get("access_token")
 
-    print(access_token)
 
     # Get user info with the access token
     url = f"{settings.API_INTRA_URL}/v2/me"
@@ -138,12 +131,15 @@ def login_oauth(request, *args, **kwargs):
         }, status=401)
 
     # Get or create user with the 42 username
-    username = response.json().get("login")
+    json_response = response.json()
+    username = json_response.get("login")
+    image_url = json_response['image']['versions']['large']
     headers = {
         "Authorization": settings.MICROSERVICE_API_TOKEN
     }
     body = {
-        "username": username
+        "username": username,
+        "image_url": image_url
     }
     url = f"{settings.USERS_SERVICE_HOST}/users/create/42/"
     response = requests.post(url, headers=headers, data=body, verify=False)

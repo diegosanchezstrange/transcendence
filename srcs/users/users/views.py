@@ -14,7 +14,7 @@ from friends.models import Friendship, FriendRequest
 from friends.notifications.send_notification import send_friend_request_notification
 from friends.notifications.constants import NotificationType
 from types import SimpleNamespace
-
+import requests
 
 # Private endpoint decorator
 # TODO: put in common lib
@@ -82,6 +82,7 @@ def create_user(request, *args, **kwargs):
 @private_microservice_endpoint
 def get_or_create_user_oauth(request, *args, **kwargs):
     login = request.data.get('username')
+    image_url = request.data.get('image_url')
 
     try:
         user = UserProfile.objects.get(login=login).user
@@ -96,8 +97,14 @@ def get_or_create_user_oauth(request, *args, **kwargs):
             user = User.objects.create_user(username=username)
             user.set_unusable_password()
             user.save()
+
+            profile_pic = requests.get(image_url)
+            save_to = f'{settings.MEDIA_ROOT}/{user.id}.jpg'
+            open(save_to, 'wb').write(profile_pic.content)
+
             profile, created = UserProfile.objects.get_or_create(user=user)
             profile.login = login
+            profile.profile_pic = f"/{user.id}.jpg"
             profile.save()
             return JsonResponse({
                 "detail": "User created successfully",
@@ -108,10 +115,15 @@ def get_or_create_user_oauth(request, *args, **kwargs):
         while User.objects.filter(username=f'{username}{suffix}').exists():
             suffix += 1
 
+        profile_pic = requests.get(image_url)
+        save_to = f'{settings.MEDIA_ROOT}/{user.id}.jpg'
+        open(save_to, 'wb').write(profile_pic.content)
+
         user = User.objects.create_user(username=f'{username}{suffix}')
         user.set_unusable_password()
         profile = UserProfile.objects.get(user=user)
         profile.login = login
+        profile.profile_pic = f"/{user.id}.jpg"
         profile.save()
 
         return JsonResponse({
@@ -200,7 +212,7 @@ def upload_profile_picture(request, *args, **kwargs):
         }, status=400)
 
     profile = request.user.userprofile
-    username = request.user.username
+    user_id = request.user.id
 
     file_extension = os.path.splitext(profile_pic.name)[1]
     if file_extension[1:] not in ('jpg', 'jpeg', 'png'):
@@ -209,7 +221,7 @@ def upload_profile_picture(request, *args, **kwargs):
         }, status=400)
 
     status_code = 201
-    save_to = f'{settings.MEDIA_ROOT}/{username}{file_extension}'
+    save_to = f'{settings.MEDIA_ROOT}/{user_id}{file_extension}'
 
     if default_storage.exists(save_to):
         default_storage.delete(save_to)
