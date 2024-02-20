@@ -3,18 +3,18 @@
 <!-- Path: navbarHome.html -->
 
 {% load static %}
-<nav class="navbar navbar-expand-lg border-bottom border-3 mb-5">
+<nav class="navbar navbar-expand-lg border-bottom border-3 mb-5 text-center">
   <div class="container-fluid">
     <a class="navbar-brand" href="#">
       <img
-        class="d-none d-md-block"
+        class="d-block d-sm-none d-md-block"
         src="{% static 'img/logo.png' %}"
         width="50"
         height="50"
         alt="Pong logo"
       />
     </a>
-    <h1 class="container-fluid, page-title">PONG THAT PANG</h1>
+    <h1 class="d-none d-sm-block container-fluid page-title">PONG THAT PANG</h1>
     <button
       class="navbar-toggler"
       type="button"
@@ -26,35 +26,18 @@
     >
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse">
-      <div class="ms-auto">
-        <button
-          class="btn"
-          type="submit"
-          onclick="Router.changePage('/register')"
-        >
-          Register
-        </button>
-        <button class="btn" type="submit" onclick="Router.changePage('/login')">
-          Login
-        </button>
-      </div>
+    <div class="collapse navbar-collapse" id="navbarHome">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a onclick="Router.changePage('/register')" class="nav-link" href="{{ BASE_URL }}/login"
+          >Login</a>
+        </li>
+        <li class="nav-item">
+          <a onclick="Router.changePage('/register')" class="nav-link" href="{{ BASE_URL }}/register"
+            >Register</a
+          >
+        </li>
+      </ul>
     </div>
   </div>
 </nav>
-
-<!-- <div class="container-fluid">
-
-
-    <div class="collapse navbar-collapse" id="navbarUser">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link" href="">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="">Rankings</a>
-        </li>
-      </ul>
-      
-    </div>
-</div> -->
