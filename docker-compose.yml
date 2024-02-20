@@ -51,6 +51,10 @@ services:
     networks:
       - "internal_microservice"
 
+    depends_on:
+      database:
+        condition: service_healthy
+
     restart: on-failure
 
   game_worker:
@@ -65,6 +69,10 @@ services:
     networks:
       - "internal_microservice"
 
+    depends_on:
+      database:
+        condition: service_healthy
+
     restart: on-failure
 
   login:
@@ -77,6 +85,10 @@ services:
     env_file:
       - .env
 
+    depends_on:
+      database:
+        condition: service_healthy
+
     restart: on-failure
 
   matchmaking:
@@ -86,6 +98,10 @@ services:
 
     networks:
       - "internal_microservice"
+
+    depends_on:
+      database:
+        condition: service_healthy
 
     restart: on-failure
 
@@ -102,6 +118,10 @@ services:
     env_file:
       - .env
 
+    depends_on:
+      database:
+        condition: service_healthy
+
     restart: on-failure
 
   notifications:
@@ -113,6 +133,10 @@ services:
       - "internal_microservice"
     env_file:
       - .env
+
+    depends_on:
+      database:
+        condition: service_healthy
 
     restart: on-failure
 

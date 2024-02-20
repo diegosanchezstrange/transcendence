@@ -48,8 +48,8 @@ def login_42(request):
     if code is None:
         return HttpResponse('No code provided')
     
-    token = requests.post(settings.LOGIN_SERVICE_HOST + "/auth/login/42/",
-                          data={'code': code})
+    token = requests.post(settings.LOGIN_SERVICE_HOST_INTERNAL + "/auth/login/42/",
+                          data={'code': code}, verify=False)
     print(token.json())
     if token.status_code != 200:
         return HttpResponse("Invalid code")

@@ -45,7 +45,7 @@ end_button.addEventListener("click", function(e) {
     .then((response) => {
       if (!response.ok) {
         response.json().then((json) => {
-          username.value = json.username;
+          username.value = json.original_name;
           addAlertBox(
             json.detail,
             "danger",
@@ -53,11 +53,13 @@ end_button.addEventListener("click", function(e) {
         );
         })} else {
           response.json().then((json) => {
-            addAlertBox(
-              "Username changed!",
-              "success",
-              document.getElementById("username-form")
-            );
+            if (json.original_name !== username.value) {
+              addAlertBox(
+                "Username changed!",
+                "success",
+                document.getElementById("username-form")
+              );
+            }
           })
         }
     })

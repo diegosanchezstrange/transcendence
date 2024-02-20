@@ -47,6 +47,11 @@ function send_friend_request(e) {
         let res = await response.json();
         throw new Error(res["detail"]);
       }
+
+      return response.json();
+    })
+    .then(function (response) {
+      if (response.ok) fill_friends_list(USERS_SERVICE_HOST + "/friends/");
     })
     .catch(function (error) {
       let container = document.getElementById("friends_requests");
@@ -216,14 +221,22 @@ function fill_friends_list(friends_list_url) {
         json["users"].forEach(function (friend) {
           let friend_request = document.createElement("li");
           let friend_name = document.createElement("p");
+
           let friend_id = document.createElement("p");
           let remove_button = document.createElement("button");
+
+          if (friend["is_online"]) {
+            friend_name.innerHTML = "🟢 ";
+          } else {
+            friend_name.innerHTML = "⭕ ";
+          }
 
           remove_button.classList = ["btn btn-danger"];
           remove_button.action = friends_list_url;
           remove_button.addEventListener("click", remove_friend_req);
-          friend_name.innerHTML = friend.username;
-          friend_name.className = `change_name_${friend.id}`
+
+          friend_name.innerHTML += friend.username;
+          //friend_name.className = `change_name_${friend.id}`
           friend_name.id = "friend-request-name";
           friend_name.onclick = function () {user_link(friend.id) };
           friend_id.innerHTML = friend.id
@@ -239,18 +252,6 @@ function fill_friends_list(friends_list_url) {
     .catch(function (error) {
       console.log(error);
     });
-
-  // for (let i = 0; i < friends.length; i++) {
-  //     let friend = friends[i];
-  //     let friend_li = document.createElement("li");
-  //     let friend_link = document.createElement("a");
-  //
-  //     friend_link.href = "/profile/" + friend.username + "/";
-  //     friend_link.innerHTML = friend.username;
-  //
-  //     friend_li.appendChild(friend_link);
-  //     friends_list.appendChild(friend_li);
-  // }
 }
 
 // window.onload = function () {

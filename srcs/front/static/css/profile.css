@@ -62,7 +62,6 @@ main {
 }
 
 .userstatus {
-  color: rgb(150, 200, 150);
   font-size: calc(0.4rem + 0.6vw);
   font-family: Verdana, Geneva, Tahoma, sans-serif !important;
   font-weight: 600;
