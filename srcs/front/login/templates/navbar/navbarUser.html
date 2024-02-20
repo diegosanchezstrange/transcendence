@@ -5,7 +5,7 @@
   <div class="container-fluid">
     <a class="navbar-brand" href="#">
       <img
-        class="d-sm-none d-lg-block"
+        class="d-none d-md-block"
         src="{% static 'img/logo.png' %}"
         width="50"
         height="50"
@@ -39,11 +39,13 @@
       <div id="friends_dropdown" class="dropdown">
         <button
           type="button"
+          id="friends-icon"
           class="btn btn-default dropdown-toggle pe-3"
           data-bs-toggle="dropdown"
           data-bs-auto-close="outside"
         >
-          <i class="fa-solid fa-user-group fa-2x"></i>
+          <i class="d-lg-none fa-solid fa-user-group fa-xl"></i>
+          <i class="d-none d-lg-block fa-solid fa-user-group fa-2xl"></i>
         </button>
         <div class="dropdown-menu dropdown-menu-end" id="friends-panel">
           <form
@@ -66,9 +68,10 @@
           <ul id="friends_list"></ul>
         </div>
       </div>
-      <a onclick="profile_link()" href="#" class="me-5"
-        ><i class="fa-solid fa-user fa-2x"></i
-      ></a>
+      <a onclick="profile_link()" href="#" id="profile-icon" class="me-5">
+        <i class="d-lg-none fa-solid fa-user fa-xl"></i>
+        <i class="d-none d-lg-block fa-solid fa-user fa-2xl"></i>
+      </a>
       <!-- <button class="btn btn-outline-success" type="submit">Login</button> -->
     </div>
   </div>
