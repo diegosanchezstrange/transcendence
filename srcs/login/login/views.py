@@ -55,7 +55,18 @@ def create_user(request, *args, **kwargs):
                 "status": 409,
                 "message": f"User with username '{username}' already exists."
             }, status=409)
-        
+
+        if len(username) > 32:
+            return JsonResponse({
+                "status": 400,
+                "message": "Username cannot be more than 32 characters"
+            }, status=400)
+        if len(password) > 32:
+            return JsonResponse({
+                "status": 400,
+                "message": "Password cannot be more than 32 characters"
+            }, status=400)
+
         body = {
             "username": username,
             "password": password
@@ -66,7 +77,7 @@ def create_user(request, *args, **kwargs):
         headers = {
             "Authorization": os.getenv('MICROSERVICE_API_TOKEN')
         }
-        
+
         response = requests.post(url, data=body, headers=headers, verify=False)
 
         if response.status_code != 201:
@@ -87,7 +98,6 @@ def create_user(request, *args, **kwargs):
 def login_oauth(request, *args, **kwargs):
     # Get 42 access token with the return code
     code = request.data.get('code')
-    print(code)
     if not code:
         return JsonResponse({
             "detail": "Code missing."
@@ -98,18 +108,12 @@ def login_oauth(request, *args, **kwargs):
         "client_id": settings.LOGIN_42_CLIENT,
         "client_secret": settings.LOGIN_42_SECRET,
         "code": code,
-        "redirect_uri": "http://localhost:3000/login/auth42/"
+        "redirect_uri": f"{settings.BASE_URL}/login/auth42/"
     }
     headers = {
         "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
     }
     access_token = requests.post(url, data=body, headers=headers)
-
-    print(body)
-
-    print(access_token.headers)
-
-    print(access_token.json())
 
     if access_token.status_code != 200:
         return JsonResponse({
@@ -118,7 +122,6 @@ def login_oauth(request, *args, **kwargs):
 
     access_token = access_token.json().get("access_token")
 
-    print(access_token)
 
     # Get user info with the access token
     url = f"{settings.API_INTRA_URL}/v2/me"
@@ -139,15 +142,18 @@ def login_oauth(request, *args, **kwargs):
         }, status=401)
 
     # Get or create user with the 42 username
-    username = response.json().get("login")
+    json_response = response.json()
+    username = json_response.get("login")
+    image_url = json_response['image']['versions']['large']
     headers = {
         "Authorization": settings.MICROSERVICE_API_TOKEN
     }
     body = {
-        "username": username
+        "username": username,
+        "image_url": image_url
     }
     url = f"{settings.USERS_SERVICE_HOST}/users/create/42/"
-    response = requests.post(url, headers=headers, data=body)
+    response = requests.post(url, headers=headers, data=body, verify=False)
     if response.status_code not in (200, 201):
         return JsonResponse({
             "detail": "Unable to get or create user."
