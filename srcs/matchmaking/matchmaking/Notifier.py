@@ -1,5 +1,5 @@
 import requests
-from .settings import NOTIFICATIONS_SOCKETS_HOST_INTERNAL, MICROSERVICE_API_TOKEN
+from django.conf import settings
 
 
 class Notifier:
@@ -20,14 +20,19 @@ class Notifier:
     
     def send_msg_to_notifications_service(self):
 
+        print(f"Sending notification to {self.player1.username} and {self.player2.username}")
+        print(f"{settings.NOTIFICATIONS_SERVICE_HOST_INTERNAL}/notifications/send/")
+
         requests.post(
-            f"{NOTIFICATIONS_SOCKETS_HOST_INTERNAL}/notifications/send/",
-            headers={"Authorization": MICROSERVICE_API_TOKEN},
+            f"{settings.NOTIFICATIONS_SERVICE_HOST_INTERNAL}/notifications/send/",
+            verify=False,
+            headers={"Authorization": settings.MICROSERVICE_API_TOKEN},
             json=Notifier.__construct_data(self.player1, self.player2)
         )
 
         requests.post(
-            f"{NOTIFICATIONS_SOCKETS_HOST_INTERNAL}/notifications/send/",
-            headers={"Authorization": MICROSERVICE_API_TOKEN},
+            f"{settings.NOTIFICATIONS_SERVICE_HOST_INTERNAL}/notifications/send/",
+            verify=False,
+            headers={"Authorization": settings.MICROSERVICE_API_TOKEN},
             json=Notifier.__construct_data(self.player2, self.player1)
         )

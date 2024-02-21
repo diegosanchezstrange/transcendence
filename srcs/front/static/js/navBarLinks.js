@@ -183,7 +183,7 @@ function accept_game_req(e) {
       if (response.ok) fill_friends_list(USERS_SERVICE_HOST + "/friends/");
 
       Router.changePage(
-        "/pong/?opponent=" + e.target.parentElement.firstChild.innerHTML,
+        "/pong/?opponent=" + e.target.parentElement.firstChild.innerHTML
       );
     })
     .catch(function (error) {
@@ -287,7 +287,7 @@ function fill_friends_list(friends_list_url) {
       console.log(error);
     });
 
-  fetch(GAME_SERVICE_HOST + "/challenges/" + "?status=PENDING", {
+  fetch(GAME_SERVICE_HOST + "/challenge/" + "?status=PENDING", {
     method: "GET",
     headers: headers,
   })

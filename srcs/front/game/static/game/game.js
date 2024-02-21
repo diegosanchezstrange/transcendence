@@ -23,7 +23,7 @@ class Game {
       let alert = addAlertBox(
         "Oponent not found",
         "danger",
-        document.getElementsByTagName("main")[0],
+        document.getElementsByTagName("main")[0]
       );
       await new Promise((resolve) => setTimeout(resolve, 2000));
       alert.remove();
@@ -32,14 +32,11 @@ class Game {
     }
 
     let invitations = await fetch(
-      GAME_SERVICE_HOST +
-        "/challenges/?opponent=" +
-        oponent +
-        "&status=PENDING",
+      GAME_SERVICE_HOST + "/challenge/?opponent=" + oponent + "&status=PENDING",
       {
         method: "GET",
         headers: headers,
-      },
+      }
     );
 
     let games = await fetch(
@@ -47,7 +44,7 @@ class Game {
       {
         method: "GET",
         headers: headers,
-      },
+      }
     );
 
     let pause_games = await fetch(
@@ -55,7 +52,7 @@ class Game {
       {
         method: "GET",
         headers: headers,
-      },
+      }
     );
 
     if (pause_games.status === 200) {
@@ -112,7 +109,7 @@ class Game {
     console.log("Connecting to game socket");
 
     this.gameSocket = new WebSocket(
-      GAME_SOCKETS_HOST + "/ws/game" + "" + "/?token=" + token + socket_params,
+      GAME_SOCKETS_HOST + "/ws/game" + "" + "/?token=" + token + socket_params
     );
 
     this.gameSocket.onmessage = async (e) => {
@@ -298,14 +295,14 @@ async function main() {
         game.gameSocket.send(
           JSON.stringify({
             message: "UP",
-          }),
+          })
         );
         break;
       case "ArrowDown":
         game.gameSocket.send(
           JSON.stringify({
             message: "DOWN",
-          }),
+          })
         );
         break;
       case "Enter":
@@ -313,21 +310,21 @@ async function main() {
         game.gameSocket.send(
           JSON.stringify({
             message: "ENTER",
-          }),
+          })
         );
         break;
       case "w":
         game.gameSocket.send(
           JSON.stringify({
             message: "W",
-          }),
+          })
         );
         break;
       case "s":
         game.gameSocket.send(
           JSON.stringify({
             message: "S",
-          }),
+          })
         );
         break;
     }
@@ -350,7 +347,7 @@ async function main() {
         e.preventDefault();
       }
     },
-    false,
+    false
   );
 }
 

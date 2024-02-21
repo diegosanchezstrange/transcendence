@@ -26,13 +26,21 @@ class Queue:
                 'Content-Type': 'application/json'
             }
 
-            print(f'{settings.GAME_SERVICE_HOST_INTERNAL}')
+            print(headers)
 
-            response = requests.post(f'{settings.GAME_SERVICE_HOST_INTERNAL}',
-                                     verify=False, headers=headers, json={
+            print(settings.GAME_SERVICE_HOST_INTERNAL)
+
+            url = f'{settings.GAME_SERVICE_HOST_INTERNAL}/'
+
+            body = {
                 'playerLeft': player1.id,
                 'playerRight': player2.id
-            })
+            }
+
+            response = requests.post(url, headers=headers, verify=False, json=body)
+
+            print(response.status_code)
+            print(response.text)
             response.raise_for_status()
 
             try:
