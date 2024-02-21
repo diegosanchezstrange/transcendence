@@ -29,5 +29,5 @@ a {
 	flex-direction: column;
 	justify-content: center;
 	flex-shrink: 0;
-	padding-right: 3%;
+	width: 80%
 }

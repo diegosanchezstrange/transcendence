@@ -104,6 +104,7 @@ WSGI_APPLICATION = 'src.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+BASE_URL = os.getenv('BASE_URL')
 LOGIN_42_REDIRECT_URI = os.getenv('REDIRECT_URI')
 LOGIN_42_CLIENT = os.getenv('LOGIN_42_CLIENT')
 LOGIN_42_SECRET = os.getenv('LOGIN_42_SECRET')

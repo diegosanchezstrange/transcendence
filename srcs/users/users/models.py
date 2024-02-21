@@ -10,6 +10,7 @@ class UserProfile(models.Model):
     login = models.TextField(max_length=50, blank=True, default=None, null=True)
     profile_pic = models.ImageField(default='default.webp',
                                     upload_to='profile_pictures', blank=True, null=True)
+    is_online = models.BooleanField(default=False)
 
 
 @receiver(post_save, sender=User)

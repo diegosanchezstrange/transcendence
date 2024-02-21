@@ -50,6 +50,11 @@ services:
       - "internal_microservice"
     env_file:
       - .env
+
+    depends_on:
+      database:
+        condition: service_healthy
+
     restart: on-failure
 
     depends_on:
@@ -129,6 +134,9 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    depends_on:
+      database:
+        condition: service_healthy
 
     restart: on-failure
 

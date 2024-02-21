@@ -21,6 +21,7 @@ function friends_link() {
 
 function user_link(id) {
   Router.changePage(`/profile/${id}`);
+
   return false;
 }
 
@@ -48,6 +49,11 @@ function send_friend_request(e) {
         let res = await response.json();
         throw new Error(res["detail"]);
       }
+
+      return response.json();
+    })
+    .then(function (response) {
+      if (response.ok) fill_friends_list(USERS_SERVICE_HOST + "/friends/");
     })
     .catch(function (error) {
       let container = document.getElementById("friends_requests");
@@ -351,13 +357,22 @@ function fill_friends_list(friends_list_url) {
         json["users"].forEach(function (friend) {
           let friend_request = document.createElement("li");
           let friend_name = document.createElement("p");
+
           let friend_id = document.createElement("p");
           let remove_button = document.createElement("button");
           let challenge_button = document.createElement("button");
 
           friend_name.innerHTML = friend;
 
-          remove_button.classList = ["btn btn-danger"];
+          remove_button.classList = ["btn btn-danger p-1 m-2"];
+          remove_button.textContent = "Unfriend";
+
+          if (friend["is_online"]) {
+            friend_name.innerHTML = "🟢 ";
+          } else {
+            friend_name.innerHTML = "⭕ ";
+          }
+
           remove_button.action = friends_list_url;
           remove_button.addEventListener("click", remove_friend_req);
 
