@@ -30,6 +30,7 @@
       const NOTIFICATIONS_SERVICE_HOST = "{{ NOTIFICATIONS_SERVICE_HOST }}";
       const NOTIFICATIONS_SOCKETS_HOST = "{{ NOTIFICATIONS_SOCKETS_HOST }}";
       const GAME_SOCKETS_HOST = "{{ GAME_SOCKETS_HOST }}";
+      const MATCHMAKING_SERVICE_HOST = "{{ MATCHMAKING_SERVICE_HOST }}";
       const LOGIN_42_URL = "{{ LOGIN_42_URL }}";
       const BASE_URL = "{{ BASE_URL }}";
     </script>
@@ -71,6 +72,7 @@
         </div>
         <script src="{% static 'js/spa.js' %}"></script>
         <script src="{% static 'js/webhook.js' %}"></script>
+        <script src="{% static 'js/homeEvents.js' %}"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
         <script>
         if (!notficationsWebSocket && Router.getJwt())

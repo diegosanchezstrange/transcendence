@@ -15,7 +15,13 @@ def join_queue(request, *args, **kwargs):
             "message": "You are already in a queue."
         }, status=403)
 
-    Queue.add_player(user)
+    try:
+        Queue.add_player(user)
+    except Exception as e:
+        print(e)
+        return JsonResponse({
+            "message": "Error while joining the queue."
+        }, status=500)
 
     return JsonResponse({
         "message": "Queue joined successfully."

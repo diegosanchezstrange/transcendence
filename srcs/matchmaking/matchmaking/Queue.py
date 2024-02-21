@@ -1,4 +1,7 @@
 from .Notifier import Notifier
+import requests
+
+from django.conf import settings
 
 
 class Queue:
@@ -18,7 +21,27 @@ class Queue:
 
             print(f"Match is ready: {player1.username} - {player2.username}")
 
-            Notifier(player1=player1, player2=player2).send_msg_to_notifications_service()
+            headers = {
+                'Authorization': settings.MICROSERVICE_API_TOKEN,
+                'Content-Type': 'application/json'
+            }
+
+            print(f'{settings.GAME_SERVICE_HOST_INTERNAL}')
+
+            response = requests.post(f'{settings.GAME_SERVICE_HOST_INTERNAL}',
+                                     verify=False, headers=headers, json={
+                'playerLeft': player1.id,
+                'playerRight': player2.id
+            })
+            response.raise_for_status()
+
+            try:
+                Notifier(player1=player1, player2=player2).send_msg_to_notifications_service()
+            except Exception as e:
+                print(e)
+                print('Error while sending notification')
+
+
 
     @staticmethod
     def is_user_in_queue(user) -> bool:

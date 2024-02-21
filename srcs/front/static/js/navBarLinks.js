@@ -181,6 +181,10 @@ function accept_game_req(e) {
   })
     .then(function (response) {
       if (response.ok) fill_friends_list(USERS_SERVICE_HOST + "/friends/");
+
+      Router.changePage(
+        "/pong/?opponent=" + e.target.parentElement.firstChild.innerHTML,
+      );
     })
     .catch(function (error) {
       console.log(error);

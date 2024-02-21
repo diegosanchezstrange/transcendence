@@ -50,6 +50,20 @@ class Game {
       },
     );
 
+    let pause_games = await fetch(
+      GAME_SERVICE_HOST + "/?opponent=" + oponent + "&status=PAUSED",
+      {
+        method: "GET",
+        headers: headers,
+      },
+    );
+
+    if (pause_games.status === 200) {
+      let game = await pause_games.json();
+      if (game["detail"].length > 0)
+        return { game: game["detail"][0], type: "game" };
+    }
+
     if (games.status === 200) {
       let game = await games.json();
       if (game["detail"].length > 0)

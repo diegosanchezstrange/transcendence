@@ -99,6 +99,9 @@ services:
     build: ./srcs/matchmaking/
     image: matchmaking
 
+    env_file:
+      - .env
+
     networks:
       - "internal_microservice"
 

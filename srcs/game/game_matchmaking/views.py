@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.cache import never_cache
 from rest_framework.decorators import api_view
+from functools import wraps
 
 from .notifications.send_notification import send_friend_request_notification
 from .notifications.constants import NotificationType
@@ -9,6 +10,17 @@ from .notifications.constants import NotificationType
 from django.db.models import Q
 from .models import Game, GameInvite
 from django.contrib.auth.models import User
+
+from django.conf import settings
+
+def private_microservice_endpoint(f):
+    @wraps(f)
+    def decorated_function(request, *args, **kwargs):
+        api_token = request.headers.get('Authorization')
+        if not api_token or api_token != settings.MICROSERVICE_API_TOKEN:
+            return JsonResponse({'detail': 'Invalid API token.'}, status=401)
+        return f(request, *args, **kwargs)
+    return decorated_function
 
 # Create your views here.
 
@@ -18,7 +30,6 @@ def challenge_user(request):
     opponent = request.data.get('opponent')
 
     if opponent is None or opponent == '':
-        print('opponent is required')
         return JsonResponse({'error': 'opponent is required'}, status=400)
 
     # Check if a Game already exists for the user and are waiting, IN_PROGRESS or PAUSED
@@ -57,6 +68,43 @@ def challenge_user(request):
 
     return JsonResponse({'invite_id': invite.id}, status=201)
 
+
+@never_cache
+@private_microservice_endpoint
+@api_view(['POST'])
+def create_game(request):
+    print('create_game')
+    playerLeft = request.data.get('playerLeft')
+    playerRight = request.data.get('playerRight')
+
+    print(playerLeft)
+    print(playerRight)
+
+    if playerLeft is None or playerLeft == '' or playerRight is None or playerRight == '':
+        return JsonResponse({'error': 'playerLeft and playerRight are required'}, status=400)
+
+    try:
+        playerLeftObj = User.objects.get(id=playerLeft)
+        playerRightObj = User.objects.get(id=playerRight)
+
+        # Check if a Game already exists for the user and are waiting, IN_PROGRESS or PAUSED
+        game = Game.objects.filter(Q(playerLeft=playerLeftObj) | Q(playerRight=playerLeftObj)).filter(Q(status=Game.GameStatus.WAITING) | Q(status=Game.GameStatus.IN_PROGRESS) | Q(status=Game.GameStatus.PAUSED))
+        if game.exists():
+            return JsonResponse({'error': 'game already exists'}, status=409)
+        game = Game.objects.filter(Q(playerLeft=playerRightObj) | Q(playerRight=playerRightObj)).filter(Q(status=Game.GameStatus.WAITING) | Q(status=Game.GameStatus.IN_PROGRESS) | Q(status=Game.GameStatus.PAUSED))
+        if game.exists():
+            return JsonResponse({'error': 'game already exists'}, status=409)
+    except User.DoesNotExist:
+        return JsonResponse({'error': 'player does not exist'}, status=404)
+    except:
+        return JsonResponse({'error': 'error while querying the database'}, status=500)
+
+    game = Game.objects.create(playerLeft=playerLeftObj, playerRight=playerRightObj)
+    game.save()
+
+    return JsonResponse({'game_id': game.id}, status=201)
+
+
 @never_cache
 @api_view(['GET'])
 def get_user_challenges(request):
@@ -70,15 +118,11 @@ def get_user_challenges(request):
 
     try:
         invites = GameInvite.objects.filter(receiver=user)
-        print('invites', invites)
         if opponent:
             opponentObj = User.objects.get(username=opponent)
-            print('opponentObj', opponentObj)
             invites = GameInvite.objects.filter(receiver=opponentObj, sender=user)
-            print('invites', invites)
         if inviteStatus:
             invites = invites.filter(status=inviteStatus)
-            print('invites', invites)
     except GameInvite.DoesNotExist:
         return JsonResponse({'error': 'no invites found'}, status=404)
     except:
@@ -172,9 +216,6 @@ def get_user_games(request):
         except:
             return JsonResponse({'error': 'error while querying the database'}, status=500)
 
-    print('opponentObj', opponentObj)
-    print('gameStatus', gameStatus)
-
     try:
         games = Game.objects.filter(Q(playerLeft=user) | Q(playerRight=user))
         if gameStatus:
@@ -187,14 +228,14 @@ def get_user_games(request):
         print(e)
         return JsonResponse({'error': 'error while querying the database'}, status=500)
 
-    print('games', games)
-
     gamesList = []
     for game in games:
         gamesList.append({
             'id': game.id,
             'playerLeft': game.playerLeft.username,
             'playerRight': game.playerRight.username,
+            'playerLeftId': game.playerLeft.id,
+            'playerRightId': game.playerRight.id,
             'playerLeftScore': game.playerLeftScore,
             'playerRightScore': game.playerRightScore,
             'status': game.status

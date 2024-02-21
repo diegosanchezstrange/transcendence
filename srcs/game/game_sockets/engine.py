@@ -128,16 +128,6 @@ class GameInstance():
             self.status = self.GameStatus.PAUSED
             self.playerRightStatus = self.PlayerStatus.DISCONNECTED
 
-        try:
-            self.game.playerLeftScore = self.playerLeftScore
-            self.game.playerRightScore = self.playerRightScore
-            self.game.status = Game.GameStatus.PAUSED
-            self.game.disconnection_time = timezone.now()
-            self.disconnection_time = self.game.disconnection_time
-            self.game.save()
-        except Exception as e:
-            print("Error saving game: ", e)
-
         if self.playerLeftStatus == self.PlayerStatus.DISCONNECTED and self.playerRightStatus == self.PlayerStatus.DISCONNECTED:
             try:
                 self.game.playerLeftScore = self.playerLeftScore
@@ -148,6 +138,17 @@ class GameInstance():
                 print("Error saving game: ", e)
 
             raise self.PlayersDisconnectedError
+
+        try:
+            self.game.playerLeftScore = self.playerLeftScore
+            self.game.playerRightScore = self.playerRightScore
+            self.game.status = Game.GameStatus.PAUSED
+            self.game.disconnection_time = timezone.now()
+            self.disconnection_time = self.game.disconnection_time
+            self.game.save()
+        except Exception as e:
+            print("Error saving game: ", e)
+
 
     def player_side(self, user_id):
         if self.playerLeftId == user_id:
@@ -187,8 +188,13 @@ class GameInstance():
                 self.game.playerRightScore = self.playerRightScore
         if self.playerLeftScore >= 5 or self.playerRightScore >= 5:
             print("Player won the game")
+            try:
+                winner_id = self.side_player(player_side)
+                winner = User.objects.get(id=winner_id)
+            except:
+                winner = None
             if (self.game):
-                self.game.winner = self.side_player(player_side)
+                self.game.winner = winner
             self.game_finished(self.side_player(player_side))
         if (self.game):
             self.game.save()
@@ -210,10 +216,7 @@ class GameInstance():
             self.game.playerLeftScore = self.playerLeftScore
             self.game.playerRightScore = self.playerRightScore
             self.game.finished_at = timezone.now()
-            print("Game finished at: ", self.game.finished_at)
-            print("Game winner: ", self.game.winner)
             self.game.save()
-            print("Game saved")
         except:
             pass
 
