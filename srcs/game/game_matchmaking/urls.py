@@ -7,4 +7,7 @@ urlpatterns = [
     path('challenge/accept/', views.accept_challenge),
     path('challenge/reject/', views.decline_challenge),
     path('', views.GameView.as_view()),
+    path('tournament/', views.GameTournamentView.as_view()),
+    path('tournament/<int:id>/matches/', views.get_tournament_matches),
+    path('tournament/nextgame/', views.next_tournament_game),
 ]

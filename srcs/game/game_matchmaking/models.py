@@ -17,6 +17,7 @@ class Game(models.Model):
     playerRightScore = models.IntegerField(default=0)
     status = models.CharField(max_length=20, choices=GameStatus.choices, default=GameStatus.WAITING)
     winner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='winner', null=True, blank=True)
+    tournament = models.ForeignKey('Tournament', on_delete=models.CASCADE, null=True, blank=True)
     disconnection_time = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     finished_at = models.DateTimeField(null=True, blank=True)
@@ -34,3 +35,25 @@ class GameInvite(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=20, choices=InviteStatus.choices, default=InviteStatus.PENDING)
 
+class Tournament(models.Model):
+    class TournamentStatus(models.TextChoices):
+        WAITING = 'WAITING'
+        IN_PROGRESS = 'IN_PROGRESS'
+        FINISHED = 'FINISHED'
+
+    tournament_winner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tournament_winner', null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    status = models.CharField(max_length=20, choices=TournamentStatus.choices, default=TournamentStatus.WAITING)
+
+class UserTournament(models.Model):
+    class UserStatus
+        PLAYING = 'PLAYING'
+        ELIMINATED = 'ELIMINATED'
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    status = models.CharField(max_length=20, choices=UserStatus.choices, default=UserStatus.PLAYING)
+    

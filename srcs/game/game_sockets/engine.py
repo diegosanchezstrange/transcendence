@@ -5,7 +5,7 @@ import time
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
-from game_matchmaking.models import Game, GameInvite
+from game_matchmaking.models import Game, GameInvite, Tournament, UserTournament
 from django.contrib.auth.models import User
 from django.utils import timezone
 
@@ -198,6 +198,25 @@ class GameInstance():
             self.game_finished(self.side_player(player_side))
         if (self.game):
             self.game.save()
+        if (self.game.tournament):
+            loser_id = self.side_player("left" if player_side == "right" else "right")
+            try:
+                loser = User.objects.get(id=loser_id)
+                user_tournament = UserTournament.objects.get(user=loser, tournament=self.game.tournament)
+                user_tournament.status = UserTournament.UserStatus.ELIMINATED
+                user_tournament.save()
+            except Exception as e:
+                print("Error saving user tournament: ", e)
+
+            headers = {
+                'Content-Type': 'application/json',
+                'Authorization': settings.MICROSERVICE_API_TOKEN
+            }
+
+            new_game = requests.post(settings.GAME_SERVICE_HOST_INTERNAL +
+                '/tournament/nextgame/', headers=headers, json={
+                    'tournament_id': self.game.tournament.id
+                })
 
     def game_winned_disconnected(self):
         if self.playerLeftStatus == self.PlayerStatus.DISCONNECTED:
