@@ -47,7 +47,7 @@ class Tournament(models.Model):
     status = models.CharField(max_length=20, choices=TournamentStatus.choices, default=TournamentStatus.WAITING)
 
 class UserTournament(models.Model):
-    class UserStatus
+    class UserStatus(models.TextChoices):
         PLAYING = 'PLAYING'
         ELIMINATED = 'ELIMINATED'
 
