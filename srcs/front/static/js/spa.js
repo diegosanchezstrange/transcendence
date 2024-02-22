@@ -24,6 +24,7 @@ function addAlertBox(message, type, container) {
   alert.id = "alert";
   alert.innerHTML = message;
   container.prepend(alert);
+  return alert;
 }
 
 class Router {
@@ -33,6 +34,17 @@ class Router {
 
   static getJwt() {
     return localStorage.getItem("token");
+  }
+
+  static getUsername() {
+    let token = localStorage.getItem("token");
+    if (token) {
+      let payload = token.split(".")[1];
+      payload = atob(payload);
+      payload = JSON.parse(payload);
+      return payload.username;
+    }
+    return null;
   }
 
   static insertHtml(html) {
@@ -86,7 +98,7 @@ class Router {
     };
 
     if (Router.getJwt()) headers["Authorization"] = "Bearer " + Router.getJwt();
-	
+
     fetch(url, {
       method: "GET",
       headers: headers,
@@ -94,6 +106,9 @@ class Router {
       .then((response) => {
         if (response.status === 401) {
           throw new Error(response.status);
+        }
+        if (response.redirected) {
+          url = new URL(response.url).pathname;
         }
         return response.text();
       })

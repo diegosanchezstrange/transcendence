@@ -13,8 +13,8 @@ services:
     networks:
       - "internal_microservice"
     volumes:
-      - './srcs/volumes/static:/static'
-      - './srcs/volumes/images:/images'
+      - "./srcs/volumes/static:/static"
+      - "./srcs/volumes/images:/images"
     env_file:
       - .env
 
@@ -45,17 +45,23 @@ services:
     container_name: game
     build: ./srcs/game/
     image: game
-    env_file:
-      - .env
 
     networks:
       - "internal_microservice"
+    env_file:
+      - .env
 
     depends_on:
       database:
         condition: service_healthy
 
     restart: on-failure
+
+    depends_on:
+      database:
+        condition: service_healthy
+      users:
+        condition: service_healthy
 
   game_worker:
     container_name: game_worker
@@ -71,6 +77,8 @@ services:
 
     depends_on:
       database:
+        condition: service_healthy
+      users:
         condition: service_healthy
 
     restart: on-failure
@@ -96,6 +104,9 @@ services:
     build: ./srcs/matchmaking/
     image: matchmaking
 
+    env_file:
+      - .env
+
     networks:
       - "internal_microservice"
 
@@ -113,11 +124,16 @@ services:
     networks:
       - "internal_microservice"
     volumes:
-      - './srcs/volumes/static:/static'
-      - './srcs/volumes/images:/images'
+      - "./srcs/volumes/static:/static"
+      - "./srcs/volumes/images:/images"
     env_file:
       - .env
 
+    healthcheck:
+      test: ["CMD-SHELL", "curl http://localhost:80/ || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     depends_on:
       database:
         condition: service_healthy

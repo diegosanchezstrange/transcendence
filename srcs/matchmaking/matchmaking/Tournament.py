@@ -3,9 +3,11 @@ import requests
 
 from django.conf import settings
 
-
-class Queue:
+class Tournament:
     __queue = []
+    __ongoing_matches = []
+
+    tournament_size = 4
 
     class UserNotInQueueError(Exception):
         def __init__(self, *args: object) -> None:
@@ -13,25 +15,25 @@ class Queue:
 
     @staticmethod
     def add_player(user):
-        Queue.__queue.append(user)
+        Tournament.__queue.append(user)
 
-        if Queue.is_match_ready():
-            player2 = Queue.__queue.pop()
-            player1 = Queue.__queue.pop()
+        if Tournament.is_match_ready():
+            players = [Tournament.__queue.pop() for i in range(Tournament.tournament_size)]
 
-            print(f"Match is ready: {player1.username} - {player2.username}")
+            for p in players:
+                print(f"Match is ready: {p.username}")
 
             headers = {
                 'Authorization': settings.MICROSERVICE_API_TOKEN,
                 'Content-Type': 'application/json'
             }
 
-            url = f'{settings.GAME_SERVICE_HOST_INTERNAL}/'
+            url = f'{settings.GAME_SERVICE_HOST_INTERNAL}/tournament/'
 
-            body = {
-                'playerLeft': player1.id,
-                'playerRight': player2.id
-            }
+            body = {"players": []}
+            
+            for i, player in enumerate(players):
+                body["players"].append({"id": player.id})
 
             response = requests.post(url, headers=headers, verify=False, json=body)
             response.raise_for_status()
@@ -42,26 +44,17 @@ class Queue:
                 print(e)
                 print('Error while sending notification')
 
-
-
     @staticmethod
     def is_user_in_queue(user) -> bool:
-        return user in Queue.__queue
-    
+        return user in Tournament.__queue
+
     @staticmethod
     def leave_queue(user):
-        if Queue.is_user_in_queue(user=user):
-            raise Queue.UserNotInQueueError()
-        Queue.__queue.remove(user)
+        if Tournament.is_user_in_queue(user=user):
+            raise Tournament.UserNotInQueueError()
+        Tournament.__queue.remove(user)
 
     @staticmethod
     def is_match_ready() -> bool:
-        return len(Queue.__queue) == 2
-    
-    @staticmethod
-    def get_queue():
-        return Queue.__queue
-    
-    @staticmethod
-    def delete_queue():
-        Queue.__queue = []
+        return len(Tournament.__queue) == Tournament.tournament_size
+

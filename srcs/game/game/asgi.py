@@ -30,8 +30,9 @@ django_asgi_app = get_asgi_application()
 
 application = ProtocolTypeRouter(
     {
+        "http": django_asgi_app,
         "websocket": AllowedHostsOriginValidator(
-            AuthMiddlewareStack(URLRouter([path('ws/game/<str:room>/', ClientConsumer.as_asgi())]))),
+            AuthMiddlewareStack(URLRouter([path('ws/game/', ClientConsumer.as_asgi())]))),
          "channel": ChannelNameRouter({"game_engine": GameConsumer.as_asgi()}),
     }
 )

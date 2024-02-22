@@ -10,7 +10,7 @@ COPY requirements.txt /app
 
 RUN apk update
 
-RUN apk add git postgresql-client
+RUN apk add git postgresql-client curl
 
 RUN pip3 install -r requirements.txt --no-cache-dir
 

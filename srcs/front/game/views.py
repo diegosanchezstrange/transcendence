@@ -1,19 +1,27 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.decorators.cache import never_cache
 from django.conf import settings
+
+from rest_framework.decorators import api_view
 
 context = {
     'LOGIN_SERVICE_HOST': settings.LOGIN_SERVICE_HOST,
     'USERS_SERVICE_HOST': settings.USERS_SERVICE_HOST,
     'NOTIFICATIONS_SERVICE_HOST': settings.NOTIFICATIONS_SERVICE_HOST,
     'NOTIFICATIONS_SOCKETS_HOST': settings.NOTIFICATIONS_SOCKETS_HOST,
+    'GAME_SERVICE_HOST': settings.GAME_SERVICE_HOST,
     'GAME_SOCKETS_HOST': settings.GAME_SOCKETS_HOST,
+    'MATCHMAKING_SERVICE_HOST': settings.MATCHMAKING_SERVICE_HOST,
     'BASE_URL': settings.BASE_URL,
 }
 
 @never_cache
+@api_view(['GET'])
 def start(request):
-    context['PATH'] = 'pong'
+    if request.query_params.get('opponent'):
+        context['PATH'] = 'pong/?opponent=' + request.query_params.get('opponent')
+    else:
+        context['PATH'] = 'pong'
     auth = request.headers.get('Authorization')
     # TO DO: request game info from database
     context['game_info'] = {
@@ -23,11 +31,14 @@ def start(request):
         "score_2": "0"
     }
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        if auth is None and not request.user.is_authenticated:
+            return redirect('/login/')
         return render(request, 'start.html', context)
     else:
         return render(request, '../templates/base.html', context)
 
 @never_cache
+@api_view(['GET'])
 def lobby(request):
     context['PATH'] = 'lobby'
     # TO DO: request game info from database
@@ -41,6 +52,8 @@ def lobby(request):
     context['player_2'] = "Ross"
     auth = request.headers.get('Authorization')
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        if auth is None and not request.user.is_authenticated:
+            return redirect('/login/')
         return render(request, 'lobby.html', context)
     else:
         return render(request, '../templates/base.html', context)

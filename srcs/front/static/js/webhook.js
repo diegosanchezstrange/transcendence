@@ -19,22 +19,26 @@ function addNotificationBox(title, message) {
 }
 
 const NotificationType = {
-    Sent: 1,
-    Accepted: 2,
-    Rejected: 3,
-    Removed: 4,
-    NameChanged: 5,
-    ImgChanged: 6,
-    UserOnline: 7,
-    UserOffline: 8,
-    UserOnlineNotification: 9,
-    UserOfflineNotification: 10,
-}
+  Sent: 1,
+  Accepted: 2,
+  Rejected: 3,
+  Removed: 4,
+  NameChanged: 5,
+  ImgChanged: 6,
+  UserOnline: 7,
+  UserOffline: 8,
+  UserOnlineNotification: 9,
+  UserOfflineNotification: 10,
+  GameFound: 11,
+  GameInvite: 12,
+};
 
 function changeNames(userId, newName) {
-  const namesToChange = document.getElementsByClassName(`change_name_${userId}`);
+  const namesToChange = document.getElementsByClassName(
+    `change_name_${userId}`
+  );
   for (let i = 0; i < namesToChange.length; i++) {
-    namesToChange[i].innerText = newName
+    namesToChange[i].innerText = newName;
   }
 }
 
@@ -47,10 +51,12 @@ function changeImgs(userId, newUrl) {
 }
 
 function changeStatus(userId, style, content) {
-  const statusToChange = document.getElementsByClassName(`change_status_${userId}`);
+  const statusToChange = document.getElementsByClassName(
+    `change_status_${userId}`
+  );
   for (let i = 0; i < statusToChange.length; i++) {
-      statusToChange[i].style = style;
-      statusToChange[i].innerHTML = content;
+    statusToChange[i].style = style;
+    statusToChange[i].innerHTML = content;
   }
 }
 
@@ -72,11 +78,11 @@ class NotificationsWebsocket {
       let data = JSON.parse(message.data)["message"];
       switch (data["ntype"]) {
         case NotificationType.NameChanged:
-          changeNames(data["sender"]["id"],data["message"])
+          changeNames(data["sender"]["id"], data["message"]);
           fill_friends_list(USERS_SERVICE_HOST + "/friends/");
           break;
         case NotificationType.ImgChanged:
-          changeImgs(data["sender"]["id"], data["message"])
+          changeImgs(data["sender"]["id"], data["message"]);
           break;
         case NotificationType.UserOnlineNotification:
           addNotificationBox("Event", data["message"]);
@@ -87,13 +93,26 @@ class NotificationsWebsocket {
           fill_friends_list(USERS_SERVICE_HOST + "/friends/");
           break;
         case NotificationType.UserOnline:
-          changeStatus(data["sender"]["id"], "color: rgb(150, 200, 150);", "online");
+          changeStatus(
+            data["sender"]["id"],
+            "color: rgb(150, 200, 150);",
+            "online"
+          );
           break;
         case NotificationType.UserOffline:
-          changeStatus(data["sender"]["id"], "color: rgb(105, 105, 105);", "offline");
+          changeStatus(
+            data["sender"]["id"],
+            "color: rgb(105, 105, 105);",
+            "offline"
+          );
+          break;
+        case NotificationType.GameFound:
+          addNotificationBox("Event", data["message"]);
+          opponent = data["sender"]["username"];
+          Router.changePage("/pong" + "?opponent=" + opponent);
           break;
         default:
-          addNotificationBox("New friend request", data["message"]);
+          addNotificationBox("Message", data["message"]);
           fill_friends_list(USERS_SERVICE_HOST + "/friends/");
           break;
       }
