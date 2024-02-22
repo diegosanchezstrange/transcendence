@@ -31,6 +31,7 @@ const NotificationType = {
   UserOfflineNotification: 10,
   GameFound: 11,
   GameInvite: 12,
+  TournamentFound: 13
 };
 
 function changeNames(userId, newName) {
@@ -110,6 +111,11 @@ class NotificationsWebsocket {
           addNotificationBox("Event", data["message"]);
           opponent = data["sender"]["username"];
           Router.changePage("/pong" + "?opponent=" + opponent);
+          break;
+        case NotificationType.TournamentFound:
+          addNotificationBox("Event", data["message"]);
+          tournament = data["tournament_id"];
+          Router.changePage("/lobby" + "?tournament=" + tournament);
           break;
         default:
           addNotificationBox("Message", data["message"]);
