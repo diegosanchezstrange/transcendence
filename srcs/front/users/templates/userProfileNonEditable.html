@@ -9,20 +9,12 @@
           src="{{ user_info.profile_pic }}"
           alt="profile"
           class="img-fluid change_img_{{ user_info.id }}"
-          style="width: 100%; border-radius: 10px"
           id="user-profile-avatar"
-        />
-        <input
-          type="file"
-          accept=".png,.jpg,.jpeg"
-          name="profile_pic"
-          style="display: none"
-          id="profile-picture-input"
         />
       </section>
       <!-- Show the user data -->
-      <section class="col-7">
-        <div class="d-none d-md-block text-left h-26 px-5">
+      <section class="col-12 col-md-7">
+        <div class="text-left h-26 px-3">
           <p
             id="profile-username"
             class="change_name_{{ user_info.id }}"
@@ -32,11 +24,11 @@
           </p>
         </div>
         {% if user_info.is_online %}
-          <p class="change_status_{{ user_info.id }} userstatus d-none d-md-block text-left h-3 px-5" style="color: rgb(150, 200, 150);">online</p>
+          <p class="change_status_{{ user_info.id }} userstatus text-left h-3 px-2" style="color: rgb(150, 200, 150);">online</p>
         {% else %}
-          <p class="change_status_{{ user_info.id }} userstatus d-none d-md-block text-left h-3 px-5" style="color: rgb(105, 105, 105);">offline</p>
+          <p class="change_status_{{ user_info.id }} userstatus text-left h-3 px-2" style="color: rgb(105, 105, 105);">offline</p>
         {% endif %}
-        <p class="userdata d-none d-md-block text-left h-75 px-5">
+        <p class="userdata text-left h-75 px-2">
           Total games:
           <br />
           Wins:
