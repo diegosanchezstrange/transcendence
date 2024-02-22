@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .views import join_queue, dev_view_get_queue, leave_queue, join_tournament
+from .views import join_queue, dev_view_get_queue, leave_queue, join_tournament, get_tournament_info
 
 
 urlpatterns = [
@@ -25,7 +25,7 @@ urlpatterns = [
     path('queue/leave/', leave_queue),
     path('queue/list/', dev_view_get_queue),
     path('queue/delete/', dev_view_get_queue),
-    path('tournament/join', join_tournament)
+    path('tournament/join', join_tournament),
     path('tournament/info', get_tournament_info)
 
 ]
