@@ -1,6 +1,7 @@
 function logout() {
   localStorage.removeItem("token");
   Router.changePage("/home/");
+  return false;
 }
 
 function profile_link() {
@@ -20,6 +21,7 @@ function friends_link() {
 
 function user_link(id) {
   Router.changePage(`/profile/${id}`);
+
   return false;
 }
 
@@ -137,6 +139,90 @@ function remove_friend_req(e) {
     });
 }
 
+function challenge_friend(e) {
+  let friend_id = e.target.parentElement.firstChild.innerHTML;
+  let friend_name = e.target.parentElement.firstChild.nextSibling.innerHTML;
+  let headers = {
+    "X-Requested-With": "XMLHttpRequest",
+    "Content-Type": "application/json",
+  };
+
+  if (Router.getJwt()) headers["Authorization"] = "Bearer " + Router.getJwt();
+
+  fetch(GAME_SERVICE_HOST + "/challenge/", {
+    method: "POST",
+    // credentials: "include",
+    headers: headers,
+    body: JSON.stringify({
+      opponent: friend_id,
+    }),
+  })
+    .then(function (response) {
+      if (response.ok) {
+        Router.changePage("/pong/?opponent=" + friend_name);
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+}
+
+function accept_game_req(e) {
+  let invite_id = e.target.parentElement.id;
+
+  let headers = {
+    "X-Requested-With": "XMLHttpRequest",
+    "Content-Type": "application/json",
+  };
+
+  if (Router.getJwt()) headers["Authorization"] = "Bearer " + Router.getJwt();
+
+  fetch(this.action, {
+    method: "POST",
+    // credentials: "include",
+    headers: headers,
+    body: JSON.stringify({
+      invite_id: invite_id,
+    }),
+  })
+    .then(function (response) {
+      if (response.ok) fill_friends_list(USERS_SERVICE_HOST + "/friends/");
+
+      Router.changePage(
+        "/pong/?opponent=" + e.target.parentElement.firstChild.innerHTML
+      );
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+}
+
+function reject_game_req(e) {
+  let invite_id = e.target.parentElement.id;
+
+  let headers = {
+    "X-Requested-With": "XMLHttpRequest",
+    "Content-Type": "application/json",
+  };
+
+  if (Router.getJwt()) headers["Authorization"] = "Bearer " + Router.getJwt();
+
+  fetch(this.action, {
+    method: "POST",
+    // credentials: "include",
+    headers: headers,
+    body: JSON.stringify({
+      invite_id: invite_id,
+    }),
+  })
+    .then(function (response) {
+      if (response.ok) fill_friends_list(USERS_SERVICE_HOST + "/friends/");
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+}
+
 function fill_friends_list(friends_list_url) {
   let friends_list = document.getElementById("friends_list");
   // let friends;
@@ -163,8 +249,8 @@ function fill_friends_list(friends_list_url) {
         json["users"].forEach(function (friend) {
           // Friend id (Used for accept and reject request)
           let friend_id = document.createElement("p");
-          friend_id.innerHTML = friend.id
-          friend_id.style = "display: none;"
+          friend_id.innerHTML = friend.id;
+          friend_id.style = "display: none;";
 
           // Accept button
           let accept_button = document.createElement("button");
@@ -179,18 +265,20 @@ function fill_friends_list(friends_list_url) {
           reject_button.textContent = "Decline";
           reject_button.action = friends_list_url + "requests/reject/";
           reject_button.addEventListener("click", reject_friend_req);
-          
+
           // Friend name
           let friend_request = document.createElement("span");
           let friend_name = document.createElement("p");
           friend_request.id = "friend-request";
           reject_button.id = "reject-button";
           friend_name.id = "friend-request-name";
-          friend_name.className = `change_name_${friend.id}`
+          friend_name.className = `change_name_${friend.id}`;
           friend_name.innerHTML = friend.username;
-          friend_name.onclick = function () {user_link(friend.id) }
+          friend_name.onclick = function () {
+            user_link(friend.id);
+          };
 
-          friend_request.appendChild(friend_id)
+          friend_request.appendChild(friend_id);
           friend_request.appendChild(friend_name);
           friend_request.appendChild(accept_button);
           friend_request.appendChild(reject_button);
@@ -199,6 +287,54 @@ function fill_friends_list(friends_list_url) {
       } else {
         let friend_req_list = document.getElementById("friends_requests");
         friend_req_list.innerHTML = "";
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+
+  fetch(GAME_SERVICE_HOST + "/challenge/" + "?status=PENDING", {
+    method: "GET",
+    headers: headers,
+  })
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (json) {
+      if (json["detail"].length != 0) {
+        let games_list = document.getElementById("games_requests");
+        games_list.innerHTML = "";
+        json["detail"].forEach(function (game) {
+          // Accept button
+          let accept_button = document.createElement("button");
+          accept_button.classList = ["btn btn-success p-1 m-2"];
+          accept_button.textContent = "Accept";
+          accept_button.action = GAME_SERVICE_HOST + "/challenge/accept/";
+          accept_button.addEventListener("click", accept_game_req);
+
+          // Reject button
+          let reject_button = document.createElement("button");
+          reject_button.classList = ["btn btn-danger p-1 m-2"];
+          reject_button.textContent = "Decline";
+          reject_button.action = GAME_SERVICE_HOST + "/challenge/reject/";
+          reject_button.addEventListener("click", reject_game_req);
+
+          // Opponent name
+          let game_request = document.createElement("span");
+          let opponent_name = document.createElement("p");
+
+          let opponent = game["sender"];
+
+          game_request.id = game["id"];
+          opponent_name.innerHTML = opponent;
+          game_request.appendChild(opponent_name);
+          game_request.appendChild(accept_button);
+          game_request.appendChild(reject_button);
+          games_list.appendChild(game_request);
+        });
+      } else {
+        let games_list = document.getElementById("games_requests");
+        games_list.innerHTML = "";
       }
     })
     .catch(function (error) {
@@ -224,6 +360,9 @@ function fill_friends_list(friends_list_url) {
 
           let friend_id = document.createElement("p");
           let remove_button = document.createElement("button");
+          let challenge_button = document.createElement("button");
+
+          friend_name.innerHTML = friend;
 
           remove_button.classList = ["btn btn-danger p-1 m-2"];
           remove_button.textContent = "Unfriend";
@@ -237,15 +376,22 @@ function fill_friends_list(friends_list_url) {
           remove_button.action = friends_list_url;
           remove_button.addEventListener("click", remove_friend_req);
 
-          friend_name.innerHTML += friend.username;
-          //friend_name.className = `change_name_${friend.id}`
+          challenge_button.classList = ["btn btn-primary"];
+          challenge_button.innerHTML = "<i class='fa-solid fa-chess'></i>";
+          challenge_button.addEventListener("click", challenge_friend);
+
+          friend_name.innerHTML = friend.username;
+          friend_name.className = `change_name_${friend.id}`;
           friend_name.id = "friend-request-name";
-          friend_name.onclick = function () {user_link(friend.id) };
-          friend_id.innerHTML = friend.id
-          friend_id.style = "display: none;"
+          friend_name.onclick = function () {
+            user_link(friend.id);
+          };
+          friend_id.innerHTML = friend.id;
+          friend_id.style = "display: none;";
 
           friend_request.appendChild(friend_id);
           friend_request.appendChild(friend_name);
+          friend_request.appendChild(challenge_button);
           friend_request.appendChild(remove_button);
           friends_list.appendChild(friend_request);
         });
@@ -255,20 +401,3 @@ function fill_friends_list(friends_list_url) {
       console.log(error);
     });
 }
-
-// window.onload = function () {
-//   let profile_link = document.getElementById("profile_link");
-//
-//   let fiends_link = document.getElementById("fiends_link");
-//
-//   profile_link.onclick = function () {
-//     Router.changePage("/profile/");
-//
-//     return false;
-//   };
-//
-//   fiends_link.onclick = function () {
-//     Router.changePage("/friends/");
-//     return false;
-//   };
-// };

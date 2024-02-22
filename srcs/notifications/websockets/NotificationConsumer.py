@@ -22,6 +22,9 @@ class NotificationType(Enum):
     USER_OFFLINE = 8
     USER_ONLINE_NOTIFICATION = 9
     USER_OFFLINE_NOTIFICATION = 10
+    GAME_FOUND = 11
+    GAME_INVITE = 12
+
 
 
 class NotificationConsumer(AsyncWebsocketConsumer):

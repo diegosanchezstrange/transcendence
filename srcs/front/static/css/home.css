@@ -48,14 +48,6 @@
   margin: 2rem;
 }
 
-#friends-icon {
-  position: absolute;
-} 
-
-#profile-icon {
-  position: absolute;
-}
-
 #game-card-space {
   padding-right: 15%;
 }
@@ -67,16 +59,20 @@
     width: 15rem;
   }
   #friends-icon {
-    right: 2%;
-    height: 30px;
-    top: 2px;
+    top: 32px;
+    position: fixed;
   }
   #profile-icon {
-    right: 4rem;
-    top: 58%;
+    top: 39px;
+    position: fixed;
+    width: 140px;
   }
   .game-card-text {
     font-size: xx-large;
+  }
+  #header-menu {
+    width: 60%;
+    justify-content: space-between;
   }
 }
 
@@ -95,6 +91,11 @@
     left: 7rem;
     bottom: 4rem;
   }
+}
+
+#friends_dropdown {
+  top: 17px;
+  position: relative;
 }
 
 #username_input {

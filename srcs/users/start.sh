@@ -16,6 +16,7 @@ done
 
 python3 manage.py makemigrations friends users
 python3 manage.py migrate
+python3 manage.py migrate friends users
 
 mv /app/profile_pics /images/profile_pics
 

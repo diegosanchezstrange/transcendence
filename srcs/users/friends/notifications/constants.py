@@ -12,6 +12,8 @@ class NotificationType(Enum):
     USER_OFFLINE = 8
     USER_ONLINE_NOTIFICATION = 9
     USER_OFFLINE_NOTIFICATION = 10
+    GAME_FOUND = 11
+    GAME_INVITE = 12
 
 
 notification_messages = {
@@ -25,4 +27,6 @@ notification_messages = {
     NotificationType.USER_OFFLINE: "",
     NotificationType.USER_ONLINE_NOTIFICATION: "",
     NotificationType.USER_OFFLINE_NOTIFICATION: "",
+    NotificationType.GAME_FOUND: "Match found against player: ",
+    NotificationType.GAME_INVITE: " has invited you to a game."
 }

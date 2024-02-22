@@ -10,12 +10,12 @@ COPY requirements.txt /app
 
 RUN apk update
 
-RUN apk add git
+RUN apk add git postgresql-client
 
 RUN pip3 install -r requirements.txt --no-cache-dir
 
 COPY . /app 
 
-ENTRYPOINT ["python3"] 
+ENV PYTHONUNBUFFERED=1
 
-CMD ["manage.py", "runserver", "0.0.0.0:80"]
+CMD ["sh", "start.sh"]

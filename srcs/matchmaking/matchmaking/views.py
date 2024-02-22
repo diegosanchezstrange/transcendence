@@ -1,4 +1,5 @@
 from .Queue import Queue
+from .Tournament import Tournament as Tourna
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view, permission_classes
@@ -15,7 +16,13 @@ def join_queue(request, *args, **kwargs):
             "message": "You are already in a queue."
         }, status=403)
 
-    Queue.add_player(user)
+    try:
+        Queue.add_player(user)
+    except Exception as e:
+        print(e)
+        return JsonResponse({
+            "message": "Error while joining the queue."
+        }, status=500)
 
     return JsonResponse({
         "message": "Queue joined successfully."
@@ -53,3 +60,57 @@ def dev_view_get_queue(request, *args, **kwargs):
 def dev_view_delete_queue(request, *args, **kwargs):
     Queue.delete_queue()
     return JsonResponse({"message": "Queue deleted."})
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def join_tournament(request, *args, **kwargs):
+    user = request.user
+
+    if Tourna.is_user_in_queue(user):
+        return JsonResponse({
+            "message": "You are already in a queue."
+        }, status=403)
+
+    try:
+        Tourna.add_player(user)
+    except Exception as e:
+        print(e)
+        return JsonResponse({
+            "message": "Error while joining the queue."
+        }, status=500)
+
+@api_view(['GET'])
+def get_tournament_info(request, *args, **kwargs):
+    tournmanet_id = request.GET.get('id')
+
+    if tournmanet_id is None:
+        return JsonResponse({
+            "message": "Tournament ID is required."
+        }, status=400)
+    
+    try:
+        tournament = requests.get(f"{settings.GAME_SERVICE_HOST_INTERNAL}/tournament/{tournmanet_id}")
+
+        return JsonResponse(tournament.json())
+    except Exception as e:
+        return JsonResponse({
+            "message": "Tournament does not exist."
+        }, status=404) 
+
+@api_view(['GET'])
+def get_tournamet_matches(request, *args, **kwargs):
+    tournmanet_id = request.GET.get('id')
+
+    if tournmanet_id is None:
+        return JsonResponse({
+            "message": "Tournament ID is required."
+        }, status=400)
+    
+    try:
+        matches = requests.get(f"{settings.GAME_SERVICE_HOST_INTERNAL}/tournament/{tournmanet_id}/matches")
+
+        return JsonResponse(matches.json())
+    except Exception as e:
+        return JsonResponse({
+            "message": "Matches not found."
+        }, status=404)
