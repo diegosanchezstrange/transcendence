@@ -50,6 +50,7 @@ class UserTournament(models.Model):
     class UserStatus(models.TextChoices):
         PLAYING = 'PLAYING'
         ELIMINATED = 'ELIMINATED'
+        FINISHED = 'FINISHED'
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)

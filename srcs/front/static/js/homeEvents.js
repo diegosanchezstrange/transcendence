@@ -104,6 +104,45 @@ async function find1v1Game() {
   }
 }
 
-function enterLobby() {
-  Router.changePage("/lobby");
+async function enterLobby() {
+    // Find any tournaments on waiting status or paused status
+  //
+
+  if (Router.getJwt() === null) {
+    Router.changePage("/login");
+    return;
+  }
+
+  let headers = {
+    "Content-Type": "application/json",
+    Authorization: "Bearer " + Router.getJwt(),
+  };
+
+  let tournament = await fetch(GAME_SERVICE_HOST + "/tournament/", {
+    method: "GET",
+    headers: headers,
+  });
+
+  let tournament_detail = (await tournament.json())["detail"];
+
+  if (tournament_detail.length == 0) // no tournament found
+  {
+    let new_tournament = fetch(MATCHMAKING_SERVICE_HOST + "/tournament/join/", {
+      method: "POST",
+      headers: headers,
+    });
+
+    if (new_tournament.status === 200) {
+      let alert = addAlertBox(
+        "Waiting for other players...",
+        "success",
+        document.getElementsByTagName("main")[0]
+      );
+    }
+  }
+  else
+  {
+    let tournament_id = tournament_detail[0].id;
+    Router.changePage("/lobby?tournament_id=" + tournament_id);
+  }
 }

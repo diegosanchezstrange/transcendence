@@ -252,7 +252,7 @@ class GameTournamentView(APIView):
             return JsonResponse({'error': 'user is not authenticated'}, status=403)
 
         try:
-            userTournaments = UserTournament.objects.filter(user=user)
+            userTournaments = UserTournament.objects.filter(user=user).filter(status=UserTournament.UserStatus.PLAYING)
             tournaments = []
             for userTournament in userTournaments:
                 tournaments.append({

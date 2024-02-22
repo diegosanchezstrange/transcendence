@@ -40,7 +40,10 @@ def start(request):
 @never_cache
 @api_view(['GET'])
 def lobby(request):
-    context['PATH'] = 'lobby'
+    if request.query_params.get('tournament_id'):
+        context['PATH'] = 'lobby/?tournament_id=' + request.query_params.get('tournament_id')
+    else:
+        context['PATH'] = 'lobby'
     # TO DO: request game info from database
     context['waitlist'] = [
         "Player 3",

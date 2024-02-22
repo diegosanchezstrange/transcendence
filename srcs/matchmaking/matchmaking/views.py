@@ -1,9 +1,11 @@
+from django.conf import settings
 from .Queue import Queue
 from .Tournament import Tournament as Tourna
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
+import requests 
 
 
 @api_view(['POST'])
