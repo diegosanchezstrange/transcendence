@@ -92,6 +92,10 @@ def get_tournament_info(request, *args, **kwargs):
         tournament = requests.get(f"{settings.GAME_SERVICE_HOST_INTERNAL}/tournament/{tournmanet_id}")
 
         return JsonResponse(tournament.json())
+    except Exception as e:
+        return JsonResponse({
+            "message": "Tournament does not exist."
+        }, status=404) 
 
 @api_view(['GET'])
 def get_tournamet_matches(request, *args, **kwargs):
@@ -106,8 +110,7 @@ def get_tournamet_matches(request, *args, **kwargs):
         matches = requests.get(f"{settings.GAME_SERVICE_HOST_INTERNAL}/tournament/{tournmanet_id}/matches")
 
         return JsonResponse(matches.json())
-
-
-
-
-    
+    except Exception as e:
+        return JsonResponse({
+            "message": "Matches not found."
+        }, status=404)
