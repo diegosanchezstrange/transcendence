@@ -12,7 +12,7 @@ class Notifier:
         data = {
             "message":
             {
-                "message": f"Match found against player: {player2.username}"
+                "message": f"Match found against player: {player2.username}",
                 "ntype": 11,
                 "sender": {
                     "id": player2.id,
@@ -30,7 +30,7 @@ class Notifier:
         data = {
             "message":
             {
-                "message": f"Match found against player: {user.username}"
+                "message": f"Match found against player: {user.username}",
                 "ntype": 11,
                 "receiver": {
                     "id": user.id,

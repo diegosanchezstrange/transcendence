@@ -17,8 +17,6 @@ from django.contrib.auth.models import User
 
 from django.conf import settings
 
-from .utils.create_tournament_games import create_tournament_games
-
 def private_microservice_endpoint(f):
     @wraps(f)
     def decorated_function(request, *args, **kwargs):

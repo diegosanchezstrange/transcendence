@@ -84,7 +84,7 @@ async function find1v1Game() {
       "success",
       document.getElementsByTagName("main")[0]
     );
-    response = await fetch(MATCHMAKING_SERVICE_HOST + "queue/join/", {
+    response = await fetch(MATCHMAKING_SERVICE_HOST + "/queue/join/", {
       method: "POST",
       headers: headers,
     });
