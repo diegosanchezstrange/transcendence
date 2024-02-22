@@ -109,6 +109,7 @@ class GameView(APIView):
                 'playerRightId': game.playerRight.id,
                 'playerLeftScore': game.playerLeftScore,
                 'playerRightScore': game.playerRightScore,
+                'winner': game.winner,
                 'status': game.status
             })
         return JsonResponse({'detail': gamesList}, status=200)
