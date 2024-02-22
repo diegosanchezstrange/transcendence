@@ -39,7 +39,7 @@ class Tournament:
             response.raise_for_status()
 
             try:
-                Notifier(player1=player1, player2=player2).send_msg_to_notifications_service()
+                Notifier.send_msg_to_tournament_players(players)
             except Exception as e:
                 print(e)
                 print('Error while sending notification')

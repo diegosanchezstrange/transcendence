@@ -79,4 +79,35 @@ def join_tournament(request, *args, **kwargs):
             "message": "Error while joining the queue."
         }, status=500)
 
+@api_view(['GET'])
+def get_tournament_info(request, *args, **kwargs):
+    tournmanet_id = request.GET.get('id')
+
+    if tournmanet_id is None:
+        return JsonResponse({
+            "message": "Tournament ID is required."
+        }, status=400)
+    
+    try:
+        tournament = requests.get(f"{settings.GAME_SERVICE_HOST_INTERNAL}/tournament/{tournmanet_id}")
+
+        return JsonResponse(tournament.json())
+
+@api_view(['GET'])
+def get_tournamet_matches(request, *args, **kwargs):
+    tournmanet_id = request.GET.get('id')
+
+    if tournmanet_id is None:
+        return JsonResponse({
+            "message": "Tournament ID is required."
+        }, status=400)
+    
+    try:
+        matches = requests.get(f"{settings.GAME_SERVICE_HOST_INTERNAL}/tournament/{tournmanet_id}/matches")
+
+        return JsonResponse(matches.json())
+
+
+
+
     
