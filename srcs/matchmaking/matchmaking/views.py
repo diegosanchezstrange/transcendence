@@ -78,8 +78,12 @@ def join_tournament(request, *args, **kwargs):
     except Exception as e:
         print(e)
         return JsonResponse({
-            "message": "Error while joining the queue."
-        }, status=500)
+         "message": "Error while joining the queue."
+         }, status=500)
+
+    return JsonResponse({
+        "message": "Tournament joined successfully."
+    }, status=200)
 
 @api_view(['GET'])
 def get_tournament_info(request, *args, **kwargs):
