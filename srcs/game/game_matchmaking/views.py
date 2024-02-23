@@ -310,6 +310,32 @@ def get_tournament_matches(request):
     return JsonResponse({'detail': matchesList}, status=200)
 
 @never_cache
+@api_view(['GET'])
+def get_top_players(request):
+    tournament_id = request.query_params.get('id')
+
+    if tournament_id is None or tournament_id == '':
+        return JsonResponse({'error': 'tournament_id is required'}, status=400)
+
+    try:
+        tournament = Tournament.objects.get(id=tournament_id)
+    except Exception as e:
+        print(e)
+        return JsonResponse({'error': 'error while querying the database'}, status=500)
+
+    try:
+        players = UserTournament.objects.filter(tournament=tournament)
+        if players.exists():
+            return JsonResponse({'players': players}, status=200)
+        else:
+            return JsonResponse({'error': 'no players found'}, status=404)
+    except Exception as e:
+        print(e)
+        return JsonResponse({'error': 'error while querying the database'}, status=500)
+    
+    
+
+@never_cache
 @api_view(['POST'])
 def next_tournament_game(request):
     tournament_id = request.data.get('tournament_id')
@@ -363,8 +389,6 @@ def next_tournament_game(request):
     except Exception as e:
         print(e)
         return JsonResponse({'error': 'Error while creating the game'}, status=500)
-
-    return JsonResponse({'error': 'Error while creating the game'}, status=500)
 
 
 @never_cache
