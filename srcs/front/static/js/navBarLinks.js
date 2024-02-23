@@ -380,7 +380,7 @@ function fill_friends_list(friends_list_url) {
           challenge_button.innerHTML = "<i class='fa-solid fa-chess'></i>";
           challenge_button.addEventListener("click", challenge_friend);
 
-          friend_name.innerHTML = friend.username;
+          friend_name.innerHTML += friend.username;
           friend_name.className = `change_name_${friend.id}`;
           friend_name.id = "friend-request-name";
           friend_name.onclick = function () {

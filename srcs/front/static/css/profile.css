@@ -102,13 +102,10 @@ main {
     width: 100%;
     height: auto;
   }
-  
-  #img-edit-button {
-    margin-left: 3rem;
-}
 
   .profileimg {
-    max-width: 400px;
+    max-width: 360px;
+    padding-left: 10%;
   }
   
   .userstatus {
@@ -131,9 +128,6 @@ main {
 }
 
 @media only screen and (max-width: 990px) {
-  #img-edit-button {
-    left: calc(16rem + 2.5vw);
-}
   #profile-username {
     font-size: calc(1rem + 2vw + 2vh);
     width: 90%;
