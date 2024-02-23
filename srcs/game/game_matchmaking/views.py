@@ -324,7 +324,7 @@ def get_top_players(request):
     try:
         players = UserTournament.objects.filter(tournament=tournament)
         if players.exists():
-            return JsonResponse({'players': players), status=200)
+            return JsonResponse({'players': players}, status=200)
     except Exception as e:
         print(e)
         return JsonResponse({'error': 'error while querying the database'}, status=500)
