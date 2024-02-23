@@ -327,7 +327,7 @@ def get_top_players(request):
         players = UserTournament.objects.filter(tournament=tournament)
         if players.exists():
             return JsonResponse({'players': players}, status=200)
-        else
+        else:
             return JsonResponse({'error': 'no players found'}, status=404)
     except Exception as e:
         print(e)
@@ -389,8 +389,6 @@ def next_tournament_game(request):
     except Exception as e:
         print(e)
         return JsonResponse({'error': 'Error while creating the game'}, status=500)
-
-    return JsonResponse({'error': 'Error while creating the game'}, status=500)
 
 
 @never_cache
