@@ -316,19 +316,23 @@ def get_top_players(request):
 
     if tournament_id is None or tournament_id == '':
         return JsonResponse({'error': 'tournament_id is required'}, status=400)
+
     try:
         tournament = Tournament.objects.get(id=tournament_id)
     except Exception as e:
         print(e)
         return JsonResponse({'error': 'error while querying the database'}, status=500)
+
     try:
         players = UserTournament.objects.filter(tournament=tournament)
         if players.exists():
             return JsonResponse({'players': players}, status=200)
+        else
+            return JsonResponse({'error': 'no players found'}, status=404)
     except Exception as e:
         print(e)
         return JsonResponse({'error': 'error while querying the database'}, status=500)
-    return JsonResponse({'error': 'no players found'}, status=404)
+    
     
 
 @never_cache
