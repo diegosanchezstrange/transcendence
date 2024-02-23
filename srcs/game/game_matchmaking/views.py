@@ -310,6 +310,28 @@ def get_tournament_matches(request):
     return JsonResponse({'detail': matchesList}, status=200)
 
 @never_cache
+@api_view(['GET'])
+def get_top_players(request):
+    tournament_id = request.query_params.get('id')
+
+    if tournament_id is None or tournament_id == '':
+        return JsonResponse({'error': 'tournament_id is required'}, status=400)
+    try:
+        tournament = Tournament.objects.get(id=tournament_id)
+    except Exception as e:
+        print(e)
+        return JsonResponse({'error': 'error while querying the database'}, status=500)
+    try:
+        players = UserTournament.objects.filter(tournament=tournament)
+        if players.exists():
+            return JsonResponse({'players': players), status=200)
+    except Exception as e:
+        print(e)
+        return JsonResponse({'error': 'error while querying the database'}, status=500)
+    return JsonResponse({'error': 'no players found'}, status=404)
+    
+
+@never_cache
 @api_view(['POST'])
 def next_tournament_game(request):
     tournament_id = request.data.get('tournament_id')
@@ -355,11 +377,11 @@ def next_tournament_game(request):
                                    playerRight=players_playing[1].user,
                                    tournament=tournament, status=Q(Game.GameStatus.WAITING) | Q(Game.GameStatus.IN_PROGRESS) | Q(Game.GameStatus.PAUSED))
         if game.exists():
-            return JsonResponse({'game_id': game.first().id}, status=200)
+            return JsonResponse({'game': game.first()}, status=200)
         new_game = Game.objects.create(playerLeft=players_playing[0].user, playerRight=players_playing[1].user, tournament=tournament)
         new_game.save()
 
-        return JsonResponse({'game_id': new_game.id}, status=201)
+        return JsonResponse({'game': new_game}, status=201)
     except Exception as e:
         print(e)
         return JsonResponse({'error': 'Error while creating the game'}, status=500)

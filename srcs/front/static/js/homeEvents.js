@@ -105,7 +105,7 @@ async function find1v1Game() {
 }
 
 async function enterLobby() {
-    // Find any tournaments on waiting status or paused status
+  // Find any tournaments on waiting status or paused status
   //
 
   if (Router.getJwt() === null) {
@@ -125,8 +125,8 @@ async function enterLobby() {
 
   let tournament_detail = (await tournament.json())["detail"];
 
-  if (tournament_detail.length == 0) // no tournament found
-  {
+  if (tournament_detail.length == 0) {
+    // no tournament found
     let new_tournament = fetch(MATCHMAKING_SERVICE_HOST + "/tournament/join/", {
       method: "POST",
       headers: headers,
@@ -139,10 +139,8 @@ async function enterLobby() {
         document.getElementsByTagName("main")[0]
       );
     }
-  }
-  else
-  {
+  } else {
     let tournament_id = tournament_detail[0].id;
-    Router.changePage("/lobby?tournament_id=" + tournament_id);
+    Router.changePage("/lobby/?tournament=" + tournament_id);
   }
 }
