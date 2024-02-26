@@ -386,8 +386,6 @@ def next_tournament_game(request):
         print(e)
         return JsonResponse({'error': 'Error while creating the game'}, status=500)
 
-    return JsonResponse({'error': 'Error while creating the game'}, status=500)
-
 
 @never_cache
 @api_view(['POST'])

@@ -75,11 +75,14 @@ def join_tournament(request, *args, **kwargs):
 
     try:
         Tourna.add_player(user)
+        return JsonResponse({
+            "message": "Tournament joined successfully."
+        }, status=200)
     except Exception as e:
         print(e)
         return JsonResponse({
-            "message": "Error while joining the queue."
-        }, status=500)
+         "message": "Error while joining the queue."
+         }, status=500)
 
 @api_view(['GET'])
 def get_tournament_info(request, *args, **kwargs):
@@ -92,7 +95,6 @@ def get_tournament_info(request, *args, **kwargs):
     
     try:
         tournament = requests.get(f"{settings.GAME_SERVICE_HOST_INTERNAL}/tournament/{tournmanet_id}")
-
         return JsonResponse(tournament.json())
     except Exception as e:
         return JsonResponse({

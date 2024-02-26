@@ -38,6 +38,8 @@ services:
     depends_on:
       database:
         condition: service_healthy
+      users:
+        condition: service_healthy
 
     restart: on-failure
 
