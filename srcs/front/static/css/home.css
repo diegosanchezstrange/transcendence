@@ -64,8 +64,7 @@
   }
   #profile-icon {
     top: 39px;
-    position: fixed;
-    width: 140px;
+    position: sticky;
   }
   .game-card-text {
     font-size: xx-large;
@@ -91,11 +90,6 @@
     left: 7rem;
     bottom: 4rem;
   }
-}
-
-#friends_dropdown {
-  top: 17px;
-  position: relative;
 }
 
 #username_input {
