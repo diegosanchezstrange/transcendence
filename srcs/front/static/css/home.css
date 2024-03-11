@@ -52,11 +52,16 @@
   padding-right: 15%;
 }
 
+#friends_requests {
+  min-height: 20px;
+}
+
 @media only screen and (min-width: 990px) {
   #friends-panel {
     right: 0;
     top: 100px;
     width: 15rem;
+    min-height: 94px;
   }
   #profile-icon {
     top: 43px;
