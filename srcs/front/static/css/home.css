@@ -58,20 +58,20 @@
     top: 100px;
     width: 15rem;
   }
-  #friends-icon {
-    top: 32px;
-    position: fixed;
-  }
   #profile-icon {
-    top: 39px;
+    top: 43px;
     position: sticky;
+    display: flex;
   }
   .game-card-text {
     font-size: xx-large;
   }
   #header-menu {
-    width: 60%;
+    width: 100%;
     justify-content: space-between;
+    max-width: 403px;
+    line-height: 5px;
+    height: 15px;
   }
 }
 
@@ -87,8 +87,8 @@
     bottom: 0.5rem;
   }
   #profile-icon {
-    left: 7rem;
     bottom: 4rem;
+    position: sticky;
   }
 }
 
