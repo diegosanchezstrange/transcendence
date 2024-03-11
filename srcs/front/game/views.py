@@ -4,6 +4,8 @@ from django.conf import settings
 
 from rest_framework.decorators import api_view
 
+import requests
+
 context = {
     'LOGIN_SERVICE_HOST': settings.LOGIN_SERVICE_HOST,
     'USERS_SERVICE_HOST': settings.USERS_SERVICE_HOST,
@@ -45,14 +47,14 @@ def lobby(request):
     else:
         context['PATH'] = 'lobby'
     # TO DO: request game info from database
-    context['waitlist'] = [
-        "Player 3",
-        "Player 4",
-        "Player 5"
-    ]
+    auth = request.headers.get('Authorization')
+    user_response = requests.get(settings.MATCHMAKING_SERVICE_HOST_INTERNAL + "queue/list/", headers={'Authorization': auth}, verify=False)
+    queue = user_response.json()['detail']
+    context['player_1'] = queue[0]
+    context['player_2'] = queue[1]
+    context['waitlist'] = queue[2:]
     context['game_ongoing'] = True
-    context['player_1'] = "Bob"
-    context['player_2'] = "Ross"
+
     auth = request.headers.get('Authorization')
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         if auth is None and not request.user.is_authenticated:
