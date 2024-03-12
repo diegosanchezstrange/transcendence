@@ -127,7 +127,7 @@ async function enterLobby() {
 
   if (tournament_detail.length == 0) // no tournament found
   {
-    let new_tournament = fetch(MATCHMAKING_SERVICE_HOST + "/tournament/join/", {
+    let new_tournament = await fetch(MATCHMAKING_SERVICE_HOST + "/tournament/join/", {
       method: "POST",
       headers: headers,
     });
