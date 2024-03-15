@@ -20,7 +20,7 @@ class Tournament {
       tournament_id: this.tournament_id,
     };
 
-    let response = await fetch(GAME_SERVICE_HOST + "/tournament/", {
+    let response = await fetch(GAME_SERVICE_HOST + "/tournament/nextgame/", {
       method: "POST",
       headers: headers,
       body: JSON.stringify(body),

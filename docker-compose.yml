@@ -62,6 +62,7 @@ services:
         condition: service_healthy
 
   game_worker:
+    container_name: game_worker
     build:
       context: ./srcs/game/
       dockerfile: Dockerfile.worker
