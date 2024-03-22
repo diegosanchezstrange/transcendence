@@ -49,6 +49,8 @@ def lobby(request):
     # TO DO: request game info from database
     auth = request.headers.get('Authorization')
     user_response = requests.get(settings.MATCHMAKING_SERVICE_HOST_INTERNAL + "queue/list/", headers={'Authorization': auth}, verify=False)
+    if user_response.status_code == 404:
+        return render(request, 'gameNotFound.html', context)
     queue = user_response.json()['detail']
     context['player_1'] = queue[0]
     context['player_2'] = queue[1]
