@@ -46,12 +46,11 @@ def lobby(request):
         context['PATH'] = 'lobby/?tournament_id=' + request.query_params.get('tournament_id')
     else:
         context['PATH'] = 'lobby'
-    # TO DO: request game info from database
     auth = request.headers.get('Authorization')
-    user_response = requests.get(settings.MATCHMAKING_SERVICE_HOST_INTERNAL + "queue/list/", headers={'Authorization': auth}, verify=False)
-    if user_response.status_code == 404:
+    tournament_info = requests.get(settings.MATCHMAKING_SERVICE_HOST_INTERNAL + "tournament/info/", headers={'Authorization': auth}, verify=False)
+    if tournament_info.status_code == 404:
         return render(request, 'gameNotFound.html', context)
-    queue = user_response.json()['detail']
+    queue = tournament_info.json()['detail'].players
     context['player_1'] = queue[0]
     context['player_2'] = queue[1]
     context['waitlist'] = queue[2:]
