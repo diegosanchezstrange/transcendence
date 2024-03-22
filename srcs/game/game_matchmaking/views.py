@@ -251,6 +251,8 @@ class GameTournamentView(APIView):
         if not user.is_authenticated:
             return JsonResponse({'error': 'user is not authenticated'}, status=403)
 
+        print("User: ", user, " is getting the tournaments")
+
         try:
             userTournaments = UserTournament.objects.filter(user=user).filter(status=UserTournament.UserStatus.PLAYING)
             tournaments = []
@@ -312,8 +314,7 @@ def get_tournament_matches(request):
 @never_cache
 @api_view(['GET'])
 def get_top_players(request):
-    tournament_id = request.query_params.get('id')
-
+    tournament_id = request.query_params.get('tournament_id')
     if tournament_id is None or tournament_id == '':
         return JsonResponse({'error': 'tournament_id is required'}, status=400)
 
@@ -322,42 +323,46 @@ def get_top_players(request):
     except Exception as e:
         print(e)
         return JsonResponse({'error': 'error while querying the database'}, status=500)
-
     try:
         players = UserTournament.objects.filter(tournament=tournament)
         if players.exists():
-            return JsonResponse({'players': players}, status=200)
-        else:
-            return JsonResponse({'error': 'no players found'}, status=404)
+            players_list = []
+            for player in players:
+                players_list.append({
+                    'id': player.user.id,
+                    'username': player.user.username
+                })
+            return JsonResponse({'players': players_list}, status=200)
     except Exception as e:
         print(e)
         return JsonResponse({'error': 'error while querying the database'}, status=500)
-    
+    return JsonResponse({'error': 'no players found'}, status=404)
     
 
 @never_cache
 @api_view(['POST'])
 def next_tournament_game(request):
     tournament_id = request.data.get('tournament_id')
+    tournament = None
 
     if tournament_id is None or tournament_id == '':
         return JsonResponse({'error': 'tournament_id is required'}, status=400)
-    
+
     try:
-        games_in_tournament = Game.objects.filter(tournament__id=tournament_id)
         tournament = Tournament.objects.get(id=tournament_id)
-        if games_in_tournament.filter(Q(status=Game.GameStatus.WAITING) | Q(status=Game.GameStatus.IN_PROGRESS) | Q(status=Game.GameStatus.PAUSED)).exists():
-            return JsonResponse({'error': 'There are still games waiting'}, status=409)
+    except Tournament.DoesNotExist:
+        return JsonResponse({'error': 'tournament does not exist'}, status=404)
     except Exception as e:
-        print(e)
+        print("Error while querying the database: ", e)
         return JsonResponse({'error': 'error while querying the database'}, status=500)
 
-    
     try:
         players_playing = UserTournament.objects.filter(tournament=tournament, status=UserTournament.UserStatus.PLAYING)
         players_playing_count = players_playing.count()
+    except UserTournament.DoesNotExist:
+        return JsonResponse({'error': 'no players found'}, status=404)
     except Exception as e:
-        print(e)
+        print("Error while querying the database for the players playing: ", e)
         return JsonResponse({'error': 'error while querying the database'}, status=500)
     
     if players_playing_count == 1:
@@ -379,13 +384,17 @@ def next_tournament_game(request):
         # Check if the game already exists
         game = Game.objects.filter(playerLeft=players_playing[0].user,
                                    playerRight=players_playing[1].user,
-                                   tournament=tournament, status=Q(Game.GameStatus.WAITING) | Q(Game.GameStatus.IN_PROGRESS) | Q(Game.GameStatus.PAUSED))
+                                   tournament=tournament).filter(Q(status=Game.GameStatus.WAITING) | Q(status=Game.GameStatus.IN_PROGRESS) | Q(status=Game.GameStatus.PAUSED))
         if game.exists():
-            return JsonResponse({'game_id': game.first().id}, status=200)
+            current_game = game.first()
+            return JsonResponse({'game': {'id': current_game.id, 'status':
+                                current_game.status, "playerLeft": current_game.playerLeft.username, "playerRight": current_game.playerRight.username}}, status=200)
         new_game = Game.objects.create(playerLeft=players_playing[0].user, playerRight=players_playing[1].user, tournament=tournament)
         new_game.save()
 
-        return JsonResponse({'game_id': new_game.id}, status=201)
+        current_game = new_game
+
+        return JsonResponse({'game': {'id': current_game.id, 'status': current_game.status, 'playerLeft': current_game.playerLeft.username, 'playerRight': current_game.playerRight.username}}, status=201)
     except Exception as e:
         print(e)
         return JsonResponse({'error': 'Error while creating the game'}, status=500)

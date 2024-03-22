@@ -17,6 +17,10 @@ class Tournament:
     def add_player(user):
         Tournament.__queue.append(user)
 
+        print(f"Player {user.username} has joined the queue")
+
+        print(f"Current queue: {[p.username for p in Tournament.__queue]}")
+
         if Tournament.is_match_ready():
             players = [Tournament.__queue.pop() for i in range(Tournament.tournament_size)]
 
@@ -39,7 +43,7 @@ class Tournament:
             response.raise_for_status()
 
             try:
-                Notifier.send_msg_to_tournament_players(players, response.tournament_id)
+                Notifier.send_msg_to_tournament_players(players)
             except Exception as e:
                 print(e)
                 print('Error while sending notification')
