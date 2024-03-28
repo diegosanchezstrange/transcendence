@@ -76,10 +76,10 @@ def join_tournament(request, *args, **kwargs):
     if hasTournament:
         return JsonResponse({'error': 'user already in a tournament'}, status=409)
  
-    # if Tourna.is_user_in_queue(user):
-    #     return JsonResponse({
-    #         "message": "You are already in a queue."
-    #     }, status=403)
+    if Tourna.is_user_in_queue(user):
+        return JsonResponse({
+            "message": "You are already in a queue."
+        }, status=403)
 
     try:
         Tourna.add_player(user)
