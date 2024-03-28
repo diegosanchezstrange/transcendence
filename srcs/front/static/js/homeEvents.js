@@ -111,18 +111,20 @@ async function find1v1Game() {
 
 async function enterLobby() {
   // Find any tournaments on waiting status or paused status
-  //
   
+  // If JWT is not available, logout
   if (Router.getJwt() === null) {
     Router.changePage("/login");
     return;
   }
   
+  // Get generic headers
   let headers = {
     "Content-Type": "application/json",
     Authorization: "Bearer " + Router.getJwt(),
   };
   
+  // Look for a tournament that the user is currently playing
   let tournament = await fetch(GAME_SERVICE_HOST + "/tournament/", {
     method: "GET",
     headers: headers,
@@ -130,7 +132,8 @@ async function enterLobby() {
   
   let tournament_detail = (await tournament.json())["detail"];
   
-  if (tournament_detail.length == 0) // no tournament found
+  // If the players isnt in any tournament, let them join one
+  if (tournament_detail.length == 0)
   {
     let new_tournament = await fetch(GAME_SERVICE_HOST + "/tournament/", {
       method: "POST",
@@ -138,20 +141,23 @@ async function enterLobby() {
     });
     tournament_detail = (await new_tournament.json())["detail"];
   }
+
+  // Get tournament id
   let tournament_id = tournament_detail[0].id;
   Router.changePage("/lobby?tournament_id=" + tournament_id);
+
+  // I'm not sure this should go here  
+  // let joined_tournament = await fetch(MATCHMAKING_SERVICE_HOST + "/tournament/join/", {
+  //   method: "POST",
+  //   headers: headers,
+  // });
   
-  let joined_tournament = await fetch(MATCHMAKING_SERVICE_HOST + "/tournament/join/", {
-    method: "POST",
-    headers: headers,
-  });
-  
-  if (joined_tournament.status === 200) {
-    let alert = addAlertBox(
-      "Waiting for other players...",
-      "success",
-      document.getElementsByTagName("main")[0]
-    );
-  }
+  // if (joined_tournament.status === 200) {
+  //   let alert = addAlertBox(
+  //     "Waiting for other players...",
+  //     "success",
+  //     document.getElementsByTagName("main")[0]
+  //   );
+  // }
 }
                   
