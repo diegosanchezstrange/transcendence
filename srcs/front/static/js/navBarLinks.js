@@ -55,9 +55,9 @@ function send_friend_request(e) {
     .then(function (response) {
       if (response.ok) fill_friends_list(USERS_SERVICE_HOST + "/friends/");
     })
-    .catch(function (error) {
+    .catch(async function (error) {
       let container = document.getElementById("friends_requests");
-      addAlertBox("Error: " + error.message, "danger", container);
+      await addAlertBox("Error: " + error.message, "danger", container, 3000);
     });
 }
 
@@ -189,7 +189,7 @@ function accept_game_req(e) {
       if (response.ok) fill_friends_list(USERS_SERVICE_HOST + "/friends/");
 
       Router.changePage(
-        "/pong/?opponent=" + e.target.parentElement.firstChild.innerHTML
+        "/pong/?opponent=" + e.target.parentElement.firstChild.innerHTML,
       );
     })
     .catch(function (error) {

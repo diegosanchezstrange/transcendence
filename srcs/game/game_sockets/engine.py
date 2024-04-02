@@ -54,6 +54,8 @@ class GameInstance():
         self.playerRightScore = 0
 
         self.disconnection_time = None
+        self.start_time = timezone.now()
+        self.connection_time = None
 
     class GameStatus():
         WAITING = "WAITING"
@@ -104,6 +106,9 @@ class GameInstance():
             self.playerLeftStatus = self.PlayerStatus.PLAYING
         elif self.playerRightId == user_id:
             self.playerRightStatus = self.PlayerStatus.PLAYING
+
+        if self.connection_time is None:
+            self.connection_time = timezone.now()
 
         if self.playerLeftStatus == self.PlayerStatus.PLAYING and self.playerRightStatus == self.PlayerStatus.PLAYING:
             if self.game_id is None or self.game is None:
