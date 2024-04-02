@@ -40,72 +40,64 @@ async function find1v1Game() {
     let game = pause_games_detail;
     if (game.length == 1) {
       let opponent = extractOpponentFromResponse(game[0]);
-      let alert = addAlertBox(
+      await addAlertBox(
         "Game paused found with " + opponent,
         "success",
-        document.getElementsByTagName("main")[0]
+        document.getElementsByTagName("main")[0],
+        2000,
       );
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      alert.remove();
       Router.changePage("/pong/?opponent=" + opponent);
     } else if (game.length > 1) {
-      let alert = addAlertBox(
+      await addAlertBox(
         "Error: more than one game found",
         "danger",
-        document.getElementsByTagName("main")[0]
+        document.getElementsByTagName("main")[0],
+        3000,
       );
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      alert.remove();
     }
   } else if (games.status === 200 && games_detail.length > 0) {
     let game = games_detail;
     if (game.length == 1) {
       let opponent = extractOpponentFromResponse(game[0]);
-      let alert = addAlertBox(
+      await addAlertBox(
         "Game found with " + opponent,
         "success",
-        document.getElementsByTagName("main")[0]
+        document.getElementsByTagName("main")[0],
+        2000,
       );
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      alert.remove();
       Router.changePage("/pong/?opponent=" + opponent);
     } else if (game.length > 1) {
-      let alert = addAlertBox(
+      await addAlertBox(
         "Error: more than one game found",
         "danger",
-        document.getElementsByTagName("main")[0]
+        document.getElementsByTagName("main")[0],
+        3000,
       );
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      alert.remove();
     }
   } else {
-    let alert = addAlertBox(
+    let alert = await addAlertBox(
       "Joining queue...",
       "success",
-      document.getElementsByTagName("main")[0]
+      document.getElementsByTagName("main")[0],
     );
     response = await fetch(MATCHMAKING_SERVICE_HOST + "/queue/join/", {
       method: "POST",
       headers: headers,
     });
-    if (response.status === 200) {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+    if (response.status != 200) {
       alert.remove();
-    } else {
-      alert.remove();
-      alert = addAlertBox(
+      await addAlertBox(
         "Error joining queue",
         "danger",
-        document.getElementsByTagName("main")[0]
+        document.getElementsByTagName("main")[0],
+        3000,
       );
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      alert.remove();
     }
   }
 }
 
 async function enterLobby() {
-    // Find any tournaments on waiting status or paused status
+  // Find any tournaments on waiting status or paused status
   //
 
   if (Router.getJwt() === null) {
@@ -125,24 +117,22 @@ async function enterLobby() {
 
   let tournament_detail = (await tournament.json())["detail"];
 
-  if (tournament_detail.length == 0) // no tournament found
-  {
+  if (tournament_detail.length == 0) {
+    // no tournament found
     let new_tournament = fetch(MATCHMAKING_SERVICE_HOST + "/tournament/join/", {
       method: "POST",
       headers: headers,
     });
 
     if (new_tournament.status === 200) {
-      let alert = addAlertBox(
+      await addAlertBox(
         "Waiting for other players...",
         "success",
-        document.getElementsByTagName("main")[0]
+        document.getElementsByTagName("main")[0],
       );
     }
-  }
-  else
-  {
+  } else {
     let tournament_id = tournament_detail[0].id;
-    Router.changePage("/lobby?tournament_id=" + tournament_id);
+    Router.changePage("/lobby/?tournament=" + tournament_id);
   }
 }

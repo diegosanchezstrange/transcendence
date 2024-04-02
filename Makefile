@@ -4,7 +4,7 @@ NEEDS_LIB = login game matchmaking users
 
 all: #commons
 	[ -d $(VOL_DIR)/mysql ] || mkdir -p $(VOL_DIR)/mysql
-	docker-compose up -d
+	docker-compose up --build -d
 
 build:
 	docker-compose --env-file ./srcs/.env build --no-cache

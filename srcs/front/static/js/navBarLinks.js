@@ -55,9 +55,9 @@ function send_friend_request(e) {
     .then(function (response) {
       if (response.ok) fill_friends_list(USERS_SERVICE_HOST + "/friends/");
     })
-    .catch(function (error) {
+    .catch(async function (error) {
       let container = document.getElementById("friends_requests");
-      addAlertBox("Error: " + error.message, "danger", container);
+      await addAlertBox("Error: " + error.message, "danger", container, 3000);
     });
 }
 
@@ -141,7 +141,7 @@ function remove_friend_req(e) {
 
 function challenge_friend(e) {
   let friend_id = e.target.parentElement.firstChild.innerHTML;
-  let friend_name = e.target.parentElement.firstChild.nextSibling.innerHTML;
+  let friend_name = e.target.parentElement.firstChild.nextSibling.id;
   let headers = {
     "X-Requested-With": "XMLHttpRequest",
     "Content-Type": "application/json",
@@ -189,7 +189,7 @@ function accept_game_req(e) {
       if (response.ok) fill_friends_list(USERS_SERVICE_HOST + "/friends/");
 
       Router.changePage(
-        "/pong/?opponent=" + e.target.parentElement.firstChild.innerHTML
+        "/pong/?opponent=" + e.target.parentElement.firstChild.innerHTML,
       );
     })
     .catch(function (error) {
@@ -382,7 +382,7 @@ function fill_friends_list(friends_list_url) {
 
           friend_name.innerHTML += friend.username;
           friend_name.className = `change_name_${friend.id}`;
-          friend_name.id = "friend-request-name";
+          friend_name.id = friend.username;
           friend_name.onclick = function () {
             user_link(friend.id);
           };

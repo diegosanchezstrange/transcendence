@@ -53,10 +53,6 @@ services:
     env_file:
       - .env
 
-    depends_on:
-      database:
-        condition: service_healthy
-
     restart: on-failure
 
     depends_on:
