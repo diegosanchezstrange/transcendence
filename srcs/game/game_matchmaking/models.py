@@ -18,6 +18,7 @@ class Game(models.Model):
     status = models.CharField(max_length=20, choices=GameStatus.choices, default=GameStatus.WAITING)
     winner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='winner', null=True, blank=True)
     tournament = models.ForeignKey('Tournament', on_delete=models.CASCADE, null=True, blank=True)
+    connection_time = models.DateTimeField(null=True, blank=True)
     disconnection_time = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     finished_at = models.DateTimeField(null=True, blank=True)
