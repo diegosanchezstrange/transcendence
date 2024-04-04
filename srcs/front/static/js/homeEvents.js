@@ -125,25 +125,25 @@ async function enterLobby() {
   };
   
   // Look for a tournament that the user is currently playing
+  // srcs/game/game_matchmaking/views.py:284 def get(self, request):
   let tournament = await fetch(GAME_SERVICE_HOST + "/tournament/", {
     method: "GET",
     headers: headers,
   });
-  
-  let tournament_detail = (await tournament.json())["detail"];
-  
+
   // If the players isnt in any tournament, let them join one
-  if (tournament_detail.length == 0)
+  let tournament_id
+  if (tournament.status !== 200)
   {
-    let new_tournament = await fetch(GAME_SERVICE_HOST + "/tournament/", {
+    // srcs/game/game_matchmaking/views.py:257 def post(self, request):
+    tournament = await fetch(GAME_SERVICE_HOST + "/tournament/", {
       method: "POST",
       headers: headers,
     });
-    tournament_detail = (await new_tournament.json())["detail"];
   }
+  tournament_id = tournament.body.id;
 
   // Get tournament id
-  let tournament_id = tournament_detail[0].id;
   Router.changePage("/lobby?tournament_id=" + tournament_id);
 
   // I'm not sure this should go here  

@@ -253,9 +253,34 @@ def decline_challenge(request):
 @method_decorator(never_cache, name='dispatch')
 class GameTournamentView(APIView):
 
-    @method_decorator(private_microservice_endpoint)
     def post(self, request):
-    # Init tournament method
+        user = request.user
+        if not user or user is None:
+            return JsonResponse({'error': 'user is required'}, status=400)
+
+        # Look for Tournaments in WAITING status
+        tournament = Tournament.objects.filter(status=Tournament.TournamentStatus.WAITING).first()
+
+        # If none is found, create a new one
+        if not tournament:
+            try:
+                tournament = Tournament.objects.create()
+                tournament.save()
+                userTournament = UserTournament.objects.create(user=user, tournament=tournament)
+                userTournament.save()
+            except Exception as e:
+                print(e)
+                if tournament is not None:
+                    tournament.delete()
+                return JsonResponse({'error': 'error while creating the tournament'}, status=500)
+
+        tournament_response = {
+            'id': tournament.tournament.id
+        }
+
+        return JsonResponse(tournament_response, status=200)
+    
+    # Init tournament game
         # data = request.data["players"] # sacamos los jugadores del torneo una vez tenemos is_match_ready
         # players = []
         # tournament = None
@@ -292,16 +317,18 @@ class GameTournamentView(APIView):
         print("User: ", user, " is getting the tournaments")
 
         try:
-            tournaments = UserTournament.objects.filter(user=user).filter(status=UserTournament.status.WAITING)
-            for userTournament in userTournaments:
-                tournaments.append({
-                    'id': userTournament.tournament.id,
-                    'status': userTournament.tournament.status
-                })
+            user_tournaments = UserTournament.objects.filter(user=user).filter(
+                Q(status=UserTournament.status.WAITING) | Q(status=UserTournament.status.PLAYING))
+            if not user_tournaments.exists():
+                return JsonResponse({'error': 'no tournament found'}, status=404)
+            user_tournament = user_tournaments.first()
+            tournament_response = {
+                    'id': user_tournament.tournament.id
+                }
         except Exception as e:
-            return JsonResponse({'error': 'error while querying the database'}, status=500)
+            return JsonResponse({'error': 'no tournament found'}, status=404)
 
-        return JsonResponse({'detail': tournaments}, status=200)
+        return JsonResponse(tournament_response, status=200)
     
     def get_object(self, id):
         try:
@@ -310,30 +337,6 @@ class GameTournamentView(APIView):
             return JsonResponse({'error': 'tournament does not exist'}, status=404)
         except:
             return JsonResponse({'error': 'error while querying the database'}, status=500)
-    
-
-@never_cache
-@api_view(['POST'])
-def create_new_tournament(request):        
-    user = request.user
-    if not user or user is None:
-        return JsonResponse({'error': 'user is required'}, status=400)
-
-    # Look for Tournaments in WAITING status
-
-    # If none is found, create a new one
-    try:
-        tournament = Tournament.objects.create()
-        tournament.save()
-        userTournament = UserTournament.objects.create(user=user, tournament=tournament)
-        userTournament.save()
-    except Exception as e:
-        print(e)
-        if tournament is not None:
-            tournament.delete()
-        return JsonResponse({'error': 'error while creating the tournament'}, status=500)
-    
-    return JsonResponse({'tournament_id': tournament.id}, status=201)
 
 
 @never_cache
