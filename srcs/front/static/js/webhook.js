@@ -69,7 +69,7 @@ class NotificationsWebsocket {
 
     // Add the token to the url as a query parameter
     this.socket = new WebSocket(
-      NOTIFICATIONS_SOCKETS_HOST + "/ws/notifications/?token=" + token
+      NOTIFICATIONS_SOCKETS_HOST + "/notifications/?token=" + token
     );
 
     this.socket.onopen = () => {
