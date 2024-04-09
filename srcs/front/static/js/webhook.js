@@ -109,7 +109,7 @@ class NotificationsWebsocket {
           break;
         case NotificationType.GameFound:
           addNotificationBox("Event", data["message"]);
-          opponent = data["sender"]["username"];
+          let opponent = data["sender"]["username"];
           Router.changePage("/pong" + "?opponent=" + opponent);
           break;
         case NotificationType.TournamentFound:
