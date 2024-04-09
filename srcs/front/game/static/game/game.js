@@ -106,7 +106,7 @@ class Game {
     console.log("Connecting to game socket");
 
     this.gameSocket = new WebSocket(
-      GAME_SOCKETS_HOST + "/ws/game" + "" + "/?token=" + token + socket_params,
+      GAME_SOCKETS_HOST + "/game" + "/?token=" + token + socket_params,
     );
 
     this.gameSocket.onmessage = async (e) => {
