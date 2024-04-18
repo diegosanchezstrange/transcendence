@@ -20,6 +20,7 @@ services:
 
     depends_on:
       - front
+      - game
 
     restart: on-failure
 
