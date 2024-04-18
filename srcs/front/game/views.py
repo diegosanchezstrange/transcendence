@@ -4,6 +4,8 @@ from django.conf import settings
 
 from rest_framework.decorators import api_view
 
+import requests
+
 context = {
     'LOGIN_SERVICE_HOST': settings.LOGIN_SERVICE_HOST,
     'USERS_SERVICE_HOST': settings.USERS_SERVICE_HOST,
