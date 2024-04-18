@@ -35,8 +35,6 @@ def start(request):
         context['PATH'] = 'pong/?opponent=' + request.query_params.get('opponent')
     else:
         context['PATH'] = 'pong'
-    
-    # TO DO: request game info from database
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         if auth is None and not request.user.is_authenticated:
