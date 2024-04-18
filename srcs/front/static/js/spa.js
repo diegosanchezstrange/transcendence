@@ -13,7 +13,7 @@ const containers = {
  * @param {string} container - The container to add the alert box to
  * @return {void}
  * */
-function addAlertBox(message, type, container) {
+async function addAlertBox(message, type, container, timeout = -1) {
   let alert = document.createElement("div");
 
   if (document.getElementById("alert")) {
@@ -24,6 +24,12 @@ function addAlertBox(message, type, container) {
   alert.id = "alert";
   alert.innerHTML = message;
   container.prepend(alert);
+
+  if (timeout > 0) {
+    await new Promise((resolve) => setTimeout(resolve, timeout));
+    alert.remove();
+  }
+
   return alert;
 }
 

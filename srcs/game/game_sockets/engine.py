@@ -54,6 +54,8 @@ class GameInstance():
         self.playerRightScore = 0
 
         self.disconnection_time = None
+        self.start_time = timezone.now()
+        self.connection_time = None
 
     class GameStatus():
         WAITING = "WAITING"
@@ -102,8 +104,17 @@ class GameInstance():
 
         if self.playerLeftId == user_id:
             self.playerLeftStatus = self.PlayerStatus.PLAYING
+            self.connection_time = timezone.now()
         elif self.playerRightId == user_id:
             self.playerRightStatus = self.PlayerStatus.PLAYING
+            self.connection_time = timezone.now()
+
+        if self.connection_time is not None:
+            try:
+                self.game.connection_time = self.connection_time
+                self.game.save()
+            except Exception as e:
+                print("Error saving game: ", e)
 
         if self.playerLeftStatus == self.PlayerStatus.PLAYING and self.playerRightStatus == self.PlayerStatus.PLAYING:
             if self.game_id is None or self.game is None:
@@ -223,6 +234,18 @@ class GameInstance():
             self.game_finished(self.playerRightId)
         elif self.playerRightStatus == self.PlayerStatus.DISCONNECTED:
             self.game_finished(self.playerLeftId)
+
+    def game_not_contested(self):
+        self.status = self.GameStatus.FINISHED
+        async_to_sync(self.channel_layer.group_send)(
+            self.group_name, {"type": "game_update", "end_dict": {"end": "Game not contested", "winner": None}}
+        )
+        try:
+            self.game.status = Game.GameStatus.FINISHED
+            self.game.winner = None
+            self.game.save()
+        except:
+            pass
 
     def game_finished(self, winner_id):
         self.status = self.GameStatus.FINISHED

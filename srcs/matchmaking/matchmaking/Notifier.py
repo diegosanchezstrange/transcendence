@@ -10,8 +10,6 @@ class Notifier:
     @staticmethod
     def __construct_data(player1, player2) -> dict:
         data = {
-            "message":
-            {
                 "message": f"Match found against player: {player2.username}",
                 "ntype": 11,
                 "sender": {
@@ -22,8 +20,6 @@ class Notifier:
                     "id": player1.id,
                     "username": player1.username
                 },
-
-            }
         }
         return data
     def __construct_tournament_data(self, user, users, tournament_id) -> dict:
