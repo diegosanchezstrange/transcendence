@@ -20,18 +20,24 @@ context = {
 @never_cache
 @api_view(['GET'])
 def start(request):
+    # Get game info from database
+    auth = request.headers.get('Authorization')
+    url = f'{settings.GAME_SERVICE_HOST}/'
+    game_response = requests.get(url, headers={'Authorization': auth}, verify=False).json()['detail']
+    context['game_info'] = {
+        "player_1": game_response.playerLeft,
+        "player_2": game_response.playerRight,
+        "score_1": game_response.playerLeftScore,
+        "score_2": game_response.playerRightScore
+    }
+
     if request.query_params.get('opponent'):
         context['PATH'] = 'pong/?opponent=' + request.query_params.get('opponent')
     else:
         context['PATH'] = 'pong'
-    auth = request.headers.get('Authorization')
+    
     # TO DO: request game info from database
-    context['game_info'] = {
-        "player_1": "Player 1",
-        "player_2": "Player 2",
-        "score_1": "0",
-        "score_2": "0"
-    }
+
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         if auth is None and not request.user.is_authenticated:
             return redirect('/login/')
