@@ -69,7 +69,7 @@ class NotificationsWebsocket {
 
     // Add the token to the url as a query parameter
     this.socket = new WebSocket(
-      NOTIFICATIONS_SOCKETS_HOST + "/ws/notifications/?token=" + token
+      NOTIFICATIONS_SOCKETS_HOST + "/notifications/?token=" + token
     );
 
     this.socket.onopen = () => {
@@ -109,7 +109,7 @@ class NotificationsWebsocket {
           break;
         case NotificationType.GameFound:
           addNotificationBox("Event", data["message"]);
-          opponent = data["sender"]["username"];
+          let opponent = data["sender"]["username"];
           Router.changePage("/pong" + "?opponent=" + opponent);
           break;
         case NotificationType.TournamentFound:
