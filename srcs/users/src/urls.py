@@ -27,5 +27,6 @@ urlpatterns = [
     path('profile/user/<int:id>/', get_user_by_username),
     path('profile/edit/', change_user_name),
     path('users/', include('users.urls')),
-    path('friends/', include('friends.urls'))
+    path('friends/', include('friends.urls')),
+    path('matches/', include('matches.urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
