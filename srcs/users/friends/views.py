@@ -83,7 +83,6 @@ class FriendView(APIView):
         }, status=201)
 
 
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def send_friend_request(request, *args, **kwargs):
@@ -140,8 +139,6 @@ def friend_requests_list(request):
     })
 
 
-
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def accept_friend_request(request, *args, **kwargs):
@@ -183,6 +180,7 @@ def accept_friend_request(request, *args, **kwargs):
     return JsonResponse({
         "detail": "OK"
     }, status=201)
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
