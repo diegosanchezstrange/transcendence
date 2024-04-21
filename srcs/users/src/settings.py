@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'users',
     'friends',
     'rest_framework',
+    'matches'
 ]
 
 

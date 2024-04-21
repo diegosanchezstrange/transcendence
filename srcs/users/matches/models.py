@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Match(models.Model):
 	player_1 = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='user_1', null=True)
