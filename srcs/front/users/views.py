@@ -25,14 +25,39 @@ context = {
 @never_cache
 @api_view(['GET'])
 def profile(request):
+    user = request.user
     context['PATH'] = 'profile'
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         if request.user.is_authenticated:
             auth = request.headers.get('Authorization')
-            user_response = requests.get(settings.USERS_SERVICE_HOST_INTERNAL + "/profile/", headers={'Authorization': auth}, verify=False)
-            context['user_info'] = user_response.json()['detail']
+            
+            user_info = requests.get(
+                settings.USERS_SERVICE_HOST_INTERNAL + "/profile/",
+                  headers={'Authorization': auth},
+                    verify=False
+                    ).json()['detail']
 
+            user_matches = requests.get(
+                settings.USERS_SERVICE_HOST_INTERNAL + "/matches/",
+                  headers={'Authorization': auth},
+                    verify=False
+                    ).json()['matches']
+
+            num_games = 0
+            num_wins = 0
+            num_loses = 0
+            for match in user_matches:
+                num_games += 1
+                if match['winner'] == user:
+                    num_wins += 1
+                else:
+                    num_loses += 1
+            user_info['games_played'] = num_games
+            user_info['wins'] = num_wins
+            user_info['loses'] = num_loses
+
+            context['user_info'] = user_info
             return render(request, 'userProfile.html', context)
         else:
             # Redirect to login page with a 302 status
