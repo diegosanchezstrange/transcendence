@@ -8,6 +8,7 @@ from django.views.decorators.cache import never_cache
 from rest_framework.decorators import api_view
 
 import requests
+from django.http import JsonResponse
 
 # Create your views here.
 
@@ -17,6 +18,7 @@ context = {
     'NOTIFICATIONS_SERVICE_HOST': settings.NOTIFICATIONS_SERVICE_HOST,
     'NOTIFICATIONS_SOCKETS_HOST': settings.NOTIFICATIONS_SOCKETS_HOST,
     'GAME_SERVICE_HOST': settings.GAME_SERVICE_HOST,
+    'GAME_SERVICE_HOST_INTERNAL': settings.GAME_SERVICE_HOST_INTERNAL,
     'GAME_SOCKETS_HOST': settings.GAME_SOCKETS_HOST,
     'MATCHMAKING_SERVICE_HOST': settings.MATCHMAKING_SERVICE_HOST,
     'BASE_URL': settings.BASE_URL,
@@ -38,24 +40,31 @@ def profile(request):
                     verify=False
                     ).json()['detail']
 
-            user_matches = requests.get(
-                settings.USERS_SERVICE_HOST_INTERNAL + "/matches/",
-                  headers={'Authorization': auth},
-                    verify=False
-                    ).json()['matches']
-
-            num_games = 0
-            num_wins = 0
-            num_loses = 0
-            for match in user_matches:
-                num_games += 1
-                if match['winner'] == user:
-                    num_wins += 1
-                else:
-                    num_loses += 1
-            user_info['games_played'] = num_games
-            user_info['wins'] = num_wins
-            user_info['loses'] = num_loses
+            try:
+                user_matches = requests.get(
+                    f'{settings.GAME_SERVICE_HOST_INTERNAL}/',
+                     headers={'Authorization': auth},
+                     verify=False
+                    ).json()['detail']
+                user_info['matches'] = user_matches
+                
+                num_games = 0
+                num_wins = 0
+                num_loses = 0
+                for match in user_matches:
+                    num_games += 1
+                    if match['winner'] == user:
+                        num_wins += 1
+                    else:
+                        num_loses += 1
+                user_info['games_played'] = num_games
+                user_info['wins'] = num_wins
+                user_info['loses'] = num_loses
+            except Exception as e:
+                print(e)
+                return JsonResponse({
+                    "message": "Matches not found."
+                    }, status=404)
 
             context['user_info'] = user_info
             return render(request, 'userProfile.html', context)
