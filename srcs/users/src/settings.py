@@ -48,8 +48,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'users',
     'friends',
-    'rest_framework',
-    'matches'
+    'rest_framework'
 ]
 
 
