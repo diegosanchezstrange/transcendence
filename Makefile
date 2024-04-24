@@ -29,7 +29,7 @@ build-commons:
 	cd srcs/ && python setup.py sdist bdist_wheel
 
 # Services that need commons
-game  game_worker login matchmaking users:
+game  game_worker login matchmaking users notifications:
 	docker-compose  up --build -d $@
 
 # Services that don't need commons

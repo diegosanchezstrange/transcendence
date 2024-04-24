@@ -32,18 +32,17 @@ class Tournament:
                 'Content-Type': 'application/json'
             }
 
-            url = f'{settings.GAME_SERVICE_HOST_INTERNAL}/tournament/'
-
             body = {"players": []}
             
             for i, player in enumerate(players):
                 body["players"].append({"id": player.id})
 
-            response = requests.post(url, headers=headers, verify=False, json=body)
+            response = requests.post(f'{settings.GAME_SERVICE_HOST_INTERNAL}/tournament/', headers=headers, verify=False, json=body)
             response.raise_for_status()
 
             try:
-                Notifier.send_msg_to_tournament_players(players)
+                Notifier().send_msg_to_tournament_players(users=players,
+                                                          tournament_id=response.json()['tournament_id'])
             except Exception as e:
                 print(e)
                 print('Error while sending notification')
