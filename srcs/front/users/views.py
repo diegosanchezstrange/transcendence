@@ -46,7 +46,37 @@ def profile(request):
                      headers={'Authorization': auth},
                      verify=False
                     ).json()['detail']
-                user_info['matches'] = user_matches
+                
+                user_matches.append({
+                'id': 1,
+                'playerLeft': "bob",
+                'playerRight': "wob",
+                'playerLeftId': 1,
+                'playerRightId': 2,
+                'playerLeftScore': 5,
+                'playerRightScore': 2,
+                'winner': "bob",
+                'status': 'FINISHED'
+                })
+
+                last_matches = []
+                for i in range(5):
+                    if user_matches[i]:
+                        match = user_matches[i]
+                    else:
+                        break
+                    if match['playerLeft'] == user.username:
+                        opponent = match['playerLeft']
+                    else:
+                        opponent = match['playerRight']
+                    last_matches.append({
+                        'Left player': match['playerLeft'],
+                        'Right player': match['playerRight'],
+                        'Left player score': match['playerLeftScore'],
+                        'Right player score': match['playerRightScore'],
+                    })
+
+                user_info['matches'] = last_matches
                 
                 num_games = 0
                 num_wins = 0

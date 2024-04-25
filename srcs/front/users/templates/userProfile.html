@@ -87,11 +87,17 @@
           <tr>
             <h2>MATCH HISTORY</h2>
           </tr>
-        {% for key, value in user_info.matches %}
-          <tr>
-            <th>{{ key }} | </th>
-            <th>{{ value }}</th>
-          </tr>
+        {% for match in user_info.matches %}
+          <button type="button" class="collapsible"></button>
+          <div class="content">
+            <p>Lorem ipsum...</p>
+            <tr>
+              {% for key, value in match.items %}
+                <th>{{ key }} | </th>
+                <th>{{ value }}</th>
+              {% endfor %}
+            </tr>
+          </div> 
         {% endfor %}
         </table>
       </section>
