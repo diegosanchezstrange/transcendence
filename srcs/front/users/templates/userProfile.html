@@ -4,7 +4,7 @@
   <div class="container h-50 profile-content">
     <div class="row m-auto w-100 h-100">
       <!-- Show the user avatar -->
-      <section class="col-12 col-md-5 profileimg">
+      <section class="col-12 col-md-4 profileimg">
         <img
           src="{{ user_info.profile_pic }}"
           alt="profile"
@@ -32,7 +32,7 @@
         />
       </section>
       <!-- Show the user data -->
-      <section class="col-12 col-md-7">
+      <section class="col-12 col-md-4">
         <div class="text-left h-26 px-3">
           <form id="username-form">
             <input
@@ -81,6 +81,19 @@
           <br />
           Loses: {{ user_info.loses }}
         </p>
+      </section>
+      <section class="col-12 col-md-4">
+        <table>
+          <tr>
+            <h2>MATCH HISTORY</h2>
+          </tr>
+        {% for key, value in user_info.matches %}
+          <tr>
+            <th>{{ key }} | </th>
+            <th>{{ value }}</th>
+          </tr>
+        {% endfor %}
+        </table>
       </section>
     </div>
   </div>
