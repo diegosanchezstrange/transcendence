@@ -77,7 +77,7 @@ def profile(request):
 @never_cache
 @api_view(['GET'])
 def user_profile(request, id):
-    context['PATH'] = f'profile/{id}';
+    context['PATH'] = f'profile/{id}'
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         if request.user.is_authenticated:
