@@ -34,9 +34,8 @@ async function addAlertBox(message, type, container, timeout = -1) {
 }
 
 class Router {
-  constructor() {
-    this.routes = {};
-  }
+  // Variable to store the scripts that have been loaded
+  static scripts = {};
 
   static getJwt() {
     return localStorage.getItem("token");
@@ -69,7 +68,8 @@ class Router {
         child.childNodes.forEach((node) => {
           if (
             node.nodeType === Node.ELEMENT_NODE &&
-            node.tagName === "SCRIPT"
+            node.tagName === "SCRIPT" &&
+            !(child.src in Router.scripts)
           ) {
             let newScript = document.createElement("script");
 
@@ -81,11 +81,16 @@ class Router {
 
             // document.body.appendChild(newScript);
             chidlScrips.push(newScript);
+            Router.scripts[child.src] = newScript;
           }
         });
         containers[child.tagName.toLowerCase()].innerHTML = child.innerHTML;
         chidlScrips.forEach((node) => document.body.appendChild(node));
-      } else if (child.tagName === "SCRIPT") {
+      } else if (
+        child.tagName === "SCRIPT" &&
+        child.src &&
+        !(child.src in Router.scripts)
+      ) {
         let newScript = document.createElement("script");
 
         if (child.src) newScript.src = child.src;
@@ -93,6 +98,7 @@ class Router {
 
         // containers["body"].appendChild(newScript);
         document.body.appendChild(newScript);
+        Router.scripts[child.src] = newScript;
       }
     });
   }

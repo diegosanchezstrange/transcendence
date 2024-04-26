@@ -1,68 +1,59 @@
 <main>
-  {% load static %}
-  <div class="container-fluid">
-    <div class="row justify-content-center align-content-center vh-100">
-      <!-- <div class="col-0 col-sm-0 col-md-0 col-lg-3 p-2 border border-end-0 border-3 bg-black rounded-start"> -->
-      <!--     <div class="border border-3 h-100 text-center"></div> -->
-      <!-- </div> -->
-      <div
-        class="content-box col-sm-10 col-md-6 col-lg-5 col-xl-4 col-xxl-3 p-5 border border-custom-color"
-      >
-        <div id="registerBox" class="h-100">
-          <h1 class="text-center mb-3">Register</h1>
-          <form
-            id="registerForm"
-            action="{{ LOGIN_SERVICE_HOST }}/auth/register/"
-            method="post"
-          >
-            {% csrf_token %}
-            <div class="text-center">
-              <p>Already have an account? <a href="/login">Login</a></p>
+    {% load static %}
+    <div class="container-fluid">
+        <div class="row justify-content-center align-content-center vh-100">
+            <!-- <div class="col-0 col-sm-0 col-md-0 col-lg-3 p-2 border border-end-0 border-3 bg-black rounded-start"> -->
+            <!--     <div class="border border-3 h-100 text-center"></div> -->
+            <!-- </div> -->
+            <div class="content-box col-sm-10 col-md-6 col-lg-5 col-xl-4 col-xxl-3 p-5 border border-custom-color">
+                <div id="registerBox" class="h-100">
+                    <h1 class="text-center mb-3">Register</h1>
+                    <form id="registerForm"
+                          action="{{ LOGIN_SERVICE_HOST }}/auth/register/"
+                          method="post"
+                          onsubmit="event.preventDefault(); formSubmitRegister(this);">
+                        {% csrf_token %}
+                        <div class="text-center">
+                            <p>
+                                Already have an account? <a href="/login">Login</a>
+                            </p>
+                        </div>
+                        <div class="mb-3">
+                            <!-- <label for="username" class="form-label">Username</label> -->
+                            <input maxlength="15"
+                                   type="text"
+                                   name="username"
+                                   class="form-control rounded shadow-sm bg-gray-200"
+                                   placeholder="Username"
+                                   id="username"
+                                   aria-describedby="emailHelp"
+                                   required />
+                        </div>
+                        <div class="mb-3">
+                            <!-- <label for="password" class="form-label">Password</label> -->
+                            <input maxlength="32"
+                                   type="password"
+                                   name="password"
+                                   class="form-control rounded shadow-sm bg-gray-200"
+                                   placeholder="Password"
+                                   id="password"
+                                   required />
+                        </div>
+                        <div class="mb-3">
+                            <!-- <label for="password" class="form-label">Password</label> -->
+                            <input maxlength="32"
+                                   type="password"
+                                   name="password"
+                                   class="form-control rounded shadow-sm bg-gray-200"
+                                   placeholder="Enter password again"
+                                   id="passwordRepeat"
+                                   required />
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Register</button>
+                    </form>
+                </div>
             </div>
-            <div class="mb-3">
-              <!-- <label for="username" class="form-label">Username</label> -->
-              <input
-                maxlength="15"
-                type="text"
-                name="username"
-                class="form-control rounded shadow-sm bg-gray-200"
-                placeholder="Username"
-                id="username"
-                aria-describedby="emailHelp"
-                required
-              />
-            </div>
-            <div class="mb-3">
-              <!-- <label for="password" class="form-label">Password</label> -->
-              <input
-                maxlength="32"
-                type="password"
-                name="password"
-                class="form-control rounded shadow-sm bg-gray-200"
-                placeholder="Password"
-                id="password"
-                required
-              />
-            </div>
-            <div class="mb-3">
-              <!-- <label for="password" class="form-label">Password</label> -->
-              <input
-                maxlength="32"
-                type="password"
-                name="password"
-                class="form-control rounded shadow-sm bg-gray-200"
-                placeholder="Enter password again"
-                id="passwordRepeat"
-                required
-              />
-            </div>
-            <button type="submit" class="btn btn-primary w-100">
-              Register
-            </button>
-          </form>
         </div>
-      </div>
     </div>
-  </div>
 </main>
 <script src="{% static '/js/loginForm.js' %}"></script>
