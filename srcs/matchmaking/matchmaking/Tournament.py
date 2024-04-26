@@ -16,10 +16,10 @@ class Tournament:
     @staticmethod
     def add_player(user):
         Tournament.__queue.append(user)
+        # Add UserTournament?
+        print(f"Player {user.username} has joined the tournament")
 
-        print(f"Player {user.username} has joined the queue")
-
-        print(f"Current queue: {[p.username for p in Tournament.__queue]}")
+        print(f"Current tournament: {[p.username for p in Tournament.__queue]}")
 
         if Tournament.is_match_ready():
             players = [Tournament.__queue.pop() for i in range(Tournament.tournament_size)]

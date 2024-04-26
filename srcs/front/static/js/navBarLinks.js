@@ -332,9 +332,6 @@ function fill_friends_list(friends_list_url) {
           game_request.appendChild(reject_button);
           games_list.appendChild(game_request);
         });
-      } else {
-        let games_list = document.getElementById("games_requests");
-        games_list.innerHTML = "";
       }
     })
     .catch(function (error) {
