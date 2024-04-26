@@ -1,27 +1,40 @@
 {% load static %}
-<header>{% include "navbar/navbarUser.html" %}</header>
+<header>
+    {% include "navbar/navbarUser.html" %}
+</header>
 <main>
-  <div class="container h-50 user-profile">
-    <div class="row m-3 w-100 h-100">
-      <!-- Show the user avatar -->
-      <section class="col-5 h-100 profileimg">
-        <img
-          src="{{ user_info.profile_pic }}"
-          alt="profile"
-          class="img-fluid change_img_{{ user_info.id }}"
-          id="user-profile-avatar"
-        />
-      </section>
-      <!-- Show the user data -->
-      <section class="col-12 col-md-7">
-        <div class="text-left h-26 px-3">
-          <p
-            id="profile-username"
-            class="change_name_{{ user_info.id }}"
-            style="border: 0px; background: transparent"
-          >
-            {{ user_info.username }}
-          </p>
+    <div class="container h-50 user-profile">
+        <div class="row m-3 w-100 h-100">
+            <!-- Show the user avatar -->
+            <section class="col-5 h-100 profileimg">
+                <img src="{{ user_info.profile_pic }}"
+                     alt="profile"
+                     class="img-fluid change_img_{{ user_info.id }}"
+                     id="user-profile-avatar" />
+            </section>
+            <!-- Show the user data -->
+            <section class="col-12 col-md-7">
+                <div class="text-left h-26 px-3">
+                    <p id="profile-username"
+                       class="change_name_{{ user_info.id }}"
+                       style="border: 0px;
+                              background: transparent">{{ user_info.username }}</p>
+                </div>
+                {% if user_info.is_online %}
+                    <p class="change_status_{{ user_info.id }} userstatus text-left h-3 px-2"
+                       style="color: rgb(150, 200, 150)">online</p>
+                {% else %}
+                    <p class="change_status_{{ user_info.id }} userstatus text-left h-3 px-2"
+                       style="color: rgb(105, 105, 105)">offline</p>
+                {% endif %}
+                <p class="userdata text-left h-75 px-2">
+                    Total games:
+                    <br />
+                    Wins:
+                    <br />
+                    Loses:
+                </p>
+            </section>
         </div>
         {% if user_info.is_online %}
           <p class="change_status_{{ user_info.id }} userstatus text-left h-3 px-2" style="color: rgb(150, 200, 150);">online</p>
@@ -63,5 +76,4 @@
         </table>
       </section>
     </div>
-  </div>
 </main>

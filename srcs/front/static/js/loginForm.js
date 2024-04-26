@@ -1,4 +1,4 @@
- function getCsrfToken() {
+function getCsrfToken() {
   let csrfToken = null;
   if (document.cookie && document.cookie !== "") {
     const cookies = document.cookie.split(";");
@@ -13,34 +13,14 @@
   return csrfToken;
 }
 
-// /*
-//  * Function to add an alert box to the page
-//  * @param {string} message - The message to display in the alert box
-//  * @param {string} type - The type of alert box to display
-//  * @param {string} container - The container to add the alert box to
-//  * @return {void}
-//  * */
-// function addAlertBox(message, type, container) {
-//   let alert = document.createElement("div");
-//
-//   if (document.getElementById("alert")) {
-//     document.getElementById("alert").remove();
-//   }
-//
-//   alert.className = "alert alert-" + type;
-//   alert.id = "alert";
-//   alert.innerHTML = message;
-//   container.prepend(alert);
-// }
-
 /*
  * Function for the login form submit event
  * @return {boolean} - voiSd
  * */
-function formSubmitLogin(e) {
-  e.preventDefault();
+function formSubmitLogin(form) {
+  // e.preventDefault();
 
-  let formData = new FormData(this);
+  let formData = new FormData(form);
   let body = {};
   let csrfToken;
 
@@ -51,8 +31,8 @@ function formSubmitLogin(e) {
 
   body = JSON.stringify(body);
 
-  fetch(this.getAttribute("action"), {
-    method: this.getAttribute("method"),
+  fetch(form.getAttribute("action"), {
+    method: form.getAttribute("method"),
     credentials: "include",
     headers: {
       "X-CSRFToken": csrfToken,
@@ -79,13 +59,15 @@ function formSubmitLogin(e) {
       addAlertBox(
         "Login failed!",
         "danger",
-        document.getElementById("loginBox")
+        document.getElementById("loginBox"),
       );
     });
+
+  return true;
 }
 
-function formSubmitRegister(e) {
-  e.preventDefault();
+function formSubmitRegister(form) {
+  // e.preventDefault();
 
   // Get the input field
   //
@@ -97,12 +79,12 @@ function formSubmitRegister(e) {
     addAlertBox(
       "Passwords do not match!",
       "danger",
-      document.getElementById("registerBox")
+      document.getElementById("registerBox"),
     );
     return;
   }
 
-  let formData = new FormData(this);
+  let formData = new FormData(form);
   let body = {};
   let csrfToken;
 
@@ -114,8 +96,8 @@ function formSubmitRegister(e) {
 
   body = JSON.stringify(body);
 
-  fetch(this.getAttribute("action"), {
-    method: this.getAttribute("method"),
+  fetch(form.getAttribute("action"), {
+    method: form.getAttribute("method"),
     credentials: "include",
     headers: {
       "X-CSRFToken": csrfToken,
@@ -135,7 +117,7 @@ function formSubmitRegister(e) {
       addAlertBox(
         "Registration successful!",
         "success",
-        document.getElementById("registerBox")
+        document.getElementById("registerBox"),
       );
       Router.changePage("/login/");
     })
@@ -144,7 +126,7 @@ function formSubmitRegister(e) {
       addAlertBox(
         "Registration failed!",
         "danger",
-        document.getElementById("registerBox")
+        document.getElementById("registerBox"),
       );
     });
 }
@@ -152,12 +134,12 @@ function formSubmitRegister(e) {
 // Check if the forms exist on the page
 // If they do, add event listeners to them
 
-document.getElementById("loginForm") &&
-  document
-    .getElementById("loginForm")
-    .addEventListener("submit", formSubmitLogin);
-
-document.getElementById("registerForm") &&
-  document
-    .getElementById("registerForm")
-    .addEventListener("submit", formSubmitRegister);
+// document.getElementById("loginForm") &&
+//   document
+//     .getElementById("loginForm")
+//     .addEventListener("submit", formSubmitLogin);
+//
+// document.getElementById("registerForm") &&
+//   document
+//     .getElementById("registerForm")
+//     .addEventListener("submit", formSubmitRegister);

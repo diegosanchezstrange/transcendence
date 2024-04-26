@@ -1,5 +1,7 @@
 {% load static %}
-<header>{% include "navbar/navbarUser.html" %}</header>
+<header>
+    {% include "navbar/navbarUser.html" %}
+</header>
 <main>
   <div class="container h-50">
     <div class="row m-auto w-100 h-100">
@@ -109,7 +111,6 @@
         </table>
       </section>
     </div>
-  </div>
 </main>
 <!-- src="{{ user_info.profile_pic }}" -->
 <script src="{% static '/js/editProfile.js' %}"></script>
