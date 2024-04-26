@@ -47,32 +47,27 @@ def profile(request):
                      verify=False
                     ).json()['detail']
                 
-                user_matches.append({
-                'id': 1,
-                'playerLeft': "bob",
-                'playerRight': "wob",
-                'playerLeftId': 1,
-                'playerRightId': 2,
-                'playerLeftScore': 5,
-                'playerRightScore': 2,
-                'winner': "bob",
-                'status': 'FINISHED'
-                })
+                # Mock match
+                # user_matches.append({
+                # 'id': 1,
+                # 'playerLeft': "bob",
+                # 'playerRight': "wob",
+                # 'playerLeftId': 1,
+                # 'playerRightId': 2,
+                # 'playerLeftScore': 5,
+                # 'playerRightScore': 2,
+                # 'winner': "bob",
+                # 'status': 'FINISHED'
+                # })
 
                 last_matches = []
-                for i in range(5):
-                    if user_matches[i]:
-                        match = user_matches[i]
-                    else:
-                        break
-                    if match['playerLeft'] == user.username:
-                        opponent = match['playerLeft']
-                    else:
-                        opponent = match['playerRight']
+                num_matches = 5 if len(user_matches) > 5 else len(user_matches)
+                for i in range(num_matches):
+                    match = user_matches[i]
                     last_matches.append({
                         'Left player': match['playerLeft'],
-                        'Right player': match['playerRight'],
                         'Left player score': match['playerLeftScore'],
+                        'Right player': match['playerRight'],
                         'Right player score': match['playerRightScore'],
                     })
 
