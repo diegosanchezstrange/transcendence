@@ -2,10 +2,6 @@ main {
   height: 75%;
 }
 
-.profile-content {
-  margin-left: 0;
-}
-
 #img-edit-button {
   background: transparent;
   border: none !important;

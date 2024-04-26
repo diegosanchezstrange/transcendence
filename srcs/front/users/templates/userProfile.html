@@ -1,7 +1,7 @@
 {% load static %}
 <header>{% include "navbar/navbarUser.html" %}</header>
 <main>
-  <div class="container h-50 profile-content">
+  <div class="container h-50">
     <div class="row m-auto w-100 h-100">
       <!-- Show the user avatar -->
       <section class="col-12 col-md-4 profileimg">
@@ -83,22 +83,28 @@
         </p>
       </section>
       <section class="col-12 col-md-4">
-        <table>
+        <table class="table table-striped">
           <tr>
             <h2>MATCH HISTORY</h2>
           </tr>
-        {% for match in user_info.matches %}
-          <button type="button" class="collapsible"></button>
-          <div class="content">
-            <p>Lorem ipsum...</p>
+          <thead>
             <tr>
-              {% for key, value in match.items %}
-                <th>{{ key }} | </th>
-                <th>{{ value }}</th>
-              {% endfor %}
+              <th scope="col">Left player</th>
+              <th scope="col">Left player score</th>
+              <th scope="col">Right player</th>
+              <th scope="col">Right player score</th>
             </tr>
-          </div> 
-        {% endfor %}
+          </thead>
+          <tbody>
+          {% for match in user_info.matches %}
+          <tr>
+            <th scope="row">1</th>
+              {% for key, value in match.items %}
+              <td>{{ value }}</td>
+              {% endfor %}
+          </tr>
+          {% endfor %}
+          </tbody>
         </table>
       </section>
     </div>
