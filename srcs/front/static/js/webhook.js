@@ -36,7 +36,7 @@ const NotificationType = {
 
 function changeNames(userId, newName) {
   const namesToChange = document.getElementsByClassName(
-    `change_name_${userId}`
+    `change_name_${userId}`,
   );
   for (let i = 0; i < namesToChange.length; i++) {
     namesToChange[i].innerText = newName;
@@ -53,7 +53,7 @@ function changeImgs(userId, newUrl) {
 
 function changeStatus(userId, style, content) {
   const statusToChange = document.getElementsByClassName(
-    `change_status_${userId}`
+    `change_status_${userId}`,
   );
   for (let i = 0; i < statusToChange.length; i++) {
     statusToChange[i].style = style;
@@ -69,7 +69,7 @@ class NotificationsWebsocket {
 
     // Add the token to the url as a query parameter
     this.socket = new WebSocket(
-      NOTIFICATIONS_SOCKETS_HOST + "/notifications/?token=" + token
+      NOTIFICATIONS_SOCKETS_HOST + "/notifications/?token=" + token,
     );
 
     this.socket.onopen = () => {
@@ -97,14 +97,14 @@ class NotificationsWebsocket {
           changeStatus(
             data["sender"]["id"],
             "color: rgb(150, 200, 150);",
-            "online"
+            "online",
           );
           break;
         case NotificationType.UserOffline:
           changeStatus(
             data["sender"]["id"],
             "color: rgb(105, 105, 105);",
-            "offline"
+            "offline",
           );
           break;
         case NotificationType.GameFound:
@@ -114,7 +114,7 @@ class NotificationsWebsocket {
           break;
         case NotificationType.TournamentFound:
           addNotificationBox("Event", data["message"]);
-          tournament = data["tournament_id"];
+          let tournament = data["tournament_id"];
           Router.changePage("/lobby/" + "?tournament=" + tournament);
           break;
         default:

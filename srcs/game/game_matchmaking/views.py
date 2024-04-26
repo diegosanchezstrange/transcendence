@@ -32,6 +32,14 @@ def private_microservice_endpoint(f):
 @method_decorator(never_cache, name='dispatch')
 class GameView(APIView):
 
+    '''
+    Create a new game
+
+    Parameters:
+        - playerLeft (Required): The id of the playerLeft
+        - playerRight (Required): The id of the playerRight
+
+    '''
     @method_decorator(private_microservice_endpoint)
     def post(self, request):
         print('create_game')
@@ -65,11 +73,25 @@ class GameView(APIView):
 
         return JsonResponse({'game_id': game.id}, status=201)
 
+    '''
+    Get all the games of the logged in user
+
+    The user must be authenticated to get the games
+
+    Parameters:
+        - status (Optional): Filter the games by status (WAITING, IN_PROGRESS, PAUSED)
+        - opponent (Optional): Filter the games by the opponent's username
+
+    '''
     def get(self, request):
         user = request.user
 
+        # Check if the user is authenticated
         if not user or user is None:
             return JsonResponse({'error': 'user is required'}, status=400)
+
+        if not user.is_authenticated:
+            return JsonResponse({'error': 'user is not authenticated'}, status=403)
 
         #Check if the url has a query parameter for the status of the game
         gameStatus = request.query_params.get('status')
@@ -118,6 +140,16 @@ class GameView(APIView):
 @method_decorator(never_cache, name='dispatch')
 class GameChallengeView(APIView):
 
+    '''
+    Create a new game challenge
+
+    Check if the user already has a game waiting, in progress or paused
+
+    Check if the opponent exists and if the user has already sent an invite for the opponent
+
+    Parameters:
+        - opponent (Required): The id of the opponent
+    '''
     def post(self,request):
         opponent = request.data.get('opponent')
 
@@ -160,6 +192,15 @@ class GameChallengeView(APIView):
 
         return JsonResponse({'invite_id': invite.id}, status=201)
 
+    '''
+    Get all the game challenges of the logged in user
+
+    The user must be authenticated to get the game challenges
+
+    Parameters:
+        - status (Optional): Filter the game challenges by status (PENDING, ACCEPTED, DECLINED)
+        - opponent (Optional): Filter the game challenges by the opponent's username
+    '''
     def get(self, request):
         user = request.user
 
@@ -195,6 +236,16 @@ class GameChallengeView(APIView):
 @method_decorator(never_cache, name='dispatch')
 class GameTournamentView(APIView):
 
+    '''
+    Create a new tournament
+
+    Check if the players exist and if they are already in a tournament
+
+    This call can only be made by the microservice MATCHMAKING
+
+    Parameters:
+        - players (Required): A list of players' ids
+    '''
     @method_decorator(private_microservice_endpoint)
     def post(self, request):
         data = request.data["players"]
@@ -243,6 +294,11 @@ class GameTournamentView(APIView):
         
         return JsonResponse({'tournament_id': tournament.id}, status=201)
 
+    '''
+    Get all the tournaments of the logged in user
+
+    The user must be authenticated to get the tournaments
+    '''
     def get(self, request):
         user = request.user
 
@@ -275,6 +331,12 @@ class GameTournamentView(APIView):
             return JsonResponse({'error': 'error while querying the database'}, status=500)
         
         
+'''
+Get all the matches of a tournament
+
+Parameters:
+    - id (Required): The id of the tournament
+'''
 @never_cache
 @api_view(['GET'])
 def get_tournament_matches(request):
@@ -311,6 +373,12 @@ def get_tournament_matches(request):
         })
     return JsonResponse({'detail': matchesList}, status=200)
 
+'''
+Get all the players of a tournament
+
+Parameters:
+    - tournament_id (Required): The id of the tournament
+'''
 @never_cache
 @api_view(['GET'])
 def get_top_players(request):
