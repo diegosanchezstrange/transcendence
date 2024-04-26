@@ -22,14 +22,14 @@ async function find1v1Game() {
     Authorization: "Bearer " + Router.getJwt(),
   };
 
-  let games = await fetch(GAME_SERVICE_HOST + "/?status=WAITING", {
+  let games = await fetch(GAME_SERVICE_HOST + "/game/?status=WAITING", {
     method: "GET",
     headers: headers,
   });
 
   let games_detail = (await games.json())["detail"];
 
-  let pause_games = await fetch(GAME_SERVICE_HOST + "/?status=PAUSED", {
+  let pause_games = await fetch(GAME_SERVICE_HOST + "/game/?status=PAUSED", {
     method: "GET",
     headers: headers,
   });

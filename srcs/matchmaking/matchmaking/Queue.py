@@ -26,7 +26,7 @@ class Queue:
                 'Content-Type': 'application/json'
             }
 
-            url = f'{settings.GAME_SERVICE_HOST_INTERNAL}/'
+            url = f'{settings.GAME_SERVICE_HOST_INTERNAL}/{player1.id}/'
 
             body = {
                 'playerLeft': player1.id,
