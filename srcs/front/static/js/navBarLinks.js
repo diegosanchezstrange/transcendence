@@ -82,8 +82,8 @@ function accept_friend_req(e) {
     .then(function (response) {
       if (response.ok) fill_friends_list(USERS_SERVICE_HOST + "/friends/");
     })
-    .catch(function (error) {
-      console.log(error);
+    // TO DO: console error
+    .catch(() => {
     });
 }
 
@@ -108,8 +108,8 @@ function reject_friend_req(e) {
     .then(function (response) {
       if (response.ok) fill_friends_list(USERS_SERVICE_HOST + "/friends/");
     })
-    .catch(function (error) {
-      console.log(error);
+    // TO DO: console error
+    .catch(function () {
     });
 }
 
@@ -134,8 +134,8 @@ function remove_friend_req(e) {
     .then(function (response) {
       if (response.ok) fill_friends_list(USERS_SERVICE_HOST + "/friends/");
     })
-    .catch(function (error) {
-      console.log(error);
+    // TO DO: console error
+    .catch(function () {
     });
 }
 
@@ -162,8 +162,8 @@ function challenge_friend(e) {
         Router.changePage("/pong/?opponent=" + friend_name);
       }
     })
-    .catch(function (error) {
-      console.log(error);
+    // TO DO: console error
+    .catch(function () {
     });
 }
 
@@ -192,8 +192,8 @@ function accept_game_req(e) {
         "/pong/?opponent=" + e.target.parentElement.firstChild.innerHTML,
       );
     })
-    .catch(function (error) {
-      console.log(error);
+    // TO DO: console error
+    .catch(function () {
     });
 }
 
@@ -218,8 +218,8 @@ function reject_game_req(e) {
     .then(function (response) {
       if (response.ok) fill_friends_list(USERS_SERVICE_HOST + "/friends/");
     })
-    .catch(function (error) {
-      console.log(error);
+    // TO DO: console error
+    .catch(function () {
     });
 }
 
@@ -289,8 +289,8 @@ function fill_friends_list(friends_list_url) {
         friend_req_list.innerHTML = "";
       }
     })
-    .catch(function (error) {
-      console.log(error);
+    // TO DO: console error
+    .catch(function () {
     });
 
   fetch(GAME_SERVICE_HOST + "/challenge/" + "?status=PENDING", {
@@ -334,8 +334,8 @@ function fill_friends_list(friends_list_url) {
         });
       }
     })
-    .catch(function (error) {
-      console.log(error);
+    // TO DO: console error
+    .catch(function () {
     });
 
   fetch(friends_list_url, {
@@ -394,7 +394,7 @@ function fill_friends_list(friends_list_url) {
         });
       }
     })
-    .catch(function (error) {
-      console.log(error);
+    // TO DO: console error
+    .catch(function () {
     });
 }
