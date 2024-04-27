@@ -47,9 +47,10 @@ function formSubmitLogin(form) {
       }
       throw new Error("Network response was not ok.");
     })
-    .then((text) => {
+    .then(async (text) => {
       // console.log(text);
       localStorage.setItem("token", text.access);
+      await Router.setUserData();
       // if (!notificationsWebSocket)
       //   notficationsWebSocket = new NotificationsWebsocket();
       Router.changePage("/home/");

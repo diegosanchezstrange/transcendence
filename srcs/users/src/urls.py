@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from users.views import profile_view, change_user_name, get_user_by_username
+from users.views import profile_view, change_user_name, get_user_by_username, get_user_data
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -27,5 +27,6 @@ urlpatterns = [
     path('profile/user/<int:id>/', get_user_by_username),
     path('profile/edit/', change_user_name),
     path('users/', include('users.urls')),
-    path('friends/', include('friends.urls'))
+    path('friends/', include('friends.urls')),
+    path('me/', get_user_data)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

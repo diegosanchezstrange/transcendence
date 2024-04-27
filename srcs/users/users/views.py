@@ -208,6 +208,20 @@ def profile_view(request, *args, **kwargs):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
+def get_user_data(request, *args, **kwargs):
+    user = request.user
+    UserProfile.objects.get_or_create(user=user)
+
+    return JsonResponse({
+        "detail": {
+            "id": user.id,
+            "username": user.username,
+            "login": user.userprofile.login,
+        }
+    })
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_user_by_username(request, id, *args, **kwargs):
     user = get_object_or_404(User, id=id)
     return JsonResponse({

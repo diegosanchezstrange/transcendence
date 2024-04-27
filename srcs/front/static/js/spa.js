@@ -36,6 +36,7 @@ async function addAlertBox(message, type, container, timeout = -1) {
 class Router {
   // Variable to store the scripts that have been loaded
   static scripts = {};
+  static user_data = null;
 
   static getJwt() {
     return localStorage.getItem("token");
@@ -71,6 +72,26 @@ class Router {
     });
 
     window.dispatchEvent(event);
+  }
+
+  static async setUserData() {
+    let token = Router.getJwt();
+    if (token) {
+      try {
+        let data = await fetch(USERS_SERVICE_HOST + "/me/", {
+          method: "GET",
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        });
+        if (data.status === 200) {
+          data = await data.json();
+          Router.user_data = data["detail"];
+        } else Router.user_data = null;
+      } catch (error) {
+        Router.user_data = null;
+      }
+    }
   }
 
   static insertHtml(html) {
@@ -160,6 +181,7 @@ class Router {
         let errorCode = parseInt(error.message);
         if (errorCode === 401) {
           localStorage.removeItem("token");
+          Router.user_data = null;
           if (notificationsWebSocket) {
             notificationsWebSocket.close();
             notificationsWebSocket = null;
@@ -190,6 +212,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     localStorage.setItem("token", token);
     document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
   }
+
+  await Router.setUserData();
 
   if (path) Router.changePage("/" + path);
   else Router.changePage("/home");
