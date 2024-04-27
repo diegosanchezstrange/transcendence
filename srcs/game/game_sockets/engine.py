@@ -8,6 +8,9 @@ from asgiref.sync import async_to_sync
 from game_matchmaking.models import Game, GameInvite, Tournament, UserTournament
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.conf import settings
+
+import requests
 
 class GameInstance():
     def __init__(self, group_name):
@@ -207,27 +210,27 @@ class GameInstance():
             if (self.game):
                 self.game.winner = winner
             self.game_finished(self.side_player(player_side))
-        if (self.game):
-            self.game.save()
-        if (self.game.tournament):
-            loser_id = self.side_player("left" if player_side == "right" else "right")
-            try:
-                loser = User.objects.get(id=loser_id)
-                user_tournament = UserTournament.objects.get(user=loser, tournament=self.game.tournament)
-                user_tournament.status = UserTournament.UserStatus.ELIMINATED
-                user_tournament.save()
-            except Exception as e:
-                print("Error saving user tournament: ", e)
+            if (self.game):
+                self.game.save()
+            if (self.game.tournament):
+                loser_id = self.side_player("left" if player_side == "right" else "right")
+                try:
+                    loser = User.objects.get(id=loser_id)
+                    user_tournament = UserTournament.objects.get(user=loser, tournament=self.game.tournament)
+                    user_tournament.status = UserTournament.UserStatus.ELIMINATED
+                    user_tournament.save()
+                except Exception as e:
+                    print("Error saving user tournament: ", e)
 
-            headers = {
-                'Content-Type': 'application/json',
-                'Authorization': settings.MICROSERVICE_API_TOKEN
-            }
+                headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': settings.MICROSERVICE_API_TOKEN
+                }
 
-            new_game = requests.post(settings.GAME_SERVICE_HOST_INTERNAL +
-                '/tournament/nextgame/', headers=headers, json={
-                    'tournament_id': self.game.tournament.id
-                })
+                new_game = requests.post(settings.GAME_SERVICE_HOST_INTERNAL +
+                    '/tournament/nextgame/', headers=headers, json={
+                        'tournament_id': self.game.tournament.id
+                    }, verify=False)
 
     def game_winned_disconnected(self):
         if self.playerLeftStatus == self.PlayerStatus.DISCONNECTED:
@@ -249,9 +252,23 @@ class GameInstance():
 
     def game_finished(self, winner_id):
         self.status = self.GameStatus.FINISHED
-        async_to_sync(self.channel_layer.group_send)(
-            self.group_name, {"type": "game_update", "end_dict": {"end": "Game finished", "winner": winner_id}}
-        )
+
+
+        try:
+            if self.game.tournament:
+                tournament_id = self.game.tournament.id
+            else:
+                tournament_id = None
+            if tournament_id:
+                async_to_sync(self.channel_layer.group_send)(
+                    self.group_name, {"type": "game_update", "end_dict": {"end": "Game finished", "winner": winner_id, "tournament_id": tournament_id}}
+                )
+            else:
+                async_to_sync(self.channel_layer.group_send)(
+                    self.group_name, {"type": "game_update", "end_dict": {"end": "Game finished", "winner": winner_id}}
+                )
+        except Exception as e:
+            print("Error sending game update: ", e)
         try:
             self.game.status = Game.GameStatus.FINISHED
             self.game.winner = User.objects.get(id=winner_id)

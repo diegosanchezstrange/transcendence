@@ -1,3 +1,5 @@
+let game = null;
+
 class Game {
   constructor() {
     this.dx = 1;
@@ -24,7 +26,7 @@ class Game {
         "Oponent not found",
         "danger",
         document.getElementsByTagName("main")[0],
-        3000,
+        3000
       );
       Router.changePage("/home");
       return;
@@ -35,7 +37,7 @@ class Game {
       {
         method: "GET",
         headers: headers,
-      },
+      }
     );
 
     let games = await fetch(
@@ -43,7 +45,7 @@ class Game {
       {
         method: "GET",
         headers: headers,
-      },
+      }
     );
 
     let pause_games = await fetch(
@@ -51,7 +53,7 @@ class Game {
       {
         method: "GET",
         headers: headers,
-      },
+      }
     );
 
     if (pause_games.status === 200) {
@@ -77,7 +79,7 @@ class Game {
   async createGame(game) {
     if (game == null) {
       await addAlertBox("Game not found", "danger", document.body, 3000);
-      Router.changePage("/home");
+      Router.changePage("/home/");
       return;
     }
 
@@ -106,7 +108,7 @@ class Game {
     console.log("Connecting to game socket");
 
     this.gameSocket = new WebSocket(
-      GAME_SOCKETS_HOST + "/game" + "/?token=" + token + socket_params,
+      GAME_SOCKETS_HOST + "/game" + "/?token=" + token + socket_params
     );
 
     this.gameSocket.onmessage = async (e) => {
@@ -122,12 +124,14 @@ class Game {
         if (endData.hasOwnProperty("error")) {
           let message = endData["error"];
           await addAlertBox(message, "danger", document.body, 4000);
-          Router.changePage("/home");
+          Router.changePage("/home/");
         } else {
           let winner = endData["winner"];
           let message = winner + " won the game";
           await addAlertBox(message, "success", document.body, 4000);
-          Router.changePage("/home");
+          if (endData.hasOwnProperty("tournament_id"))
+            Router.changePage("/lobby/?tournament=" + endData["tournament_id"]);
+          else Router.changePage("/home/");
         }
       }
     };
@@ -137,7 +141,7 @@ class Game {
     };
 
     this.gameSocket.onclose = function (e) {
-      console.error("Game socket closed unexpectedly");
+      console.log("connection closed");
     };
   }
 
@@ -271,10 +275,67 @@ class Game {
   }
 }
 
-async function main() {
+function handleKeyDownArrows(event, game) {
+  switch (event.key) {
+    case "ArrowUp":
+      game.gameSocket.send(
+        JSON.stringify({
+          message: "UP",
+        })
+      );
+      break;
+    case "ArrowDown":
+      game.gameSocket.send(
+        JSON.stringify({
+          message: "DOWN",
+        })
+      );
+      break;
+    case "Enter":
+      console.log("ENTER");
+      game.gameSocket.send(
+        JSON.stringify({
+          message: "ENTER",
+        })
+      );
+      break;
+    case "w":
+      game.gameSocket.send(
+        JSON.stringify({
+          message: "W",
+        })
+      );
+      break;
+    case "s":
+      game.gameSocket.send(
+        JSON.stringify({
+          message: "S",
+        })
+      );
+      break;
+  }
+}
+
+function handleKeysPreventDefault(e) {
+  if (
+    [
+      "ArrowUp",
+      "ArrowDown",
+      "ArrowLeft",
+      "ArrowRight",
+      "Enter",
+      "A",
+      "S",
+    ].indexOf(e.code) > -1
+  ) {
+    e.preventDefault();
+  }
+}
+
+async function main_game() {
   // Check the token and redirect to the login page if it's not valid
   let token = Router.getJwt();
-  let game = new Game();
+  game = new Game();
 
   if (!token) {
     addAlertBox("You need to be logged in to play", "danger", document.body);
@@ -284,66 +345,28 @@ async function main() {
   }
   let gameData = await game.getGames();
   game.createGame(gameData);
-  window.addEventListener("keydown", function (event) {
-    switch (event.key) {
-      case "ArrowUp":
-        game.gameSocket.send(
-          JSON.stringify({
-            message: "UP",
-          }),
-        );
-        break;
-      case "ArrowDown":
-        game.gameSocket.send(
-          JSON.stringify({
-            message: "DOWN",
-          }),
-        );
-        break;
-      case "Enter":
-        console.log("ENTER");
-        game.gameSocket.send(
-          JSON.stringify({
-            message: "ENTER",
-          }),
-        );
-        break;
-      case "w":
-        game.gameSocket.send(
-          JSON.stringify({
-            message: "W",
-          }),
-        );
-        break;
-      case "s":
-        game.gameSocket.send(
-          JSON.stringify({
-            message: "S",
-          }),
-        );
-        break;
-    }
-  });
 
-  window.addEventListener(
-    "keydown",
-    function (e) {
-      if (
-        [
-          "ArrowUp",
-          "ArrowDown",
-          "ArrowLeft",
-          "ArrowRight",
-          "Enter",
-          "A",
-          "S",
-        ].indexOf(e.code) > -1
-      ) {
-        e.preventDefault();
-      }
-    },
-    false,
-  );
+  let wrapperFunction = function (event) {
+    handleKeyDownArrows(event, game);
+  };
+
+  window.removeEventListener("keydown", wrapperFunction, false);
+  window.addEventListener("keydown", wrapperFunction, false);
+
+  window.removeEventListener("keydown", handleKeysPreventDefault, false);
+  window.addEventListener("keydown", handleKeysPreventDefault, false);
 }
 
-main();
+main_game();
+
+window.addEventListener("change-page", function (event) {
+  //Check if the url has /pong/
+  //If it has execute the main_game function
+  if (game) {
+    game.gameSocket.close();
+    game = null;
+  }
+  if (event.detail.newPage.includes("/pong/")) {
+    main_game();
+  }
+});

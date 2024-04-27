@@ -44,7 +44,7 @@ async function find1v1Game() {
         "Game paused found with " + opponent,
         "success",
         document.getElementsByTagName("main")[0],
-        2000,
+        2000
       );
       Router.changePage("/pong/?opponent=" + opponent);
     } else if (game.length > 1) {
@@ -52,7 +52,7 @@ async function find1v1Game() {
         "Error: more than one game found",
         "danger",
         document.getElementsByTagName("main")[0],
-        3000,
+        3000
       );
     }
   } else if (games.status === 200 && games_detail.length > 0) {
@@ -63,7 +63,7 @@ async function find1v1Game() {
         "Game found with " + opponent,
         "success",
         document.getElementsByTagName("main")[0],
-        2000,
+        2000
       );
       Router.changePage("/pong/?opponent=" + opponent);
     } else if (game.length > 1) {
@@ -71,14 +71,14 @@ async function find1v1Game() {
         "Error: more than one game found",
         "danger",
         document.getElementsByTagName("main")[0],
-        3000,
+        3000
       );
     }
   } else {
     let alert = await addAlertBox(
       "Joining queue...",
       "success",
-      document.getElementsByTagName("main")[0],
+      document.getElementsByTagName("main")[0]
     );
     response = await fetch(MATCHMAKING_SERVICE_HOST + "/queue/join/", {
       method: "POST",
@@ -90,7 +90,7 @@ async function find1v1Game() {
         "Error joining queue",
         "danger",
         document.getElementsByTagName("main")[0],
-        3000,
+        3000
       );
     }
   }
@@ -115,24 +115,33 @@ async function enterLobby() {
     headers: headers,
   });
 
-  let tournament_detail = (await tournament.json())["detail"];
-
-  if (tournament_detail.length == 0) {
-    // no tournament found
-    let new_tournament = fetch(MATCHMAKING_SERVICE_HOST + "/tournament/join/", {
+  if (tournament.status === 200) {
+    let tournament_detail = (await tournament.json())["detail"];
+    for (let i = 0; i < tournament_detail.length; i++) {
+      if (
+        tournament_detail[i].status === "WAITING" ||
+        tournament_detail[i].status === "IN_PROGRESS"
+      ) {
+        let tournament_id = tournament_detail[i].id;
+        Router.changePage("/lobby/?tournament=" + tournament_id);
+        return;
+      }
+    }
+  }
+  // no tournament found
+  let new_tournament = await fetch(
+    MATCHMAKING_SERVICE_HOST + "/tournament/join/",
+    {
       method: "POST",
       headers: headers,
-    });
-
-    if (new_tournament.status === 200) {
-      await addAlertBox(
-        "Waiting for other players...",
-        "success",
-        document.getElementsByTagName("main")[0],
-      );
     }
-  } else {
-    let tournament_id = tournament_detail[0].id;
-    Router.changePage("/lobby/?tournament=" + tournament_id);
+  );
+
+  if (new_tournament.status === 200) {
+    await addAlertBox(
+      "Waiting for other players...",
+      "success",
+      document.getElementsByTagName("main")[0]
+    );
   }
 }
