@@ -52,12 +52,33 @@
   padding-right: 15%;
 }
 
-@media only screen and (min-width: 990px) {
+@media only screen and (min-width: 2200px) {
   #friends-panel {
-    right: 0;
-    top: 100px;
-    width: 15rem;
+    left: 130px;
+    width: 300px;
+    right: auto;
   }
+}
+
+@media only screen and (min-width: 1092px) and (max-width: 2200px) {
+  #friends-panel {
+    right: 400px;
+    top: 440px;
+    width: 26rem;
+  }
+}
+
+@media only screen and (max-width: 1092px) {
+  #friends-panel {
+    top: 600px;
+    margin: 6%;
+    position: absolute;
+    max-width: 500px;
+    min-width: 300px;
+  }
+}
+
+@media only screen and (min-width: 990px) and (max-width: 1072px) {
   #friends-icon {
     top: 32px;
     position: fixed;
@@ -76,20 +97,19 @@
   }
 }
 
-@media only screen and (max-width: 990px) {
-  #friends-panel {
-    top: 600px;
-    left: 0%;
-    margin: 6%;
-    position: absolute;
-  }
-  #friends-icon {
-    left: 5rem;
-    bottom: 0.5rem;
-  }
+@media only screen and (min-width: 990px)
+{
   #profile-icon {
-    left: 7rem;
-    bottom: 4rem;
+    top: 39px;
+    position: fixed;
+    width: 140px;
+  }
+}
+
+@media only screen and (max-width: 990px) {
+  #friends-icon {
+    bottom: 1rem;
+    position: inherit;
   }
 }
 

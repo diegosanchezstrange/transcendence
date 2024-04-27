@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from django.db.models import Q
 from .models import Friendship, FriendRequest
 from .notifications.send_notification import send_friend_request_notification
@@ -9,17 +9,44 @@ from .notifications.constants import NotificationType
 from .utils.utils import is_your_friend
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
+from functools import wraps
+from django.utils.decorators import method_decorator
 
+from django.conf import settings
+
+def private_or_public_endpoint(f):
+    @wraps(f)
+    def decorated_function(request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return f(request, *args, **kwargs)
+        
+        api_token = request.headers.get('Authorization')
+        if not api_token or api_token != settings.MICROSERVICE_API_TOKEN:
+            return JsonResponse({'detail': 'Invalid API token.'}, status=401)
+        return f(request, *args, **kwargs)
+    return decorated_function
 
 class FriendView(APIView):
-    permission_classes = [IsAuthenticated]
 
-    def get(self, request, *args, **kwargs):
+    @method_decorator(permission_classes([]))
+    @method_decorator(authentication_classes([]))
+    @method_decorator(private_or_public_endpoint)
+    def get(self, request, id=None):
         """
         Returns a list of friends of the user
 
         """
-        user = request.user
+        if id:
+            user = get_object_or_404(User, id=id)
+        elif request.user.is_authenticated:
+            user = request.user
+        else:
+            return JsonResponse({
+                "detail": "User is not authenticated"
+            }, status=401)
+
+        print(user)
+
         friends = Friendship.objects.filter(Q(user1=user) | Q(user2=user))
         print(user.userprofile)
 
@@ -44,7 +71,8 @@ class FriendView(APIView):
         })
 
 
-    def delete(self, request, *args, **kwargs):
+    @method_decorator(permission_classes([IsAuthenticated]))
+    def delete(self, request, id=None):
         """
         Removes a friend from your friend list
 

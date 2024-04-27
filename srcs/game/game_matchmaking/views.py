@@ -6,6 +6,7 @@ from functools import wraps
 from django.utils.decorators import method_decorator
 from django.shortcuts import get_object_or_404
 import random
+import requests
 
 from .notifications.send_notification import send_friend_request_notification
 from .notifications.constants import NotificationType
@@ -28,6 +29,14 @@ def private_microservice_endpoint(f):
     return decorated_function
 
 
+'''
+Create a new game
+
+Parameters:
+    - playerLeft (Required): The id of the playerLeft
+    - playerRight (Required): The id of the playerRight
+
+'''
 @api_view(['POST'])
 @private_microservice_endpoint
 def create_game(request):
@@ -58,7 +67,16 @@ def create_game(request):
 
     return JsonResponse({'game_id': game.id}, status=201)
 
+'''
+Get all the games of the logged in user
 
+The user must be authenticated to get the games
+
+Parameters:
+    - status (Optional): Filter the games by status (WAITING, IN_PROGRESS, PAUSED)
+    - opponent (Optional): Filter the games by the opponent's username
+
+'''
 @api_view(['GET'])
 def get_user_games(request, id):
     user = get_object_or_404(User, id=id)
@@ -81,7 +99,6 @@ def get_user_games(request, id):
             return JsonResponse({'error': 'opponent does not exist'}, status=404)
         except:
             return JsonResponse({'error': 'error while querying the database'}, status=500)
-
     try:
         games = Game.objects.filter(Q(playerLeft=user) | Q(playerRight=user))
         if gameStatus:
@@ -104,7 +121,9 @@ def get_user_games(request, id):
             'playerRightId': game.playerRight.id,
             'playerLeftScore': game.playerLeftScore,
             'playerRightScore': game.playerRightScore,
-            'winner': game.winner,
+            'winner': game.winner.username if game.winner is not None else None,
+            'winnerId': game.winner.id if game.winner is not None else None,
+            'tournament': game.tournament.id if game.tournament is not None else None,
             'status': game.status
         })
     return JsonResponse({'detail': gamesList}, status=200)
@@ -113,6 +132,16 @@ def get_user_games(request, id):
 @method_decorator(never_cache, name='dispatch')
 class GameChallengeView(APIView):
 
+    '''
+    Create a new game challenge
+
+    Check if the user already has a game waiting, in progress or paused
+
+    Check if the opponent exists and if the user has already sent an invite for the opponent
+
+    Parameters:
+        - opponent (Required): The id of the opponent
+    '''
     def post(self,request):
         opponent = request.data.get('opponent')
 
@@ -155,6 +184,15 @@ class GameChallengeView(APIView):
 
         return JsonResponse({'invite_id': invite.id}, status=201)
 
+    '''
+    Get all the game challenges of the logged in user
+
+    The user must be authenticated to get the game challenges
+
+    Parameters:
+        - status (Optional): Filter the game challenges by status (PENDING, ACCEPTED, DECLINED)
+        - opponent (Optional): Filter the game challenges by the opponent's username
+    '''
     def get(self, request):
         user = request.user
 
@@ -190,6 +228,16 @@ class GameChallengeView(APIView):
 @method_decorator(never_cache, name='dispatch')
 class GameTournamentView(APIView):
 
+    '''
+    Create a new tournament
+
+    Check if the players exist and if they are already in a tournament
+
+    This call can only be made by the microservice MATCHMAKING
+
+    Parameters:
+        - players (Required): A list of players' ids
+    '''
     @method_decorator(private_microservice_endpoint)
     def post(self, request):
         data = request.data["players"]
@@ -238,6 +286,11 @@ class GameTournamentView(APIView):
         
         return JsonResponse({'tournament_id': tournament.id}, status=201)
 
+    '''
+    Get all the tournaments of the logged in user
+
+    The user must be authenticated to get the tournaments
+    '''
     def get(self, request):
         user = request.user
 
@@ -256,6 +309,8 @@ class GameTournamentView(APIView):
                     'id': userTournament.tournament.id,
                     'status': userTournament.tournament.status
                 })
+            if len(tournaments) == 0:
+                return JsonResponse({'error': 'no tournaments found'}, status=404)
         except Exception as e:
             return JsonResponse({'error': 'error while querying the database'}, status=500)
 
@@ -270,6 +325,12 @@ class GameTournamentView(APIView):
             return JsonResponse({'error': 'error while querying the database'}, status=500)
         
         
+'''
+Get all the matches of a tournament
+
+Parameters:
+    - id (Required): The id of the tournament
+'''
 @never_cache
 @api_view(['GET'])
 def get_tournament_matches(request):
@@ -306,6 +367,12 @@ def get_tournament_matches(request):
         })
     return JsonResponse({'detail': matchesList}, status=200)
 
+'''
+Get all the players of a tournament
+
+Parameters:
+    - tournament_id (Required): The id of the tournament
+'''
 @never_cache
 @api_view(['GET'])
 def get_top_players(request):
@@ -383,16 +450,54 @@ def next_tournament_game(request):
         if game.exists():
             current_game = game.first()
             return JsonResponse({'game': {'id': current_game.id, 'status':
-                                current_game.status, "playerLeft": current_game.playerLeft.username, "playerRight": current_game.playerRight.username}}, status=200)
+                                current_game.status, "playerLeft":
+                                          current_game.playerLeft.username,
+                                          "playerLeftId":
+                                          current_game.playerLeft.id,
+                                          "playerRight":
+                                          current_game.playerRight.username,
+                                          "playerRightId":
+                                          current_game.playerRight.id}}, status=200)
         new_game = Game.objects.create(playerLeft=players_playing[0].user, playerRight=players_playing[1].user, tournament=tournament)
         new_game.save()
 
         current_game = new_game
 
-        return JsonResponse({'game': {'id': current_game.id, 'status': current_game.status, 'playerLeft': current_game.playerLeft.username, 'playerRight': current_game.playerRight.username}}, status=201)
+        return JsonResponse({'game': {'id': current_game.id, 'status': current_game.status, 
+                                      'playerLeft': current_game.playerLeft.username, 'playerLeftId': current_game.playerLeft.id,
+                                      'playerRight': current_game.playerRight.username, 'playerRightId': current_game.playerRight.id}}, status=201)
+            
     except Exception as e:
         print(e)
         return JsonResponse({'error': 'Error while creating the game'}, status=500)
+
+@never_cache
+@api_view(['GET'])
+def user_tournament_status(request):
+    user = request.user
+
+    if not user or user is None or not user.is_authenticated:
+        return JsonResponse({'error': 'user is required'}, status=403)
+
+    tournament_id = request.query_params.get('tournament_id')
+
+    if tournament_id is None or tournament_id == '':
+        return JsonResponse({'error': 'tournament_id is required'}, status=400)
+
+    try:
+        tournament = Tournament.objects.get(id=tournament_id)
+    except Tournament.DoesNotExist:
+        return JsonResponse({'error': 'tournament does not exist'}, status=404)
+    except:
+        return JsonResponse({'error': 'error while querying the database'}, status=500)
+
+    try:
+        user_tournament = UserTournament.objects.get(user=user, tournament=tournament)
+        return JsonResponse({'status': user_tournament.status}, status=200)
+    except UserTournament.DoesNotExist:
+        return JsonResponse({'error': 'user is not in the tournament'}, status=404)
+    except:
+        return JsonResponse({'error': 'error while querying the database'}, status=500)
 
 
 @never_cache

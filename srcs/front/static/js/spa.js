@@ -52,6 +52,27 @@ class Router {
     return null;
   }
 
+  static getUserId() {
+    let token = localStorage.getItem("token");
+    if (token) {
+      let payload = token.split(".")[1];
+      payload = atob(payload);
+      payload = JSON.parse(payload);
+      return payload.user_id;
+    }
+    return null;
+  }
+
+  static changePageEventDispat(newUrl) {
+    let event = new CustomEvent("change-page", {
+      detail: {
+        newPage: newUrl,
+      },
+    });
+
+    window.dispatchEvent(event);
+  }
+
   static insertHtml(html) {
     let parser = new DOMParser();
     let doc = parser.parseFromString(html, "text/html");
@@ -129,12 +150,20 @@ class Router {
         if (!popstate) {
           history.pushState({ page: url }, "", url);
         }
+        if (!notificationsWebSocket && Router.getJwt()) {
+          notificationsWebSocket = new NotificationsWebsocket();
+        }
+        Router.changePageEventDispat(url);
       })
       .catch((error) => {
         console.log(error.message);
         let errorCode = parseInt(error.message);
         if (errorCode === 401) {
           localStorage.removeItem("token");
+          if (notificationsWebSocket) {
+            notificationsWebSocket.close();
+            notificationsWebSocket = null;
+          }
           Router.changePage("/login");
         }
       });

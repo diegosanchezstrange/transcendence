@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from .models import UserProfile
 from functools import wraps
 from src.settings import MICROSERVICE_API_TOKEN
@@ -23,6 +23,18 @@ def private_microservice_endpoint(f):
     def decorated_function(request, *args, **kwargs):
         api_token = request.headers.get('Authorization')
         if not api_token or api_token != MICROSERVICE_API_TOKEN:
+            return JsonResponse({'detail': 'Invalid API token.'}, status=401)
+        return f(request, *args, **kwargs)
+    return decorated_function
+
+def private_or_public_endpoint(f):
+    @wraps(f)
+    def decorated_function(request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return f(request, *args, **kwargs)
+        
+        api_token = request.headers.get('Authorization')
+        if not api_token or api_token != settings.MICROSERVICE_API_TOKEN:
             return JsonResponse({'detail': 'Invalid API token.'}, status=401)
         return f(request, *args, **kwargs)
     return decorated_function
@@ -257,11 +269,23 @@ def upload_profile_picture(request, *args, **kwargs):
     }, status=status_code)
 
 @api_view(['PUT'])
-@permission_classes([IsAuthenticated])
+@private_or_public_endpoint
+@permission_classes([])
+@authentication_classes([])
 def set_user_status(request, *args, **kwargs):
     status = request.data.get("is_online")
 
-    profile = request.user.userprofile
+    if request.user.is_authenticated:
+        user = request.user
+    else:
+        user_id = request.data.get('user_id')
+        if user_id is None:
+            return JsonResponse({
+                "message": "User ID is required."
+            }, status=400)
+        user = User.objects.get(pk=user_id)
+
+    profile = user.userprofile
     profile.is_online = True if status else False # This line hurts
     profile.save()
 

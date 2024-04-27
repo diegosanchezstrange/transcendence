@@ -110,11 +110,11 @@ class NotificationsWebsocket {
         case NotificationType.GameFound:
           addNotificationBox("Event", data["message"]);
           let opponent = data["sender"]["username"];
-          Router.changePage("/pong" + "?opponent=" + opponent);
+          Router.changePage("/pong/" + "?opponent=" + opponent);
           break;
         case NotificationType.TournamentFound:
           addNotificationBox("Event", data["message"]);
-          tournament = data["tournament_id"];
+          let tournament = data["tournament_id"];
           Router.changePage("/lobby/" + "?tournament=" + tournament);
           break;
         default:

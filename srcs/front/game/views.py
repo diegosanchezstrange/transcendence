@@ -42,8 +42,9 @@ def start(request):
 @never_cache
 @api_view(['GET'])
 def lobby(request):
-    if request.query_params.get('tournament_id'):
-        context['PATH'] = 'lobby/?tournament_id=' + request.query_params.get('tournament_id')
+    print(request.query_params)
+    if request.query_params.get('tournament'):
+        context['PATH'] = 'lobby/?tournament=' + request.query_params.get('tournament')
     else:
         context['PATH'] = 'lobby'
     # TO DO: request game info from database
