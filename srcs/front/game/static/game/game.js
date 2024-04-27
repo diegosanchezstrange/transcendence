@@ -41,7 +41,7 @@ class Game {
     );
 
     let games = await fetch(
-      GAME_SERVICE_HOST + "/?opponent=" + oponent + "&status=WAITING",
+      GAME_SERVICE_HOST + "/game/?opponent=" + oponent + "&status=WAITING",
       {
         method: "GET",
         headers: headers,
@@ -49,7 +49,7 @@ class Game {
     );
 
     let pause_games = await fetch(
-      GAME_SERVICE_HOST + "/?opponent=" + oponent + "&status=PAUSED",
+      GAME_SERVICE_HOST + "/game/?opponent=" + oponent + "&status=PAUSED",
       {
         method: "GET",
         headers: headers,

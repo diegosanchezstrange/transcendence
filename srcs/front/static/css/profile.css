@@ -2,10 +2,6 @@ main {
   height: 75%;
 }
 
-.profile-content {
-  margin-left: 0;
-}
-
 #img-edit-button {
   background: transparent;
   border: none !important;
@@ -131,5 +127,12 @@ main {
   #profile-username {
     font-size: calc(1rem + 2vw + 2vh);
     width: 90%;
+  }
+}
+
+@media only screen and (min-width: 767px) {
+  .match-history
+  {
+  margin-top: 12vh;
   }
 }

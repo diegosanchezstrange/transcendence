@@ -4,6 +4,7 @@ from django.views.decorators.cache import never_cache
 from rest_framework.decorators import api_view
 from functools import wraps
 from django.utils.decorators import method_decorator
+from django.shortcuts import get_object_or_404
 import random
 import requests
 
@@ -27,117 +28,105 @@ def private_microservice_endpoint(f):
         return f(request, *args, **kwargs)
     return decorated_function
 
-# Create your views here.
 
+'''
+Create a new game
 
-@method_decorator(never_cache, name='dispatch')
-class GameView(APIView):
+Parameters:
+    - playerLeft (Required): The id of the playerLeft
+    - playerRight (Required): The id of the playerRight
 
-    '''
-    Create a new game
+'''
+@api_view(['POST'])
+@private_microservice_endpoint
+def create_game(request):
+    playerLeft = request.data.get('playerLeft')
+    playerRight = request.data.get('playerRight')
 
-    Parameters:
-        - playerLeft (Required): The id of the playerLeft
-        - playerRight (Required): The id of the playerRight
+    if playerLeft is None or playerLeft == '' or playerRight is None or playerRight == '':
+        return JsonResponse({'error': 'playerLeft and playerRight are required'}, status=400)
 
-    '''
-    @method_decorator(private_microservice_endpoint)
-    def post(self, request):
-        print('create_game')
-        playerLeft = request.data.get('playerLeft')
-        playerRight = request.data.get('playerRight')
+    try:
+        playerLeftObj = User.objects.get(id=playerLeft)
+        playerRightObj = User.objects.get(id=playerRight)
 
-        print(playerLeft)
-        print(playerRight)
+        # Check if a Game already exists for the user and are waiting, IN_PROGRESS or PAUSED
+        game = Game.objects.filter(Q(playerLeft=playerLeftObj) | Q(playerRight=playerLeftObj)).filter(Q(status=Game.GameStatus.WAITING) | Q(status=Game.GameStatus.IN_PROGRESS) | Q(status=Game.GameStatus.PAUSED))
+        if game.exists():
+            return JsonResponse({'error': 'game already exists'}, status=409)
+        game = Game.objects.filter(Q(playerLeft=playerRightObj) | Q(playerRight=playerRightObj)).filter(Q(status=Game.GameStatus.WAITING) | Q(status=Game.GameStatus.IN_PROGRESS) | Q(status=Game.GameStatus.PAUSED))
+        if game.exists():
+            return JsonResponse({'error': 'game already exists'}, status=409)
+    except User.DoesNotExist:
+        return JsonResponse({'error': 'player does not exist'}, status=404)
+    except:
+        return JsonResponse({'error': 'error while querying the database'}, status=500)
 
-        if playerLeft is None or playerLeft == '' or playerRight is None or playerRight == '':
-            return JsonResponse({'error': 'playerLeft and playerRight are required'}, status=400)
+    game = Game.objects.create(playerLeft=playerLeftObj, playerRight=playerRightObj)
+    game.save()
 
+    return JsonResponse({'game_id': game.id}, status=201)
+
+'''
+Get all the games of the logged in user
+
+The user must be authenticated to get the games
+
+Parameters:
+    - status (Optional): Filter the games by status (WAITING, IN_PROGRESS, PAUSED)
+    - opponent (Optional): Filter the games by the opponent's username
+
+'''
+@api_view(['GET'])
+def get_user_games(request, id):
+    user = get_object_or_404(User, id=id)
+
+    if not user or user is None:
+        return JsonResponse({'error': 'user is required'}, status=400)
+
+    #Check if the url has a query parameter for the status of the game
+    gameStatus = request.query_params.get('status')
+    # Check if the url has a query parameter for the opponent's username
+    opponent = request.query_params.get('opponent')
+
+    opponentObj = None
+
+    # Get the opponent's object
+    if opponent:
         try:
-            playerLeftObj = User.objects.get(id=playerLeft)
-            playerRightObj = User.objects.get(id=playerRight)
-
-            # Check if a Game already exists for the user and are waiting, IN_PROGRESS or PAUSED
-            game = Game.objects.filter(Q(playerLeft=playerLeftObj) | Q(playerRight=playerLeftObj)).filter(Q(status=Game.GameStatus.WAITING) | Q(status=Game.GameStatus.IN_PROGRESS) | Q(status=Game.GameStatus.PAUSED))
-            if game.exists():
-                return JsonResponse({'error': 'game already exists'}, status=409)
-            game = Game.objects.filter(Q(playerLeft=playerRightObj) | Q(playerRight=playerRightObj)).filter(Q(status=Game.GameStatus.WAITING) | Q(status=Game.GameStatus.IN_PROGRESS) | Q(status=Game.GameStatus.PAUSED))
-            if game.exists():
-                return JsonResponse({'error': 'game already exists'}, status=409)
+            opponentObj = User.objects.get(username=opponent)
         except User.DoesNotExist:
-            return JsonResponse({'error': 'player does not exist'}, status=404)
+            return JsonResponse({'error': 'opponent does not exist'}, status=404)
         except:
             return JsonResponse({'error': 'error while querying the database'}, status=500)
+    try:
+        games = Game.objects.filter(Q(playerLeft=user) | Q(playerRight=user))
+        if gameStatus:
+            games = games.filter(status=gameStatus)
+        if opponent and opponentObj is not None:
+            games = games.filter(Q(playerLeft=opponentObj) | Q(playerRight=opponentObj))
+    except Game.DoesNotExist:
+        return JsonResponse({'error': 'no games found'}, status=404)
+    except Exception as e:
+        print(e)
+        return JsonResponse({'error': 'error while querying the database'}, status=500)
 
-        game = Game.objects.create(playerLeft=playerLeftObj, playerRight=playerRightObj)
-        game.save()
-
-        return JsonResponse({'game_id': game.id}, status=201)
-
-    '''
-    Get all the games of the logged in user
-
-    The user must be authenticated to get the games
-
-    Parameters:
-        - status (Optional): Filter the games by status (WAITING, IN_PROGRESS, PAUSED)
-        - opponent (Optional): Filter the games by the opponent's username
-
-    '''
-    def get(self, request):
-        user = request.user
-
-        # Check if the user is authenticated
-        if not user or user is None:
-            return JsonResponse({'error': 'user is required'}, status=400)
-
-        if not user.is_authenticated:
-            return JsonResponse({'error': 'user is not authenticated'}, status=403)
-
-        #Check if the url has a query parameter for the status of the game
-        gameStatus = request.query_params.get('status')
-        # Check if the url has a query parameter for the opponent's username
-        opponent = request.query_params.get('opponent')
-
-        opponentObj = None
-
-        # Get the opponent's object
-        if opponent:
-            try:
-                opponentObj = User.objects.get(username=opponent)
-            except User.DoesNotExist:
-                return JsonResponse({'error': 'opponent does not exist'}, status=404)
-            except:
-                return JsonResponse({'error': 'error while querying the database'}, status=500)
-
-        try:
-            games = Game.objects.filter(Q(playerLeft=user) | Q(playerRight=user))
-            if gameStatus:
-                games = games.filter(status=gameStatus)
-            if opponent and opponentObj is not None:
-                games = games.filter(Q(playerLeft=opponentObj) | Q(playerRight=opponentObj))
-        except Game.DoesNotExist:
-            return JsonResponse({'error': 'no games found'}, status=404)
-        except Exception as e:
-            print(e)
-            return JsonResponse({'error': 'error while querying the database'}, status=500)
-
-        gamesList = []
-        for game in games:
-            gamesList.append({
-                'id': game.id,
-                'playerLeft': game.playerLeft.username,
-                'playerRight': game.playerRight.username,
-                'playerLeftId': game.playerLeft.id,
-                'playerRightId': game.playerRight.id,
-                'playerLeftScore': game.playerLeftScore,
-                'playerRightScore': game.playerRightScore,
-                'winner': game.winner.username if game.winner is not None else None,
-                'winnerId': game.winner.id if game.winner is not None else None,
-                'tournament': game.tournament.id if game.tournament is not None else None,
-                'status': game.status
-            })
-        return JsonResponse({'detail': gamesList}, status=200)
+    gamesList = []
+    for game in games:
+        gamesList.append({
+            'id': game.id,
+            'playerLeft': game.playerLeft.username,
+            'playerRight': game.playerRight.username,
+            'playerLeftId': game.playerLeft.id,
+            'playerRightId': game.playerRight.id,
+            'playerLeftScore': game.playerLeftScore,
+            'playerRightScore': game.playerRightScore,
+            'winner': game.winner.username if game.winner is not None else None,
+            'winnerId': game.winner.id if game.winner is not None else None,
+            'tournament': game.tournament.id if game.tournament is not None else None,
+            'status': game.status
+        })
+    return JsonResponse({'detail': gamesList}, status=200)
 
 
 @method_decorator(never_cache, name='dispatch')
