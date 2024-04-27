@@ -50,6 +50,16 @@ court::after {
     align-items: center;
 }
 
+.instructions
+{
+  position: absolute;
+  top: 0%;
+  font-size: xx-large;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-weight: bold;
+  color: #b12e4e;
+}
+
 .score-panel {
   position: absolute;
   top: 12%;
