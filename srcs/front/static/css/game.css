@@ -60,11 +60,19 @@ court::after {
   color: white;
   text-align: center;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-size: 1vw;
+  font-size: 140%;
   font-style: normal;
   font-weight: 700;
-  line-height: 130%; /* 62.4px */
   letter-spacing: 4.32px;
+  display: inline-block;
+}
+
+.game-score {
+  width: 10%;
+}
+
+.game-score-player {
+  width: 33.3%;
 }
 
 .game-board {

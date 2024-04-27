@@ -4,12 +4,12 @@
 </header>
 <main>
     <div id="parent-container">
-        <div class="d-none d-sm-block score-panel row justify-content-center">
-            <span class="game-score-text col-3">{{ game_info.player_1 }}</span>
-            <span id="scoreLeft" class="game-score-text col-2">{{ game_info.score_1 }}</span>
-            <span class="game-score-text col-2">-</span>
-            <span id="scoreRight" class="game-score-text col-2">{{ game_info.score_2 }}</span>
-            <span class="game-score-text col-3">{{ game_info.player_2 }}</span>
+        <div class="d-none d-sm-block score-panel row">
+            <span class="game-score-text game-score-player col-3">{{ game_info.player_1 }}</span>
+            <span id="scoreLeft" class="game-score-text game-score col-2">{{ game_info.score_1 }}</span>
+            <span class="game-score-text game-score col-2">-</span>
+            <span id="scoreRight" class="game-score-text game-score col-2">{{ game_info.score_2 }}</span>
+            <span class="game-score-text game-score-player col-3">{{ game_info.player_2 }}</span>
         </div>
         <div class="d-none d-sm-block game-board" id="court">
             <span class="board-line-v"></span>
