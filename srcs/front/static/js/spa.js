@@ -150,6 +150,9 @@ class Router {
         if (!popstate) {
           history.pushState({ page: url }, "", url);
         }
+        if (!notificationsWebSocket && Router.getJwt()) {
+          notificationsWebSocket = new NotificationsWebsocket();
+        }
         Router.changePageEventDispat(url);
       })
       .catch((error) => {
@@ -157,6 +160,10 @@ class Router {
         let errorCode = parseInt(error.message);
         if (errorCode === 401) {
           localStorage.removeItem("token");
+          if (notificationsWebSocket) {
+            notificationsWebSocket.close();
+            notificationsWebSocket = null;
+          }
           Router.changePage("/login");
         }
       });
