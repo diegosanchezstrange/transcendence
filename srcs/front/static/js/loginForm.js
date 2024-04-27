@@ -50,8 +50,8 @@ function formSubmitLogin(form) {
     .then((text) => {
       // console.log(text);
       localStorage.setItem("token", text.access);
-      if (!notficationsWebSocket)
-        notficationsWebSocket = new NotificationsWebsocket();
+      // if (!notificationsWebSocket)
+      //   notficationsWebSocket = new NotificationsWebsocket();
       Router.changePage("/home/");
     })
     .catch((error) => {
@@ -59,7 +59,7 @@ function formSubmitLogin(form) {
       addAlertBox(
         "Login failed!",
         "danger",
-        document.getElementById("loginBox"),
+        document.getElementById("loginBox")
       );
     });
 
@@ -79,7 +79,7 @@ function formSubmitRegister(form) {
     addAlertBox(
       "Passwords do not match!",
       "danger",
-      document.getElementById("registerBox"),
+      document.getElementById("registerBox")
     );
     return;
   }
@@ -117,7 +117,7 @@ function formSubmitRegister(form) {
       addAlertBox(
         "Registration successful!",
         "success",
-        document.getElementById("registerBox"),
+        document.getElementById("registerBox")
       );
       Router.changePage("/login/");
     })
@@ -126,7 +126,7 @@ function formSubmitRegister(form) {
       addAlertBox(
         "Registration failed!",
         "danger",
-        document.getElementById("registerBox"),
+        document.getElementById("registerBox")
       );
     });
 }
