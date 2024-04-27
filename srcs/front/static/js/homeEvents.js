@@ -115,26 +115,33 @@ async function enterLobby() {
     headers: headers,
   });
 
-  if (tournament.status !== 200) {
-    // no tournament found
-    let new_tournament = await fetch(
-      MATCHMAKING_SERVICE_HOST + "/tournament/join/",
-      {
-        method: "POST",
-        headers: headers,
-      }
-    );
-
-    if (new_tournament.status === 200) {
-      await addAlertBox(
-        "Waiting for other players...",
-        "success",
-        document.getElementsByTagName("main")[0]
-      );
-    }
-  } else {
+  if (tournament.status === 200) {
     let tournament_detail = (await tournament.json())["detail"];
-    let tournament_id = tournament_detail[0].id;
-    Router.changePage("/lobby/?tournament=" + tournament_id);
+    for (let i = 0; i < tournament_detail.length; i++) {
+      if (
+        tournament_detail[i].status === "WAITING" ||
+        tournament_detail[i].status === "IN_PROGRESS"
+      ) {
+        let tournament_id = tournament_detail[i].id;
+        Router.changePage("/lobby/?tournament=" + tournament_id);
+        return;
+      }
+    }
+  }
+  // no tournament found
+  let new_tournament = await fetch(
+    MATCHMAKING_SERVICE_HOST + "/tournament/join/",
+    {
+      method: "POST",
+      headers: headers,
+    }
+  );
+
+  if (new_tournament.status === 200) {
+    await addAlertBox(
+      "Waiting for other players...",
+      "success",
+      document.getElementsByTagName("main")[0]
+    );
   }
 }

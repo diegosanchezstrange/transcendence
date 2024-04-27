@@ -230,7 +230,7 @@ class GameInstance():
                 new_game = requests.post(settings.GAME_SERVICE_HOST_INTERNAL +
                     '/tournament/nextgame/', headers=headers, json={
                         'tournament_id': self.game.tournament.id
-                    })
+                    }, verify=False)
 
     def game_winned_disconnected(self):
         if self.playerLeftStatus == self.PlayerStatus.DISCONNECTED:
@@ -252,9 +252,20 @@ class GameInstance():
 
     def game_finished(self, winner_id):
         self.status = self.GameStatus.FINISHED
-        async_to_sync(self.channel_layer.group_send)(
-            self.group_name, {"type": "game_update", "end_dict": {"end": "Game finished", "winner": winner_id}}
-        )
+
+
+        try:
+            tournament_id = self.game.tournament.id
+            if tournament_id:
+                async_to_sync(self.channel_layer.group_send)(
+                    self.group_name, {"type": "game_update", "end_dict": {"end": "Game finished", "winner": winner_id, "tournament_id": tournament_id}}
+                )
+            else:
+                async_to_sync(self.channel_layer.group_send)(
+                    self.group_name, {"type": "game_update", "end_dict": {"end": "Game finished", "winner": winner_id}}
+                )
+        except Exception as e:
+            print("Error sending game update: ", e)
         try:
             self.game.status = Game.GameStatus.FINISHED
             self.game.winner = User.objects.get(id=winner_id)

@@ -4,7 +4,32 @@ class Tournament {
       "tournament"
     );
     this.current_game = null;
+    this.winner = null;
     this.players = [];
+  }
+
+  async getPlayerStatus() {
+    if (this.tournament_id === null) return;
+
+    let headers = {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + Router.getJwt(),
+    };
+
+    let response = await fetch(
+      GAME_SERVICE_HOST +
+        "/tournament/player/status/?tournament_id=" +
+        this.tournament_id,
+      {
+        method: "GET",
+        headers: headers,
+      }
+    );
+
+    if (response.status !== 200) return;
+    let data = await response.json();
+
+    return data["status"];
   }
 
   async getCurrentGame() {
@@ -28,6 +53,10 @@ class Tournament {
     if (response.status !== 200) return;
     let data = await response.json();
 
+    if ("winner" in data) {
+      this.winner = data["winner"];
+      return this.winner;
+    }
     this.current_game = data["game"];
     return this.current_game;
   }
@@ -62,17 +91,58 @@ class Tournament {
 async function main() {
   let tournament = new Tournament();
 
+  if (tournament.tournament_id === null) {
+    await addAlertBox(
+      "Tournament not found",
+      "danger",
+      document.getElementsByTagName("main")[0],
+      3000
+    );
+    Router.changePage("/home");
+    return;
+  }
+
+  if ((await tournament.getPlayerStatus()) === "ELIMINATED") {
+    await addAlertBox(
+      "You have been eliminated from the tournament",
+      "danger",
+      document.getElementsByTagName("main")[0],
+      3000
+    );
+    Router.changePage("/home");
+    return;
+  }
+
   await tournament.getCurrentGame();
 
-  if (tournament.current_game.playerLeftId === Router.getUserId()) {
-    Router.changePage("/pong/?opponent=" + tournament.current_game.playerRight);
-  } else if (tournament.current_game.playerRightId === Router.getUserId()) {
-    Router.changePage("/pong/?opponent=" + tournament.current_game.playerLeft);
+  if (tournament.current_game !== null) {
+    if (tournament.current_game.playerLeftId === Router.getUserId()) {
+      Router.changePage(
+        "/pong/?opponent=" + tournament.current_game.playerRight
+      );
+    } else if (tournament.current_game.playerRightId === Router.getUserId()) {
+      Router.changePage(
+        "/pong/?opponent=" + tournament.current_game.playerLeft
+      );
+    }
+  } else if (tournament.winner !== null) {
+    await addAlertBox(
+      tournament.winner + " has won the game",
+      "success",
+      document.getElementsByTagName("main")[0],
+      3000
+    );
+    Router.changePage("/home");
+    return;
   } else {
-    document.getElementById("player-left").innerText =
-      tournament.current_game.playerLeft;
-    document.getElementById("player-right").innerText =
-      tournament.current_game.playerRight;
+    await addAlertBox(
+      "Game not found",
+      "danger",
+      document.getElementsByTagName("main")[0],
+      3000
+    );
+    Router.changePage("/home");
+    return;
   }
 }
 

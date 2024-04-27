@@ -480,6 +480,34 @@ def next_tournament_game(request):
         print(e)
         return JsonResponse({'error': 'Error while creating the game'}, status=500)
 
+@never_cache
+@api_view(['GET'])
+def user_tournament_status(request):
+    user = request.user
+
+    if not user or user is None or not user.is_authenticated:
+        return JsonResponse({'error': 'user is required'}, status=403)
+
+    tournament_id = request.query_params.get('tournament_id')
+
+    if tournament_id is None or tournament_id == '':
+        return JsonResponse({'error': 'tournament_id is required'}, status=400)
+
+    try:
+        tournament = Tournament.objects.get(id=tournament_id)
+    except Tournament.DoesNotExist:
+        return JsonResponse({'error': 'tournament does not exist'}, status=404)
+    except:
+        return JsonResponse({'error': 'error while querying the database'}, status=500)
+
+    try:
+        user_tournament = UserTournament.objects.get(user=user, tournament=tournament)
+        return JsonResponse({'status': user_tournament.status}, status=200)
+    except UserTournament.DoesNotExist:
+        return JsonResponse({'error': 'user is not in the tournament'}, status=404)
+    except:
+        return JsonResponse({'error': 'error while querying the database'}, status=500)
+
 
 @never_cache
 @api_view(['POST'])
