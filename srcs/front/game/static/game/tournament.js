@@ -1,7 +1,7 @@
 class Tournament {
   constructor() {
     this.tournament_id = new URLSearchParams(window.location.search).get(
-      "tournament",
+      "tournament"
     );
     this.current_game = null;
     this.players = [];
@@ -48,7 +48,7 @@ class Tournament {
       {
         method: "GET",
         headers: headers,
-      },
+      }
     );
 
     if (response.status !== 200) return;
@@ -59,16 +59,14 @@ class Tournament {
   }
 }
 
-function main() {
+async function main() {
   let tournament = new Tournament();
 
-  tournament.getCurrentGame();
+  await tournament.getCurrentGame();
 
-  if (tournament.current_game.playerLeft === Router.getUsername()) {
-    document.getElementById("player-left").innerText = "You";
+  if (tournament.current_game.playerLeftId === Router.getUserId()) {
     Router.changePage("/pong/?opponent=" + tournament.current_game.playerRight);
-  } else if (tournament.current_game.playerRight === Router.getUsername()) {
-    document.getElementById("player-right").innerText = "You";
+  } else if (tournament.current_game.playerRightId === Router.getUserId()) {
     Router.changePage("/pong/?opponent=" + tournament.current_game.playerLeft);
   } else {
     document.getElementById("player-left").innerText =

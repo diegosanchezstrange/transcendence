@@ -53,7 +53,7 @@ class Tournament:
 
     @staticmethod
     def leave_queue(user):
-        if Tournament.is_user_in_queue(user=user):
+        if not Tournament.is_user_in_queue(user=user):
             raise Tournament.UserNotInQueueError()
         Tournament.__queue.remove(user)
 

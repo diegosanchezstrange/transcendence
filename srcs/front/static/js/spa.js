@@ -52,6 +52,17 @@ class Router {
     return null;
   }
 
+  static getUserId() {
+    let token = localStorage.getItem("token");
+    if (token) {
+      let payload = token.split(".")[1];
+      payload = atob(payload);
+      payload = JSON.parse(payload);
+      return payload.user_id;
+    }
+    return null;
+  }
+
   static insertHtml(html) {
     let parser = new DOMParser();
     let doc = parser.parseFromString(html, "text/html");

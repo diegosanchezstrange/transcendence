@@ -5,6 +5,7 @@ from rest_framework.decorators import api_view
 from functools import wraps
 from django.utils.decorators import method_decorator
 import random
+import requests
 
 from .notifications.send_notification import send_friend_request_notification
 from .notifications.constants import NotificationType
@@ -17,9 +18,6 @@ from django.contrib.auth.models import User
 
 from django.conf import settings
 
-
-# GENERAL
-
 def private_microservice_endpoint(f):
     @wraps(f)
     def decorated_function(request, *args, **kwargs):
@@ -29,8 +27,8 @@ def private_microservice_endpoint(f):
         return f(request, *args, **kwargs)
     return decorated_function
 
+# Create your views here.
 
-# 1v1 GAME
 
 @method_decorator(never_cache, name='dispatch')
 class GameView(APIView):
@@ -236,61 +234,6 @@ class GameChallengeView(APIView):
         print(invitesList)
         return JsonResponse({'detail': invitesList}, status=200)
 
-@never_cache
-@api_view(['POST'])
-def accept_challenge(request):
-    invite_id = request.data.get('invite_id')
-
-    if invite_id is None or invite_id == '':
-        return JsonResponse({'error': 'invite_id is required'}, status=400)
-
-    try:
-        invite = GameInvite.objects.get(id=invite_id)
-    except GameInvite.DoesNotExist:
-        return JsonResponse({'error': 'invite does not exist'}, status=404)
-    except:
-        return JsonResponse({'error': 'error while querying the database'}, status=500)
-
-    if invite.status != GameInvite.InviteStatus.PENDING:
-        return JsonResponse({'error': 'invite is not pending'}, status=400)
-
-    invite.status = GameInvite.InviteStatus.ACCEPTED
-    invite.save()
-
-    game = Game.objects.create(playerLeft=invite.sender, playerRight=invite.receiver)
-    game.save()
-
-    invite.game = game
-    invite.save()
-
-    return JsonResponse({'game_id': game.id}, status=201)
-
-@never_cache
-@api_view(['POST'])
-def decline_challenge(request):
-    invite_id = request.data.get('invite_id')
-
-    if invite_id is None or invite_id == '':
-        return JsonResponse({'error': 'invite_id is required'}, status=400)
-
-    try:
-        invite = GameInvite.objects.get(id=invite_id)
-    except GameInvite.DoesNotExist:
-        return JsonResponse({'error': 'invite does not exist'}, status=404)
-    except:
-        return JsonResponse({'error': 'error while querying the database'}, status=500)
-
-    if invite.status != GameInvite.InviteStatus.PENDING:
-        return JsonResponse({'error': 'invite is not pending'}, status=400)
-
-    invite.status = GameInvite.InviteStatus.DECLINED
-    invite.save()
-
-    return JsonResponse({'detail': 'invite declined'}, status=200)
-
-
-# TOURNAMENT
-
 @method_decorator(never_cache, name='dispatch')
 class GameTournamentView(APIView):
 
@@ -306,57 +249,51 @@ class GameTournamentView(APIView):
     '''
     @method_decorator(private_microservice_endpoint)
     def post(self, request):
-        user = request.user
-        if not user or user is None:
-            return JsonResponse({'error': 'user is required'}, status=400)
+        data = request.data["players"]
+        players = []
+        tournament = None
+        initia_game = None
 
-        # Look for Tournaments in WAITING status
-        tournament = Tournament.objects.filter(status=Tournament.TournamentStatus.WAITING).first()
-
-        # If none is found, create a new one
-        if not tournament:
+        for player in data:
             try:
-                tournament = Tournament.objects.create()
-                tournament.save()
-                userTournament = UserTournament.objects.create(user=user, tournament=tournament)
-                userTournament.save()
+                current = User.objects.get(id=player['id'])
+                hasTournament = UserTournament.objects.filter(user=current,
+                                                              tournament__tournament_winner=None,
+                                                              tournament__status__in=[Tournament.TournamentStatus.WAITING, Tournament.TournamentStatus.IN_PROGRESS]).exists()
+                if hasTournament:
+                    return JsonResponse({'error': 'user already in a tournament'}, status=409)
+
+                if player not in players:
+                    players.append(current)
+                else:
+                    return JsonResponse({'error': 'duplicate players'}, status=400)
             except Exception as e:
                 print(e)
-                if tournament is not None:
-                    tournament.delete()
-                return JsonResponse({'error': 'error while creating the tournament'}, status=500)
-
-        tournament_response = {
-            'id': tournament.tournament.id
-        }
-
-        return JsonResponse(tournament_response, status=200)
-    
-    # Init tournament game
-        # data = request.data["players"] # sacamos los jugadores del torneo una vez tenemos is_match_ready
-        # players = []
-        # tournament = None
-        # initia_game = None
-
-        # for player in data:
-        #     try:
-        #         if player not in players:
-        #             players.append(current)
-        #         else:
-        #             return JsonResponse({'error': 'duplicate players'}, status=400)
-        #     except Exception as e:
-        #         print(e)
-        #         return JsonResponse({'error': 'player does not exist'}, status=404)
-
-        # players.sort(key=lambda x: x.id)
-
-        # initia_game = Game.objects.create(playerLeft=players[0], playerRight=players[1], tournament=tournament)
-        # initia_game.save()
+                return JsonResponse({'error': 'player does not exist'}, status=404)
         
-        # except Exception as e:
-        #   if initia_game is not None:
-        #     initia_game.delete()
+        try:
+            tournament = Tournament.objects.create()
 
+            tournament.save()
+
+            for player in players:
+                userTournament = UserTournament.objects.create(user=player, tournament=tournament)
+                userTournament.save()
+
+            players.sort(key=lambda x: x.id)
+
+            initia_game = Game.objects.create(playerLeft=players[0], playerRight=players[1], tournament=tournament)
+            initia_game.save()
+
+        except Exception as e:
+            print(e)
+            if tournament is not None:
+                tournament.delete()
+            if initia_game is not None:
+                initia_game.delete()
+            return JsonResponse({'error': 'error while creating the tournament'}, status=500)
+        
+        return JsonResponse({'tournament_id': tournament.id}, status=201)
 
     '''
     Get all the tournaments of the logged in user
@@ -374,18 +311,19 @@ class GameTournamentView(APIView):
         print("User: ", user, " is getting the tournaments")
 
         try:
-            user_tournaments = UserTournament.objects.filter(user=user).filter(
-                Q(status=UserTournament.status.WAITING) | Q(status=UserTournament.status.PLAYING))
-            if not user_tournaments.exists():
-                return JsonResponse({'error': 'no tournament found'}, status=404)
-            user_tournament = user_tournaments.first()
-            tournament_response = {
-                    'id': user_tournament.tournament.id
-                }
+            userTournaments = UserTournament.objects.filter(user=user).filter(status=UserTournament.UserStatus.PLAYING)
+            tournaments = []
+            for userTournament in userTournaments:
+                tournaments.append({
+                    'id': userTournament.tournament.id,
+                    'status': userTournament.tournament.status
+                })
+            if len(tournaments) == 0:
+                return JsonResponse({'error': 'no tournaments found'}, status=404)
         except Exception as e:
-            return JsonResponse({'error': 'no tournament found'}, status=404)
+            return JsonResponse({'error': 'error while querying the database'}, status=500)
 
-        return JsonResponse(tournament_response, status=200)
+        return JsonResponse({'detail': tournaments}, status=200)
     
     def get_object(self, id):
         try:
@@ -521,14 +459,79 @@ def next_tournament_game(request):
         if game.exists():
             current_game = game.first()
             return JsonResponse({'game': {'id': current_game.id, 'status':
-                                current_game.status, "playerLeft": current_game.playerLeft.username, "playerRight": current_game.playerRight.username}}, status=200)
+                                current_game.status, "playerLeft":
+                                          current_game.playerLeft.username,
+                                          "playerLeftId":
+                                          current_game.playerLeft.id,
+                                          "playerRight":
+                                          current_game.playerRight.username,
+                                          "playerRightId":
+                                          current_game.playerRight.id}}, status=200)
         new_game = Game.objects.create(playerLeft=players_playing[0].user, playerRight=players_playing[1].user, tournament=tournament)
         new_game.save()
 
         current_game = new_game
 
-        return JsonResponse({'game': {'id': current_game.id, 'status': current_game.status, 'playerLeft': current_game.playerLeft.username, 'playerRight': current_game.playerRight.username}}, status=201)
+        return JsonResponse({'game': {'id': current_game.id, 'status': current_game.status, 
+                                      'playerLeft': current_game.playerLeft.username, 'playerLeftId': current_game.playerLeft.id,
+                                      'playerRight': current_game.playerRight.username, 'playerRightId': current_game.playerRight.id}}, status=201)
+            
     except Exception as e:
         print(e)
         return JsonResponse({'error': 'Error while creating the game'}, status=500)
+
+
+@never_cache
+@api_view(['POST'])
+def accept_challenge(request):
+    invite_id = request.data.get('invite_id')
+
+    if invite_id is None or invite_id == '':
+        return JsonResponse({'error': 'invite_id is required'}, status=400)
+
+    try:
+        invite = GameInvite.objects.get(id=invite_id)
+    except GameInvite.DoesNotExist:
+        return JsonResponse({'error': 'invite does not exist'}, status=404)
+    except:
+        return JsonResponse({'error': 'error while querying the database'}, status=500)
+
+    if invite.status != GameInvite.InviteStatus.PENDING:
+        return JsonResponse({'error': 'invite is not pending'}, status=400)
+
+    invite.status = GameInvite.InviteStatus.ACCEPTED
+    invite.save()
+
+    game = Game.objects.create(playerLeft=invite.sender, playerRight=invite.receiver)
+    game.save()
+
+    invite.game = game
+    invite.save()
+
+    return JsonResponse({'game_id': game.id}, status=201)
+
+@never_cache
+@api_view(['POST'])
+def decline_challenge(request):
+    invite_id = request.data.get('invite_id')
+
+    if invite_id is None or invite_id == '':
+        return JsonResponse({'error': 'invite_id is required'}, status=400)
+
+    try:
+        invite = GameInvite.objects.get(id=invite_id)
+    except GameInvite.DoesNotExist:
+        return JsonResponse({'error': 'invite does not exist'}, status=404)
+    except:
+        return JsonResponse({'error': 'error while querying the database'}, status=500)
+
+    if invite.status != GameInvite.InviteStatus.PENDING:
+        return JsonResponse({'error': 'invite is not pending'}, status=400)
+
+    invite.status = GameInvite.InviteStatus.DECLINED
+    invite.save()
+
+    return JsonResponse({'detail': 'invite declined'}, status=200)
+
+
 

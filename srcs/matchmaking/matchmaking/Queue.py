@@ -50,7 +50,7 @@ class Queue:
     
     @staticmethod
     def leave_queue(user):
-        if Queue.is_user_in_queue(user=user):
+        if not Queue.is_user_in_queue(user=user):
             raise Queue.UserNotInQueueError()
         Queue.__queue.remove(user)
 

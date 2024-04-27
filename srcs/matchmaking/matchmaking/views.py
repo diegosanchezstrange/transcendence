@@ -3,12 +3,24 @@ from .Queue import Queue
 from .Tournament import Tournament as Tourna
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
-from game.game_matchmaking.models import UserTournament, Tournament
 import requests 
 
+from functools import wraps
+
+def private_or_public_endpoint(f):
+    @wraps(f)
+    def decorated_function(request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return f(request, *args, **kwargs)
+        
+        api_token = request.headers.get('Authorization')
+        if not api_token or api_token != settings.MICROSERVICE_API_TOKEN:
+            return JsonResponse({'detail': 'Invalid API token.'}, status=401)
+        return f(request, *args, **kwargs)
+    return decorated_function
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -33,9 +45,20 @@ def join_queue(request, *args, **kwargs):
     }, status=200)
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@private_or_public_endpoint
+@authentication_classes([])
+@permission_classes([])
 def leave_queue(request, *args, **kwargs):
-    user = request.user
+
+    if request.user.is_authenticated:
+        user = request.user
+    else:
+        user_id = request.data.get('user_id')
+        if user_id is None:
+            return JsonResponse({
+                "message": "User ID is required."
+            }, status=400)
+        user = User.objects.get(pk=user_id)
 
     try:
         Queue.leave_queue(user)
@@ -70,12 +93,6 @@ def dev_view_delete_queue(request, *args, **kwargs):
 def join_tournament(request, *args, **kwargs):
     user = request.user
 
-    id = User.objects.get(id=user['id'])
-    hasTournament = UserTournament.objects.filter(user=user,
-        tournament__tournament_winner=None, tournament__status__in=[Tournament.TournamentStatus.WAITING, Tournament.TournamentStatus.IN_PROGRESS]).exists()
-    if hasTournament:
-        return JsonResponse({'error': 'user already in a tournament, please wait for the rest of the players to join.'}, status=409)
- 
     if Tourna.is_user_in_queue(user):
         return JsonResponse({
             "message": "You are already in a queue."
@@ -91,6 +108,32 @@ def join_tournament(request, *args, **kwargs):
         return JsonResponse({
          "message": "Error while joining the queue."
          }, status=500)
+
+@api_view(['POST'])
+@private_or_public_endpoint
+@authentication_classes([])
+@permission_classes([])
+def leave_tournament(request, *args, **kwargs):
+    if request.user.is_authenticated:
+        user = request.user
+    else:
+        user_id = request.data.get('user_id')
+        if user_id is None:
+            return JsonResponse({
+                "message": "User ID is required."
+            }, status=400)
+        user = User.objects.get(pk=user_id)
+
+    try:
+        Tourna.leave_queue(user)
+    except Tourna.UserNotInQueueError:
+        return JsonResponse({
+            "message": "You are not in a queue currently."
+        }, status=403)
+
+    return JsonResponse({
+        "message": "Tournament left successfully."
+    }, status=200)
 
 @api_view(['GET'])
 def get_tournament_info(request, *args, **kwargs):
@@ -110,7 +153,7 @@ def get_tournament_info(request, *args, **kwargs):
         }, status=404) 
 
 @api_view(['GET'])
-def get_tournament_matches(request, *args, **kwargs):
+def get_tournamet_matches(request, *args, **kwargs):
     tournmanet_id = request.GET.get('id')
 
     if tournmanet_id is None:

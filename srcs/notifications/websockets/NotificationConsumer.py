@@ -105,9 +105,19 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, code):
         try:
-            body = {"is_online": False}
-            requests.put(settings.USERS_SERVICE_HOST_INTERNAL + "/users/status/",json=body, headers=self.headers, verify=False)
-            friends = requests.get(settings.USERS_SERVICE_HOST_INTERNAL + f"/friends/", headers=self.headers, verify=False).json()["users"]
+            headers = {
+                "Authorization": settings.MICROSERVICE_API_TOKEN
+            }
+
+            body = {"is_online": False, "user_id": self.id}
+            requests.put(settings.USERS_SERVICE_HOST_INTERNAL + "/users/status/",json=body, headers=headers, verify=False)
+            friends = requests.get(settings.USERS_SERVICE_HOST_INTERNAL + f"/friends/{str(self.id)}/",  headers=headers, verify=False)
+
+            if friends.status_code == 200:
+                friends = friends.json()["users"]
+            else:
+                friends = []
+
 
             await self.channel_layer.group_send(
                 'broadcast',
@@ -137,8 +147,15 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                 f'group_{self.id}',
                 self.channel_name
             )
-        except:
-            pass
+
+            # Leave the any queues or tournaments
+            body = {"user_id": self.id}
+            requests.post(settings.MATCHMAKING_SERVICE_HOST_INTERNAL + "/queue/leave/", headers=headers, json=body, verify=False)
+
+            requests.post(settings.MATCHMAKING_SERVICE_HOST_INTERNAL + "/tournament/leave/", headers=headers, json=body, verify=False)
+        except Exception as e:
+            print(e)
+        
 
 
     async def send_message(self, event):
