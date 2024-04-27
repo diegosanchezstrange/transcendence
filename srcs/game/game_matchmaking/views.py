@@ -132,7 +132,9 @@ class GameView(APIView):
                 'playerRightId': game.playerRight.id,
                 'playerLeftScore': game.playerLeftScore,
                 'playerRightScore': game.playerRightScore,
-                'winner': game.winner,
+                'winner': game.winner.username if game.winner is not None else None,
+                'winnerId': game.winner.id if game.winner is not None else None,
+                'tournament': game.tournament.id if game.tournament is not None else None,
                 'status': game.status
             })
         return JsonResponse({'detail': gamesList}, status=200)

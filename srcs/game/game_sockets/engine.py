@@ -255,7 +255,10 @@ class GameInstance():
 
 
         try:
-            tournament_id = self.game.tournament.id
+            if self.game.tournament:
+                tournament_id = self.game.tournament.id
+            else:
+                tournament_id = None
             if tournament_id:
                 async_to_sync(self.channel_layer.group_send)(
                     self.group_name, {"type": "game_update", "end_dict": {"end": "Game finished", "winner": winner_id, "tournament_id": tournament_id}}

@@ -63,6 +63,16 @@ class Router {
     return null;
   }
 
+  static changePageEventDispat(newUrl) {
+    let event = new CustomEvent("change-page", {
+      detail: {
+        newPage: newUrl,
+      },
+    });
+
+    window.dispatchEvent(event);
+  }
+
   static insertHtml(html) {
     let parser = new DOMParser();
     let doc = parser.parseFromString(html, "text/html");
@@ -140,6 +150,7 @@ class Router {
         if (!popstate) {
           history.pushState({ page: url }, "", url);
         }
+        Router.changePageEventDispat(url);
       })
       .catch((error) => {
         console.log(error.message);

@@ -88,7 +88,7 @@ class Tournament {
   }
 }
 
-async function main() {
+async function main_tournament() {
   let tournament = new Tournament();
 
   if (tournament.tournament_id === null) {
@@ -146,4 +146,10 @@ async function main() {
   }
 }
 
-main();
+main_tournament();
+
+window.addEventListener("change-page", function (event) {
+  if (event.detail.newPage.includes("/tournament")) {
+    main_tournament();
+  }
+});
