@@ -156,7 +156,7 @@ class Router {
         Router.changePageEventDispat(url);
       })
       // TO DO: console error
-      .catch(() => {
+      .catch((error) => {
         let errorCode = parseInt(error.message);
         if (errorCode === 401) {
           localStorage.removeItem("token");
