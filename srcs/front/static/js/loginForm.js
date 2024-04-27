@@ -54,8 +54,8 @@ function formSubmitLogin(form) {
       //   notficationsWebSocket = new NotificationsWebsocket();
       Router.changePage("/home/");
     })
-    .catch((error) => {
-      console.log(error);
+    // TO DO: console error
+    .catch(() => {
       addAlertBox(
         "Login failed!",
         "danger",
@@ -121,8 +121,8 @@ function formSubmitRegister(form) {
       );
       Router.changePage("/login/");
     })
-    .catch((error) => {
-      console.log(error);
+    // TO DO: console error
+    .catch(() => {
       addAlertBox(
         "Registration failed!",
         "danger",
