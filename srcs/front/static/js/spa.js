@@ -6,6 +6,8 @@ const containers = {
   body: document.querySelector("body"),
 };
 
+const originalFetch = window.fetch;
+
 /*
  * Function to add an alert box to the page
  * @param {string} message - The message to display in the alert box
@@ -39,6 +41,48 @@ class Router {
 
   static getJwt() {
     return localStorage.getItem("token");
+  }
+
+  static async refreshToken() {
+    let token = localStorage.getItem("token");
+    let refreshToken = localStorage.getItem("refreshToken");
+
+    if (token && refreshToken) {
+      let body = {
+        refresh: refreshToken,
+      };
+
+      originalFetch(LOGIN_SERVICE_HOST + "/auth/login/refresh/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      })
+        .then((response) => {
+          if (response.status === 401) {
+            throw new Error(response.status);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          localStorage.setItem("token", data.access);
+          // localStorage.setItem("refreshToken", data.refreshToken);
+        })
+        .catch((error) => {
+          console.log(error.message);
+          let errorCode = parseInt(error.message);
+          if (errorCode === 401) {
+            localStorage.removeItem("token");
+            localStorage.removeItem("refreshToken");
+            if (notificationsWebSocket) {
+              notificationsWebSocket.close();
+              notificationsWebSocket = null;
+            }
+            Router.changePage("/login");
+          }
+        });
+    }
   }
 
   static getUsername() {
@@ -179,7 +223,27 @@ window.addEventListener("popstate", (event) => {
 document.addEventListener("DOMContentLoaded", async function () {
   // TODO: Check where the token should be safely stored
   // const token = localStorage.getItem("token");
-  //
+
+  window.fetch = async function (url, options) {
+    const token = localStorage.getItem("token");
+    if (token) {
+      if (!options.headers) {
+        options.headers = {};
+      }
+      options.headers.Authorization = "Bearer " + token;
+    }
+
+    const response = await originalFetch(url, options);
+
+    if (response.status === 401) {
+      await Router.refreshToken();
+
+      options.headers.Authorization = "Bearer " + localStorage.getItem("token");
+      return originalFetch(url, options);
+    }
+    return response;
+  };
+
   // Get the token from the cookie and store it in localStorage
   let token = document.cookie
     .split("; ")

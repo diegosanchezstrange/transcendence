@@ -50,6 +50,7 @@ function formSubmitLogin(form) {
     .then((text) => {
       // console.log(text);
       localStorage.setItem("token", text.access);
+      localStorage.setItem("refreshToken", text.refresh);
       // if (!notificationsWebSocket)
       //   notficationsWebSocket = new NotificationsWebsocket();
       Router.changePage("/home/");
