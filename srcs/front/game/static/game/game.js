@@ -10,7 +10,7 @@ class Game {
     this.dotY = 0;
     this.gameSocket = null;
   }
-  async getGames() {
+  async getGames(id) {
     let token = Router.getJwt();
     let headers = {
       "X-Requested-With": "XMLHttpRequest",
@@ -40,16 +40,15 @@ class Game {
       }
     );
 
-    let games = await fetch(
-      GAME_SERVICE_HOST + "/game/?opponent=" + oponent + "&status=WAITING",
+    let url = GAME_SERVICE_HOST + "/game/" + id + "/?opponent=" + oponent;
+    let games = await fetch( url + "&status=WAITING",
       {
         method: "GET",
         headers: headers,
       }
     );
 
-    let pause_games = await fetch(
-      GAME_SERVICE_HOST + "/game/?opponent=" + oponent + "&status=PAUSED",
+    let pause_games = await fetch(url + "&status=PAUSED",
       {
         method: "GET",
         headers: headers,
@@ -343,7 +342,9 @@ async function main_game() {
       Router.changePage("/login");
     }, 2000);
   }
-  let gameData = await game.getGames();
+
+  id = Router.getUserId();
+  let gameData = await game.getGames(id);
   game.createGame(gameData);
 
   let wrapperFunction = function (event) {

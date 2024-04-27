@@ -199,8 +199,8 @@ class Router {
         }
         Router.changePageEventDispat(url);
       })
-      .catch((error) => {
-        console.log(error.message);
+      // TO DO: console error
+      .catch(() => {
         let errorCode = parseInt(error.message);
         if (errorCode === 401) {
           localStorage.removeItem("token");
