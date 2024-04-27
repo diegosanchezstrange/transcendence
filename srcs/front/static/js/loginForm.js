@@ -54,8 +54,8 @@ function formSubmitLogin(form) {
       //   notficationsWebSocket = new NotificationsWebsocket();
       Router.changePage("/home/");
     })
-    .catch((error) => {
-      console.log(error);
+    //TO DO: empty catch
+    .catch(() => {
       addAlertBox(
         "Login failed!",
         "danger",
