@@ -32,12 +32,14 @@ def start(request):
         f'{settings.GAME_SERVICE_HOST_INTERNAL}/game/{id}/',
         headers={'Authorization': auth},
         verify=False).json()['detail']
-    
+
+    current_game = None
     for match in user_matches:
         if match['status'] != 'FINISHED':
             current_game = match
-        else:
-            continue
+    if current_game == None:
+        return redirect('/home/')
+
     context['game_info'] = {
         "player_1": current_game['playerLeft'],
         "player_2": current_game['playerRight']
