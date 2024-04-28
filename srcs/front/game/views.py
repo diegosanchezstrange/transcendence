@@ -28,16 +28,10 @@ def start(request):
         context['PATH'] = 'pong'
     auth = request.headers.get('Authorization')
     id = request.user.id
-    print(id)
     user_matches = requests.get(
         f'{settings.GAME_SERVICE_HOST_INTERNAL}/game/{id}/',
         headers={'Authorization': auth},
-        verify=False)
-
-    if user_matches.status_code != 200:
-        context['PATH'] = 'home'
-        return render(request, '../templates/base.html', context)
-    user_matches = user_matches.json()['detail']
+        verify=False).json()['detail']
 
     current_game = None
     for match in user_matches:
