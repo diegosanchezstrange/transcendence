@@ -6,17 +6,15 @@
     <section class="game-status-panel row col-sm-12 col-md-7 col-lg-5">
         <h2 id="game-status-title">GAME STATUS</h2>
         <p id="game-status-text">
-            {{ player1 }} and {{ player2 }} are currently playing.
+            {{ player3 }} and {{ player4 }} are currently playing.
         </p>
     </section>
     <section class="lobby row">
         <section class="queue col-sm-12 col-md-7 col-lg-5">
             <h3 id="queue-header">NEXT IN THE QUEUE</h3>
             <ul id="queue-players">
-                <li class="player-name">{{ player3 }}</li>
-            {% if player4 %}
-                <li class="player-name">{{ player4 }}</li>
-            {% endif %}
+                <li class="player-name">{{ player1 }}</li>
+                <li class="player-name">{{ player2 }}</li>
             </ul>
         </section>
     </section>
