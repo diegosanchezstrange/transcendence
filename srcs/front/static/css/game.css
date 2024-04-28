@@ -50,6 +50,16 @@ court::after {
     align-items: center;
 }
 
+.instructions
+{
+  position: absolute;
+  top: 0%;
+  font-size: xx-large;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-weight: bold;
+  color: #b12e4e;
+}
+
 .score-panel {
   position: absolute;
   top: 12%;
@@ -60,11 +70,19 @@ court::after {
   color: white;
   text-align: center;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-size: 1vw;
+  font-size: 140%;
   font-style: normal;
   font-weight: 700;
-  line-height: 130%; /* 62.4px */
   letter-spacing: 4.32px;
+  display: inline-block;
+}
+
+.game-score {
+  width: 10%;
+}
+
+.game-score-player {
+  width: 33.3%;
 }
 
 .game-board {

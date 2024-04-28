@@ -83,11 +83,6 @@
     top: 32px;
     position: fixed;
   }
-  #profile-icon {
-    top: 39px;
-    position: fixed;
-    width: 140px;
-  }
   .game-card-text {
     font-size: xx-large;
   }
@@ -100,8 +95,8 @@
 @media only screen and (min-width: 990px)
 {
   #profile-icon {
-    top: 39px;
-    position: fixed;
+    top: 46px;
+    position: absolute;
     width: 140px;
   }
 }
