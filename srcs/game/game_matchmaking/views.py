@@ -121,7 +121,7 @@ def get_user_games(request, id):
             'playerRightId': game.playerRight.id,
             'playerLeftScore': game.playerLeftScore,
             'playerRightScore': game.playerRightScore,
-            'winner': game.winner.username if game.winner is not None else None,
+            'winner': game.winner.id if game.winner is not None else None,
             'winnerId': game.winner.id if game.winner is not None else None,
             'tournament': game.tournament.id if game.tournament is not None else None,
             'status': game.status
