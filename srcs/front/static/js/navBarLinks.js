@@ -366,7 +366,7 @@ function fill_friends_list(friends_list_url) {
           remove_button.addEventListener("click", remove_friend_req);
 
           challenge_button.classList = ["btn btn-primary"];
-          challenge_button.innerHTML = "<i class='fa-solid fa-chess'></i>";
+          challenge_button.innerHTML = "Challenge";
           challenge_button.addEventListener("click", challenge_friend);
 
           friend_name.innerHTML += friend.username;
