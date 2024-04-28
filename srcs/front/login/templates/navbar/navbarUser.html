@@ -2,73 +2,82 @@
 <!-- Path: navbarUser.html -->
 {% load static %}
 <nav class="navbar navbar-expand-lg border-bottom border-3 mb-5 text-center">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#">
-            <img class="d-block d-sm-none d-md-block"
-                 src="{% static 'img/logo.png' %}"
-                 width="50"
-                 height="50"
-                 alt="Pong logo" />
-        </a>
-        <h1 class="d-none d-sm-block container-fluid page-title">PONG THAT PANG</h1>
-        <button class="navbar-toggler"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#navbarUser"
-                aria-controls="navbarUser"
-                aria-expanded="false"
-                aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarUser">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="header-menu">
-                <li class="nav-item">
-                    <a onclick="home_link()" class="nav-link" href="#">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a onclick="logout()" class="nav-link" href="{{ BASE_URL }}/home">Logout</a>
-                </li>
-                <li class="nav-item">
-                    <div id="friends_dropdown" class="dropdown">
-                        <button type="button"
-                                id="friends-icon"
-                                class="btn btn-default dropdown-toggle pe-3"
-                                data-bs-toggle="dropdown"
-                                data-bs-auto-close="outside">
-                            <i class="d-lg-none fa-solid fa-user-group fa-xl"></i>
-                            <i class="d-none d-lg-block fa-solid fa-user-group fa-2xl"></i>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-end" id="friends-panel">
-                            <form id="send_friend_request_form"
-                                  action="{{ USERS_SERVICE_HOST }}/friends/requests/send/"
-                                  class="d-flex">
-                                <input id="username_input"
-                                       class="form-control"
-                                       type="text"
-                                       placeholder="Add friend"
-                                       aria-label="Search" />
-                                <button id="friend-request-button" type="submit">
-                                    <i class="fa-solid fa-arrow-right"></i>
-                                </button>
-                            </form>
-                            <ul id="friends_requests">
-                            </ul>
-                            <ul id="games_requests">
-                            </ul>
-                            <ul id="friends_list">
-                            </ul>
-                        </div>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a onclick="profile_link()" href="#" id="profile-icon" class="me-5">
-                        <i class="d-lg-none fa-solid fa-user fa-xl"></i>
-                        <i class="d-none d-lg-block fa-solid fa-user fa-2xl"></i>
-                    </a>
-                </li>
-            </ul>
-        </div>
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">
+      <img
+        class="d-block d-sm-none d-md-block"
+        src="{% static 'img/logo.png' %}"
+        width="50"
+        height="50"
+        alt="Pong logo"
+      />
+    </a>
+    <h1 class="d-none d-sm-block container-fluid page-title">PONG THAT PANG</h1>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarUser"
+      aria-controls="navbarUser"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarUser">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="header-menu">
+        <li class="nav-item">
+          <a onclick="home_link()" class="nav-link" href="#">Home</a>
+        </li>
+        <li class="nav-item">
+          <a onclick="logout()" class="nav-link" href="{{ BASE_URL }}/home"
+            >Logout</a
+          >
+        </li>
+        <li class="nav-item">
+          <div id="friends_dropdown" class="dropdown">
+            <button
+              type="button"
+              id="friends-icon"
+              class="btn btn-default dropdown-toggle pe-3"
+              data-bs-toggle="dropdown"
+              data-bs-auto-close="outside"
+            >
+              <i class="d-lg-none fa-solid fa-user-group fa-xl"></i>
+              <i class="d-none d-lg-block fa-solid fa-user-group fa-2xl"></i>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end" id="friends-panel">
+              <form
+                id="send_friend_request_form"
+                class="d-flex"
+                onsubmit="event.preventDefault(); send_friend_request(this);"
+              >
+                <input
+                  id="username_input"
+                  class="form-control"
+                  type="text"
+                  placeholder="Add friend"
+                  aria-label="Search"
+                />
+                <button id="friend-request-button" type="submit">
+                  <i class="fa-solid fa-arrow-right"></i>
+                </button>
+              </form>
+              <ul id="friends_requests"></ul>
+              <ul id="games_requests"></ul>
+              <ul id="friends_list"></ul>
+            </div>
+          </div>
+        </li>
+        <li class="nav-item">
+          <a onclick="profile_link()" href="#" id="profile-icon" class="me-5">
+            <i class="d-lg-none fa-solid fa-user fa-xl"></i>
+            <i class="d-none d-lg-block fa-solid fa-user fa-2xl"></i>
+          </a>
+        </li>
+      </ul>
     </div>
+  </div>
 </nav>
 <!-- <script src="{% static 'js/navBarLinks.js' %}"></script> -->
 <script src="{% static 'js/addDropdownEvents.js' %}"></script>
