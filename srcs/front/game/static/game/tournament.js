@@ -149,7 +149,7 @@ async function main_tournament() {
 main_tournament();
 
 window.addEventListener("change-page", function (event) {
-  if (event.detail.newPage.includes("/tournament")) {
+  if (event.detail.newPage.includes("/lobby/")) {
     main_tournament();
   }
 });
