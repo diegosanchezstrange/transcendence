@@ -9,9 +9,9 @@
         </div>
         <div class="d-none d-sm-block score-panel row">
             <span class="game-score-text game-score-player col-3">{{ game_info.player_1 }}</span>
-            <span id="scoreLeft" class="game-score-text game-score col-2">{{ game_info.score_1 }}</span>
+            <span id="scoreLeft" class="game-score-text game-score col-2">0</span>
             <span class="game-score-text game-score col-2">-</span>
-            <span id="scoreRight" class="game-score-text game-score col-2">{{ game_info.score_2 }}</span>
+            <span id="scoreRight" class="game-score-text game-score col-2">0</span>
             <span class="game-score-text game-score-player col-3">{{ game_info.player_2 }}</span>
         </div>
         <div class="d-none d-sm-block game-board" id="court">
@@ -23,6 +23,5 @@
         </div>
         <p class="d-xs-block d-sm-none">Oh no! Looks like this screen is too small to play :( Try another device</p>
     </div>
-    <button id="send">Send</button>
 </main>
 <script src="{% static 'game/game.js' %}"></script>

@@ -12,6 +12,7 @@ context = {
     'NOTIFICATIONS_SERVICE_HOST': settings.NOTIFICATIONS_SERVICE_HOST,
     'NOTIFICATIONS_SOCKETS_HOST': settings.NOTIFICATIONS_SOCKETS_HOST,
     'GAME_SERVICE_HOST': settings.GAME_SERVICE_HOST,
+    'GAME_SERVICE_HOST': settings.GAME_SERVICE_HOST_INTERNAL,
     'GAME_SOCKETS_HOST': settings.GAME_SOCKETS_HOST,
     'MATCHMAKING_SERVICE_HOST': settings.MATCHMAKING_SERVICE_HOST,
     'BASE_URL': settings.BASE_URL,
@@ -25,12 +26,20 @@ def start(request):
     else:
         context['PATH'] = 'pong'
     auth = request.headers.get('Authorization')
-    # TO DO: request game info from database
+    id = request.user.id
+    user_matches = requests.get(
+        f'{settings.GAME_SERVICE_HOST_INTERNAL}/game/{id}/',
+        headers={'Authorization': auth},
+        verify=False).json()['detail']
+    
+    for match in user_matches:
+        if match['status'] != 'FINISHED':
+            current_game = match
+        else:
+            continue
     context['game_info'] = {
-        "player_1": "Player 1",
-        "player_2": "Player 2",
-        "score_1": "0",
-        "score_2": "0"
+        "player_1": current_game['playerLeft'],
+        "player_2": current_game['playerRight']
     }
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         if auth is None and not request.user.is_authenticated:
