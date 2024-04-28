@@ -102,10 +102,9 @@
           <tbody>
           {% for match in user_info.matches %}
           <tr>
-            <th scope="row">1</th>
-              {% for key, value in match.items %}
+            {% for key, value in match.items %}
               <td>{{ value }}</td>
-              {% endfor %}
+            {% endfor %}
           </tr>
           {% endfor %}
           </tbody>
