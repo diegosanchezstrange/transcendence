@@ -19,7 +19,7 @@ class Game {
     let headers = {
       "X-Requested-With": "XMLHttpRequest",
       "Content-Type": "application/json",
-      Authorization: "Bearer " + token,
+      Authorization: "Bearer " + token
     };
 
     //Get the oponent from the URL query param
@@ -118,12 +118,29 @@ class Game {
           await addAlertBox(message, "danger", document.body, 4000);
           Router.changePage("/home/");
         } else {
+          let token = Router.getJwt();
+          let headers = {
+            "X-Requested-With": "XMLHttpRequest",
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token
+          };
           let winner = endData["winner"];
-          let message = winner + " won the game";
-          await addAlertBox(message, "success", document.body, 4000);
-          if (endData.hasOwnProperty("tournament_id"))
-            Router.changePage("/lobby/?tournament=" + endData["tournament_id"]);
-          else Router.changePage("/home/");
+          console.log("Llega " + USERS_SERVICE_HOST);
+          ft_fetch(USERS_SERVICE_HOST + "/profile/user/" + winner + "/", {
+            method: "GET",
+            headers: headers
+          }).then(function (response) {
+            return response.json();
+          }).then(async function (json) {
+            winner = json["detail"]["username"]
+            console.log(json["detail"]["username"]);
+            let message = winner + " won the game";
+            await addAlertBox(message, "success", document.body, 4000);
+            if (endData.hasOwnProperty("tournament_id"))
+              Router.changePage("/lobby/?tournament=" + endData["tournament_id"]);
+            else Router.changePage("/home/");
+          });
+
         }
       }
     };

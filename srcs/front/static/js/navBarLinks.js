@@ -36,7 +36,7 @@ function send_friend_request() {
 
   if (Router.getJwt()) headers["Authorization"] = "Bearer " + Router.getJwt();
 
-  fetch(USERS_SERVICE_HOST + "/friends/requests/send/", {
+  ft_fetch(USERS_SERVICE_HOST + "/friends/requests/send/", {
     method: "POST",
     // credentials: "include",
     headers: headers,

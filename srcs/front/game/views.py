@@ -69,8 +69,7 @@ def lobby(request):
         context['player1'] = players[0]['username']
         context['player2'] = players[1]['username']
         context['player3'] = players[2]['username']
-        if len(players) > 3:
-            context['player4'] = players[3]['username']
+        context['player4'] = players[3]['username']
     except Exception as e:
         print(e)
         print(e.message)

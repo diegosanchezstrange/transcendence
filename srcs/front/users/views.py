@@ -81,7 +81,7 @@ def profile(request):
                 num_loses = 0
                 for match in user_matches:
                     num_games += 1
-                    if match['winner'] == user:
+                    if match['winner'] == id:
                         num_wins += 1
                     else:
                         num_loses += 1
@@ -89,7 +89,6 @@ def profile(request):
                 user_info['wins'] = num_wins
                 user_info['loses'] = num_loses
             except Exception as e:
-                print(e)
                 return JsonResponse({
                     "message": "Matches not found."
                     }, status=404)
@@ -152,9 +151,10 @@ def user_profile(request, id):
                 num_games = 0
                 num_wins = 0
                 num_loses = 0
+ 
                 for match in user_matches:
                     num_games += 1
-                    if match['winner'] == User.objects.get(id=id):
+                    if match['winner'] == id:
                         num_wins += 1
                     else:
                         num_loses += 1
@@ -162,7 +162,6 @@ def user_profile(request, id):
                 user_info['wins'] = num_wins
                 user_info['loses'] = num_loses
             except Exception as e:
-                print(e)
                 return JsonResponse({
                     "message": "Matches not found."
                     }, status=404)
