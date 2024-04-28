@@ -269,3 +269,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   if (path) Router.changePage("/" + path);
   else Router.changePage("/home");
 });
+
+window.addEventListener("change-page", function (event) {
+  fill_friends_list(USERS_SERVICE_HOST + "/friends/");
+});
