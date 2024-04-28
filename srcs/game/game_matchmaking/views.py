@@ -443,10 +443,13 @@ def next_tournament_game(request):
     
     try:
         players_playing = players_playing.order_by('user__id')
+
+
         # Check if the game already exists
         game = Game.objects.filter(playerLeft=players_playing[0].user,
                                    playerRight=players_playing[1].user,
-                                   tournament=tournament).filter(Q(status=Game.GameStatus.WAITING) | Q(status=Game.GameStatus.IN_PROGRESS) | Q(status=Game.GameStatus.PAUSED))
+                                   tournament=tournament).filter(Q(status=Game.GameStatus.WAITING) | Q(status=Game.GameStatus.IN_PROGRESS) | Q(status=Game.GameStatus.PAUSED ))
+
         if game.exists():
             current_game = game.first()
             return JsonResponse({'game': {'id': current_game.id, 'status':

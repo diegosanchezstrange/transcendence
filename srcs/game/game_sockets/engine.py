@@ -10,6 +10,8 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.conf import settings
 
+from game_matchmaking.notifications.send_notification import send_tournament_players_update_notification
+
 import requests
 
 class GameInstance():
@@ -147,9 +149,12 @@ class GameInstance():
                 self.game.playerLeftScore = self.playerLeftScore
                 self.game.playerRightScore = self.playerRightScore
                 self.game.status = Game.GameStatus.FINISHED
+                self.game.winner = self.game.playerLeft
                 self.game.save()
             except Exception as e:
                 print("Error saving game: ", e)
+
+            self.next_tournament_game(self.playerRightId)
 
             raise self.PlayersDisconnectedError
 
@@ -214,23 +219,7 @@ class GameInstance():
                 self.game.save()
             if (self.game.tournament):
                 loser_id = self.side_player("left" if player_side == "right" else "right")
-                try:
-                    loser = User.objects.get(id=loser_id)
-                    user_tournament = UserTournament.objects.get(user=loser, tournament=self.game.tournament)
-                    user_tournament.status = UserTournament.UserStatus.ELIMINATED
-                    user_tournament.save()
-                except Exception as e:
-                    print("Error saving user tournament: ", e)
-
-                headers = {
-                    'Content-Type': 'application/json',
-                    'Authorization': settings.MICROSERVICE_API_TOKEN
-                }
-
-                new_game = requests.post(settings.GAME_SERVICE_HOST_INTERNAL +
-                    '/tournament/nextgame/', headers=headers, json={
-                        'tournament_id': self.game.tournament.id
-                    }, verify=False)
+                self.next_tournament_game(loser_id)
 
     def game_winned_disconnected(self):
         if self.playerLeftStatus == self.PlayerStatus.DISCONNECTED:
@@ -289,6 +278,25 @@ class GameInstance():
         except:
             pass
 
+    def next_tournament_game(self, loser_id):
+        try:
+            loser = User.objects.get(id=loser_id)
+            user_tournament = UserTournament.objects.get(user=loser, tournament=self.game.tournament)
+            user_tournament.status = UserTournament.UserStatus.ELIMINATED
+            user_tournament.save()
+        except Exception as e:
+            print("Error saving user tournament: ", e)
+
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization': settings.MICROSERVICE_API_TOKEN
+        }
+
+        new_game = requests.post(settings.GAME_SERVICE_HOST_INTERNAL +
+            '/tournament/nextgame/', headers=headers, json={
+                'tournament_id': self.game.tournament.id
+            }, verify=False)
+
 class GameEngine(threading.Thread):
 
     playerCount = 0
@@ -339,6 +347,15 @@ class GameEngine(threading.Thread):
             return
         try:
             self.games[group_name].remove_player(user_id)
+        except GameInstance.PlayersDisconnectedError as e:
+            print("Error removing player: ", e)
+            async_to_sync(self.channel_layer.group_send)(
+                group_name, {"type": "game_update", "end_dict": {"error": "Error removing player"}}
+            )
+            self.games[group_name].end_game()
+            self.games.pop(group_name)
+            # if self.games[group_name].game.tournament:
+            #     send_tournament_players_update_notification(self.games[group_name].tournament)
         except Exception as e:
             print("Error removing player: ", e)
             async_to_sync(self.channel_layer.group_send)(
