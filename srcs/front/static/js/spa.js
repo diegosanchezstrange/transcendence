@@ -50,7 +50,7 @@ class Router {
         refresh: refreshToken,
       };
 
-      let refreshData = await ft_fetch(
+      let refreshData = await fetch(
         LOGIN_SERVICE_HOST + "/auth/login/refresh/",
         {
           method: "POST",
@@ -65,7 +65,7 @@ class Router {
         localStorage.removeItem("token");
         localStorage.removeItem("refreshToken");
         if (notificationsWebSocket) {
-          notificationsWebSocket.close();
+          notificationsWebSocket.socket.close();
           notificationsWebSocket = null;
         }
         Router.changePage("/login");
