@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404
 import random
 import requests
 
-from .notifications.send_notification import send_friend_request_notification
+from .notifications.send_notification import send_friend_request_notification, send_tournament_players_update_notification
 from .notifications.constants import NotificationType
 
 from rest_framework.views import APIView
@@ -463,9 +463,11 @@ def next_tournament_game(request):
 
         current_game = new_game
 
-        return JsonResponse({'game': {'id': current_game.id, 'status': current_game.status, 
-                                      'playerLeft': current_game.playerLeft.username, 'playerLeftId': current_game.playerLeft.id,
-                                      'playerRight': current_game.playerRight.username, 'playerRightId': current_game.playerRight.id}}, status=201)
+
+        print("Sending notification")
+        send_tournament_players_update_notification(tournament)
+
+        return JsonResponse({'game': {'id': current_game.id, 'status': current_game.status, "playerLeft": current_game.playerLeft.username, "playerLeftId": current_game.playerLeft.id, "playerRight": current_game.playerRight.username, "playerRightId": current_game.playerRight.id}}, status=201)
             
     except Exception as e:
         print(e)

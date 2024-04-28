@@ -32,6 +32,7 @@ const NotificationType = {
   GameFound: 11,
   GameInvite: 12,
   TournamentFound: 13,
+  TournamentNextMatch: 14,
 };
 
 function changeNames(userId, newName) {
@@ -75,6 +76,11 @@ class NotificationsWebsocket {
     this.socket.onopen = () => {
       console.log("WebSocket Client Connected");
     };
+
+    this.socket.onclose = (event) => {
+      console.log("WebSocket Client Closed" * event.code);
+    };
+
     this.socket.onmessage = (message) => {
       let data = JSON.parse(message.data)["message"];
       switch (data["ntype"]) {
@@ -117,7 +123,13 @@ class NotificationsWebsocket {
           let tournament = data["tournament_id"];
           Router.changePage("/lobby/" + "?tournament=" + tournament);
           break;
-        case NotificationType.NextTournamentMatch:
+        case NotificationType.TournamentNextMatch:
+          // Check if the current page contains /lobby/
+          if (window.location.href.includes("/lobby/")) {
+            addNotificationBox("Event", data["message"]);
+            let tournament = data["tournament_id"];
+            Router.changePage("/lobby/" + "?tournament=" + tournament);
+          } else addNotificationBox("Event", data["message"]);
           break;
         default:
           addNotificationBox("Message", data["message"]);

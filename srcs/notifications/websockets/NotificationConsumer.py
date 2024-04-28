@@ -11,6 +11,8 @@ from channels.db import database_sync_to_async
 from django.http import JsonResponse
 from enum import Enum
 
+from .models import Room
+
 class NotificationType(Enum):
     SENT = 1
     ACCEPTED = 2
@@ -63,6 +65,16 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
 
+        #If room does not exist, create it and set connections to 1
+        # If room exists, increment connections by 1
+        try:
+            room = await database_sync_to_async(Room.objects.get)(name="global")
+            room.connections += 1
+            await database_sync_to_async(room.save)()
+        except Room.DoesNotExist:
+            room = await database_sync_to_async(Room.objects.create)(name="global", connections=1)
+
+
         # Send a message to your friends that you are online
         headers = {
             "Authorization": f"Bearer {jwt_token}"
@@ -105,6 +117,17 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, code):
         try:
+
+            # Check room connections
+            room = await database_sync_to_async(Room.objects.get)(name="global")
+            room.connections -= 1
+            if room.connections == 0:
+                await database_sync_to_async(room.delete)()
+            else:
+                await database_sync_to_async(room.save)()
+                return
+
+
             headers = {
                 "Authorization": settings.MICROSERVICE_API_TOKEN
             }

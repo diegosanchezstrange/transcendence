@@ -23,9 +23,9 @@ class GameInstance():
         self.invite = None
 
         # Game status
-        self.dx = random.choice([1.5, 2])
+        self.dx = random.choice([2.5, 2])
         self.group_name = group_name
-        self.dy = random.choice([1.5, 2])
+        self.dy = random.choice([2.5, 2])
         self.paddle_right = 50
         self.paddle_left = 50
         self.court_top = 0
