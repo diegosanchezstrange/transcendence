@@ -46,7 +46,7 @@ def join_queue(request, *args, **kwargs):
 
 @api_view(['POST'])
 @private_or_public_endpoint
-@authentication_classes([])
+#@authentication_classes([])
 @permission_classes([])
 def leave_queue(request, *args, **kwargs):
 
@@ -111,7 +111,7 @@ def join_tournament(request, *args, **kwargs):
 
 @api_view(['POST'])
 @private_or_public_endpoint
-@authentication_classes([])
+#@authentication_classes([])
 @permission_classes([])
 def leave_tournament(request, *args, **kwargs):
     if request.user.is_authenticated:
