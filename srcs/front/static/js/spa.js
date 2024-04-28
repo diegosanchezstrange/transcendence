@@ -41,6 +41,41 @@ class Router {
     return localStorage.getItem("token");
   }
 
+  static async refreshToken() {
+    let token = localStorage.getItem("token");
+    let refreshToken = localStorage.getItem("refreshToken");
+
+    if (token && refreshToken) {
+      let body = {
+        refresh: refreshToken,
+      };
+
+      let refreshData = await ft_fetch(
+        LOGIN_SERVICE_HOST + "/auth/login/refresh/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(body),
+        }
+      );
+
+      if (refreshData.status === 401) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("refreshToken");
+        if (notificationsWebSocket) {
+          notificationsWebSocket.close();
+          notificationsWebSocket = null;
+        }
+        Router.changePage("/login");
+      } else {
+        let data = await refreshData.json();
+        localStorage.setItem("token", data.access);
+      }
+    }
+  }
+
   static getUsername() {
     let token = localStorage.getItem("token");
     if (token) {
@@ -132,7 +167,7 @@ class Router {
 
     if (Router.getJwt()) headers["Authorization"] = "Bearer " + Router.getJwt();
 
-    fetch(url, {
+    ft_fetch(url, {
       method: "GET",
       headers: headers,
     })
@@ -159,15 +194,30 @@ class Router {
       .catch((error) => {
         let errorCode = parseInt(error.message);
         if (errorCode === 401) {
-          localStorage.removeItem("token");
           if (notificationsWebSocket) {
             notificationsWebSocket.close();
             notificationsWebSocket = null;
           }
-          Router.changePage("/login");
         }
       });
   }
+}
+
+async function ft_fetch(url, options) {
+  const response = await fetch(url, options);
+
+  if (response.status === 401) {
+    await Router.refreshToken();
+
+    if (!options.headers) {
+      options.headers = {};
+    }
+    options.headers.Authorization = "Bearer " + localStorage.getItem("token");
+
+    return await fetch(url, options);
+  }
+
+  return response;
 }
 
 window.addEventListener("popstate", (event) => {
@@ -179,7 +229,32 @@ window.addEventListener("popstate", (event) => {
 document.addEventListener("DOMContentLoaded", async function () {
   // TODO: Check where the token should be safely stored
   // const token = localStorage.getItem("token");
+
+  // window.ft_fetch = async function (url, options) {
+  //   const token = localStorage.getItem("token");
+  //   if (token) {
+  //     if (!options.headers) {
+  //       options.headers = {};
+  //     }
+  //     options.headers.Authorization = "Bearer " + token;
+  //   }
   //
+  //   try {
+  //     let response = await originalft_fetch(url, options);
+  //     console.log(response);
+  //     return response;
+  //   } catch (error) {
+  //     console.log(error);
+  //     if (response.status === 401) {
+  //       await Router.refreshToken();
+  //
+  //       options.headers.Authorization =
+  //         "Bearer " + localStorage.getItem("token");
+  //       return originalft_fetch(url, options);
+  //     }
+  //   }
+  //
+
   // Get the token from the cookie and store it in localStorage
   let token = document.cookie
     .split("; ")

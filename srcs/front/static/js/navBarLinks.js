@@ -71,7 +71,7 @@ function accept_friend_req(e) {
 
   if (Router.getJwt()) headers["Authorization"] = "Bearer " + Router.getJwt();
 
-  fetch(this.action, {
+  ft_fetch(this.action, {
     method: "POST",
     // credentials: "include",
     headers: headers,
@@ -96,7 +96,7 @@ function reject_friend_req(e) {
 
   if (Router.getJwt()) headers["Authorization"] = "Bearer " + Router.getJwt();
 
-  fetch(this.action, {
+  ft_fetch(this.action, {
     method: "POST",
     // credentials: "include",
     headers: headers,
@@ -121,7 +121,7 @@ function remove_friend_req(e) {
 
   if (Router.getJwt()) headers["Authorization"] = "Bearer " + Router.getJwt();
 
-  fetch(this.action, {
+  ft_fetch(this.action, {
     method: "DELETE",
     // credentials: "include",
     headers: headers,
@@ -146,7 +146,7 @@ function challenge_friend(e) {
 
   if (Router.getJwt()) headers["Authorization"] = "Bearer " + Router.getJwt();
 
-  fetch(GAME_SERVICE_HOST + "/challenge/", {
+  ft_fetch(GAME_SERVICE_HOST + "/challenge/", {
     method: "POST",
     // credentials: "include",
     headers: headers,
@@ -173,7 +173,7 @@ function accept_game_req(e) {
 
   if (Router.getJwt()) headers["Authorization"] = "Bearer " + Router.getJwt();
 
-  fetch(this.action, {
+  ft_fetch(this.action, {
     method: "POST",
     // credentials: "include",
     headers: headers,
@@ -202,7 +202,7 @@ function reject_game_req(e) {
 
   if (Router.getJwt()) headers["Authorization"] = "Bearer " + Router.getJwt();
 
-  fetch(this.action, {
+  ft_fetch(this.action, {
     method: "POST",
     // credentials: "include",
     headers: headers,
@@ -228,7 +228,7 @@ function fill_friends_list(friends_list_url) {
 
   if (Router.getJwt()) headers["Authorization"] = "Bearer " + Router.getJwt();
 
-  fetch(friends_list_url + "requests/", {
+  ft_fetch(friends_list_url + "requests/", {
     method: "GET",
     // credentials: "include",
     headers: headers,
@@ -286,7 +286,7 @@ function fill_friends_list(friends_list_url) {
     // TO DO: console error
     .catch(function () {});
 
-  fetch(GAME_SERVICE_HOST + "/challenge/" + "?status=PENDING", {
+  ft_fetch(GAME_SERVICE_HOST + "/challenge/" + "?status=PENDING", {
     method: "GET",
     headers: headers,
   })
@@ -330,7 +330,7 @@ function fill_friends_list(friends_list_url) {
     // TO DO: console error
     .catch(function () {});
 
-  fetch(friends_list_url, {
+  ft_fetch(friends_list_url, {
     method: "GET",
     // credentials: "include",
     headers: headers,
