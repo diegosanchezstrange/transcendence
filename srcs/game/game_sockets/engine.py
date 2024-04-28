@@ -34,8 +34,8 @@ class GameInstance():
         self.dotX = 50
         self.dotY = 50
 
-        self.speedX= self.dx*random.choice([-1, 1])
-        self.speedY= self.dy*random.choice([-1, 1])
+        self.speedX= self.dx*random.choice([-1, 1]) - 0.5
+        self.speedY= self.dy*random.choice([-1, 1]) - 0.5
         self.started = True
         self.dotKicked = False
 
