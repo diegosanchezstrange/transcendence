@@ -49,7 +49,7 @@ function confirmUsernameHandler2() {
           json.detail,
           "danger",
           document.getElementById("username-form"),
-          3000,
+          3000
         );
       });
     } else {
@@ -59,7 +59,7 @@ function confirmUsernameHandler2() {
             "Username changed!",
             "success",
             document.getElementById("username-form"),
-            2000,
+            2000
           );
         }
       });

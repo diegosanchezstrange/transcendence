@@ -25,8 +25,8 @@ function user_link(id) {
   return false;
 }
 
-function send_friend_request(e) {
-  e.preventDefault();
+function send_friend_request() {
+  // e.preventDefault();
   let username_input = document.getElementById("username_input");
   let username = username_input.value;
   let headers = {
@@ -36,7 +36,7 @@ function send_friend_request(e) {
 
   if (Router.getJwt()) headers["Authorization"] = "Bearer " + Router.getJwt();
 
-  ft_fetch(this.getAttribute("action"), {
+  fetch(USERS_SERVICE_HOST + "/friends/requests/send/", {
     method: "POST",
     // credentials: "include",
     headers: headers,
@@ -83,8 +83,7 @@ function accept_friend_req(e) {
       if (response.ok) fill_friends_list(USERS_SERVICE_HOST + "/friends/");
     })
     // TO DO: console error
-    .catch(() => {
-    });
+    .catch(() => {});
 }
 
 function reject_friend_req(e) {
@@ -109,8 +108,7 @@ function reject_friend_req(e) {
       if (response.ok) fill_friends_list(USERS_SERVICE_HOST + "/friends/");
     })
     // TO DO: console error
-    .catch(function () {
-    });
+    .catch(function () {});
 }
 
 function remove_friend_req(e) {
@@ -135,8 +133,7 @@ function remove_friend_req(e) {
       if (response.ok) fill_friends_list(USERS_SERVICE_HOST + "/friends/");
     })
     // TO DO: console error
-    .catch(function () {
-    });
+    .catch(function () {});
 }
 
 function challenge_friend(e) {
@@ -163,8 +160,7 @@ function challenge_friend(e) {
       }
     })
     // TO DO: console error
-    .catch(function () {
-    });
+    .catch(function () {});
 }
 
 function accept_game_req(e) {
@@ -189,12 +185,11 @@ function accept_game_req(e) {
       if (response.ok) fill_friends_list(USERS_SERVICE_HOST + "/friends/");
 
       Router.changePage(
-        "/pong/?opponent=" + e.target.parentElement.firstChild.innerHTML,
+        "/pong/?opponent=" + e.target.parentElement.firstChild.innerHTML
       );
     })
     // TO DO: console error
-    .catch(function () {
-    });
+    .catch(function () {});
 }
 
 function reject_game_req(e) {
@@ -219,8 +214,7 @@ function reject_game_req(e) {
       if (response.ok) fill_friends_list(USERS_SERVICE_HOST + "/friends/");
     })
     // TO DO: console error
-    .catch(function () {
-    });
+    .catch(function () {});
 }
 
 function fill_friends_list(friends_list_url) {
@@ -290,8 +284,7 @@ function fill_friends_list(friends_list_url) {
       }
     })
     // TO DO: console error
-    .catch(function () {
-    });
+    .catch(function () {});
 
   ft_fetch(GAME_SERVICE_HOST + "/challenge/" + "?status=PENDING", {
     method: "GET",
@@ -335,8 +328,7 @@ function fill_friends_list(friends_list_url) {
       }
     })
     // TO DO: console error
-    .catch(function () {
-    });
+    .catch(function () {});
 
   ft_fetch(friends_list_url, {
     method: "GET",
@@ -395,6 +387,5 @@ function fill_friends_list(friends_list_url) {
       }
     })
     // TO DO: console error
-    .catch(function () {
-    });
+    .catch(function () {});
 }

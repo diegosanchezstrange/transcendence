@@ -31,6 +31,7 @@
           name="profile_pic"
           style="display: none"
           id="profile-picture-input"
+        onchange="event.preventDefault(); changeProfilePicture()"
         />
       </section>
       <!-- Show the user data -->
@@ -46,7 +47,7 @@
               value="{{ user_info.username }}"
               disabled
             />
-            <button id="confirm-name-edit-button">
+            <button id="confirm-name-edit-button" onclick="event.preventDefault(); confirmUsernameHandler1(); confirmUsernameHandler2()">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="currentColor"
@@ -59,7 +60,7 @@
               </svg>
             </button>
           </form>
-          <button id="name-edit-button">
+          <button id="name-edit-button" onclick="editUsername()">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="25"
