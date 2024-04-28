@@ -1,5 +1,9 @@
 let game = null;
 
+let wrapperFunction = function (event) {
+  handleKeyDownArrows(event, game);
+};
+
 class Game {
   constructor() {
     this.dx = 1;
@@ -41,19 +45,15 @@ class Game {
     );
 
     let url = GAME_SERVICE_HOST + "/game/" + id + "/?opponent=" + oponent;
-    let games = await ft_fetch( url + "&status=WAITING",
-      {
-        method: "GET",
-        headers: headers,
-      }
-    );
+    let games = await ft_fetch(url + "&status=WAITING", {
+      method: "GET",
+      headers: headers,
+    });
 
-    let pause_games = await ft_fetch(url + "&status=PAUSED",
-      {
-        method: "GET",
-        headers: headers,
-      }
-    );
+    let pause_games = await ft_fetch(url + "&status=PAUSED", {
+      method: "GET",
+      headers: headers,
+    });
 
     if (pause_games.status === 200) {
       let game = await pause_games.json();
@@ -94,13 +94,6 @@ class Game {
       let challenge_id = gameData.id;
       socket_params = "&invitation=" + challenge_id;
     }
-
-    // dx = 1;
-    // rectangle_left = document.getElementById("rectangle-left");
-    // rectangle_right = document.getElementById("rectangle-right");
-    // dot = document.getElementById("dot");
-    // dotX = 0;
-    // dotY = 0;
 
     let token = Router.getJwt();
 
@@ -347,10 +340,6 @@ async function main_game() {
   let gameData = await game.getGames(id);
   game.createGame(gameData);
 
-  let wrapperFunction = function (event) {
-    handleKeyDownArrows(event, game);
-  };
-
   window.removeEventListener("keydown", wrapperFunction, false);
   window.addEventListener("keydown", wrapperFunction, false);
 
@@ -364,7 +353,9 @@ window.addEventListener("change-page", function (event) {
   //Check if the url has /pong/
   //If it has execute the main_game function
   if (game) {
-    game.gameSocket.close();
+    if (game.gameSocket) game.gameSocket.close();
+    window.removeEventListener("keydown", wrapperFunction, false);
+    window.removeEventListener("keydown", handleKeysPreventDefault, false);
     game = null;
   }
   if (event.detail.newPage.includes("/pong/")) {
