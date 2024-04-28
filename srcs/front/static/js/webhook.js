@@ -117,6 +117,8 @@ class NotificationsWebsocket {
           let tournament = data["tournament_id"];
           Router.changePage("/lobby/" + "?tournament=" + tournament);
           break;
+        case NotificationType.NextTournamentMatch:
+          break;
         default:
           addNotificationBox("Message", data["message"]);
           fill_friends_list(USERS_SERVICE_HOST + "/friends/");
