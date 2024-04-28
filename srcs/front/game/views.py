@@ -74,10 +74,21 @@ def lobby(request):
             headers={'Authorization': auth},
             verify=False)
         players = players.json()["players"]
-        context['player1'] = players[0]['username']
-        context['player2'] = players[1]['username']
-        context['player3'] = players[2]['username']
-        context['player4'] = players[3]['username']
+        current_game = requests.get(
+            f'{settings.GAME_SERVICE_HOST_INTERNAL}/tournament/nextgame/',
+            headers={'Authorization': auth},
+            verify=False)
+        current_game = current_game.json()['game']
+        context['player3'] = None
+        for player in players:
+            if player['username'] == current_game['playerLeft']:
+                context['playerLeft'] = players['username']
+            elif player['username'] == current_game['playerRight']:
+                context['playerRight'] = players['username']
+            elif context['player3'] == None:
+                context['player3'] = players['username']
+            else:
+                context['player4'] = players['username']
     except Exception as e:
         print(e)
         print(e.message)
