@@ -28,16 +28,10 @@ def start(request):
         context['PATH'] = 'pong'
     auth = request.headers.get('Authorization')
     id = request.user.id
-    print(id)
     user_matches = requests.get(
         f'{settings.GAME_SERVICE_HOST_INTERNAL}/game/{id}/',
         headers={'Authorization': auth},
-        verify=False)
-
-    if user_matches.status_code != 200:
-        context['PATH'] = 'home'
-        return render(request, '../templates/base.html', context)
-    user_matches = user_matches.json()['detail']
+        verify=False).json()['detail']
 
     current_game = None
     for match in user_matches:
@@ -74,21 +68,10 @@ def lobby(request):
             headers={'Authorization': auth},
             verify=False)
         players = players.json()["players"]
-        current_game = requests.get(
-            f'{settings.GAME_SERVICE_HOST_INTERNAL}/tournament/nextgame/',
-            headers={'Authorization': auth},
-            verify=False)
-        current_game = current_game.json()['game']
-        context['player3'] = None
-        for player in players:
-            if player['username'] == current_game['playerLeft']:
-                context['playerLeft'] = players['username']
-            elif player['username'] == current_game['playerRight']:
-                context['playerRight'] = players['username']
-            elif context['player3'] == None:
-                context['player3'] = players['username']
-            else:
-                context['player4'] = players['username']
+        context['player1'] = players[0]['username']
+        context['player2'] = players[1]['username']
+        context['player3'] = players[2]['username']
+        context['player4'] = players[3]['username']
     except Exception as e:
         print(e)
         print(e.message)
