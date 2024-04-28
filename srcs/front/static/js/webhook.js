@@ -76,6 +76,11 @@ class NotificationsWebsocket {
     this.socket.onopen = () => {
       console.log("WebSocket Client Connected");
     };
+
+    this.socket.onclose = (event) => {
+      console.log("WebSocket Client Closed" * event.code);
+    };
+
     this.socket.onmessage = (message) => {
       let data = JSON.parse(message.data)["message"];
       switch (data["ntype"]) {

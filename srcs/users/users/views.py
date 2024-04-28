@@ -271,7 +271,7 @@ def upload_profile_picture(request, *args, **kwargs):
 @api_view(['PUT'])
 @private_or_public_endpoint
 @permission_classes([])
-@authentication_classes([])
+#@authentication_classes([])
 def set_user_status(request, *args, **kwargs):
     status = request.data.get("is_online")
 
