@@ -3,6 +3,7 @@ from django.views.decorators.cache import never_cache
 from django.conf import settings
 
 from rest_framework.decorators import api_view
+from django.http import JsonResponse
 
 import requests
 
@@ -12,7 +13,7 @@ context = {
     'NOTIFICATIONS_SERVICE_HOST': settings.NOTIFICATIONS_SERVICE_HOST,
     'NOTIFICATIONS_SOCKETS_HOST': settings.NOTIFICATIONS_SOCKETS_HOST,
     'GAME_SERVICE_HOST': settings.GAME_SERVICE_HOST,
-    'GAME_SERVICE_HOST': settings.GAME_SERVICE_HOST_INTERNAL,
+    'GAME_SERVICE_HOST_INTERNAL': settings.GAME_SERVICE_HOST_INTERNAL,
     'GAME_SOCKETS_HOST': settings.GAME_SOCKETS_HOST,
     'MATCHMAKING_SERVICE_HOST': settings.MATCHMAKING_SERVICE_HOST,
     'BASE_URL': settings.BASE_URL,
@@ -56,16 +57,27 @@ def lobby(request):
         context['PATH'] = 'lobby/?tournament=' + request.query_params.get('tournament')
     else:
         context['PATH'] = 'lobby'
-    # TO DO: request game info from database
-    context['waitlist'] = [
-        "Player 3",
-        "Player 4",
-        "Player 5"
-    ]
-    context['game_ongoing'] = True
-    context['player_1'] = "Bob"
-    context['player_2'] = "Ross"
+
     auth = request.headers.get('Authorization')
+    tournament_id = request.query_params.get('tournament')
+    try:
+        players = requests.get(
+            f'{settings.GAME_SERVICE_HOST_INTERNAL}/tournament/players/?tournament_id={tournament_id}',
+            headers={'Authorization': auth},
+            verify=False)
+        players = players.json()["players"]
+        context['player1'] = players[0]['username']
+        context['player2'] = players[1]['username']
+        context['player3'] = players[2]['username']
+        if len(players) > 3:
+            context['player4'] = players[3]['username']
+    except Exception as e:
+        print(e)
+        print(e.message)
+        return JsonResponse({
+            "message": "Players not found."
+            }, status=404)
+
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         if auth is None and not request.user.is_authenticated:
             return redirect('/login/')
@@ -73,11 +85,3 @@ def lobby(request):
     else:
         return render(request, '../templates/base.html', context)
 
-# class LobbyView(TemplateView):
-#     template_name = 'lobby.html'
- 
-#     def get_context_data(self, **kwargs):
-#         context = super(LobbyView, self).get_context_data(**kwargs)
-#         # get current open games to prepopulate the list
- 
-#         return context
