@@ -37,7 +37,7 @@ function confirmUsernameHandler2() {
   };
   body = JSON.stringify(body);
 
-  fetch(USERS_SERVICE_HOST + "/profile/edit/", {
+  ft_fetch(USERS_SERVICE_HOST + "/profile/edit/", {
     method: "PUT",
     headers: headers,
     body: body,
@@ -85,7 +85,7 @@ function changeProfilePicture() {
   let body = new FormData();
   body.append("profile_pic", profile_picture_input.files[0]);
 
-  fetch(USERS_SERVICE_HOST + "/users/upload/", {
+  ft_fetch(USERS_SERVICE_HOST + "/users/upload/", {
     method: "POST",
     headers: headers,
     body: body,

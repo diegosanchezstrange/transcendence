@@ -6,8 +6,6 @@ const containers = {
   body: document.querySelector("body"),
 };
 
-const originalFetch = window.fetch;
-
 /*
  * Function to add an alert box to the page
  * @param {string} message - The message to display in the alert box
@@ -52,36 +50,29 @@ class Router {
         refresh: refreshToken,
       };
 
-      originalFetch(LOGIN_SERVICE_HOST + "/auth/login/refresh/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      })
-        .then((response) => {
-          if (response.status === 401) {
-            throw new Error(response.status);
-          }
-          return response.json();
-        })
-        .then((data) => {
-          localStorage.setItem("token", data.access);
-          // localStorage.setItem("refreshToken", data.refreshToken);
-        })
-        .catch((error) => {
-          console.log(error.message);
-          let errorCode = parseInt(error.message);
-          if (errorCode === 401) {
-            localStorage.removeItem("token");
-            localStorage.removeItem("refreshToken");
-            if (notificationsWebSocket) {
-              notificationsWebSocket.close();
-              notificationsWebSocket = null;
-            }
-            Router.changePage("/login");
-          }
-        });
+      let refreshData = await ft_fetch(
+        LOGIN_SERVICE_HOST + "/auth/login/refresh/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(body),
+        }
+      );
+
+      if (refreshData.status === 401) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("refreshToken");
+        if (notificationsWebSocket) {
+          notificationsWebSocket.close();
+          notificationsWebSocket = null;
+        }
+        Router.changePage("/login");
+      } else {
+        let data = await refreshData.json();
+        localStorage.setItem("token", data.access);
+      }
     }
   }
 
@@ -176,7 +167,7 @@ class Router {
 
     if (Router.getJwt()) headers["Authorization"] = "Bearer " + Router.getJwt();
 
-    fetch(url, {
+    ft_fetch(url, {
       method: "GET",
       headers: headers,
     })
@@ -200,18 +191,33 @@ class Router {
         Router.changePageEventDispat(url);
       })
       // TO DO: console error
-      .catch(() => {
+      .catch((error) => {
         let errorCode = parseInt(error.message);
         if (errorCode === 401) {
-          localStorage.removeItem("token");
           if (notificationsWebSocket) {
             notificationsWebSocket.close();
             notificationsWebSocket = null;
           }
-          Router.changePage("/login");
         }
       });
   }
+}
+
+async function ft_fetch(url, options) {
+  const response = await fetch(url, options);
+
+  if (response.status === 401) {
+    await Router.refreshToken();
+
+    if (!options.headers) {
+      options.headers = {};
+    }
+    options.headers.Authorization = "Bearer " + localStorage.getItem("token");
+
+    return await fetch(url, options);
+  }
+
+  return response;
 }
 
 window.addEventListener("popstate", (event) => {
@@ -224,25 +230,30 @@ document.addEventListener("DOMContentLoaded", async function () {
   // TODO: Check where the token should be safely stored
   // const token = localStorage.getItem("token");
 
-  window.fetch = async function (url, options) {
-    const token = localStorage.getItem("token");
-    if (token) {
-      if (!options.headers) {
-        options.headers = {};
-      }
-      options.headers.Authorization = "Bearer " + token;
-    }
-
-    const response = await originalFetch(url, options);
-
-    if (response.status === 401) {
-      await Router.refreshToken();
-
-      options.headers.Authorization = "Bearer " + localStorage.getItem("token");
-      return originalFetch(url, options);
-    }
-    return response;
-  };
+  // window.ft_fetch = async function (url, options) {
+  //   const token = localStorage.getItem("token");
+  //   if (token) {
+  //     if (!options.headers) {
+  //       options.headers = {};
+  //     }
+  //     options.headers.Authorization = "Bearer " + token;
+  //   }
+  //
+  //   try {
+  //     let response = await originalft_fetch(url, options);
+  //     console.log(response);
+  //     return response;
+  //   } catch (error) {
+  //     console.log(error);
+  //     if (response.status === 401) {
+  //       await Router.refreshToken();
+  //
+  //       options.headers.Authorization =
+  //         "Bearer " + localStorage.getItem("token");
+  //       return originalft_fetch(url, options);
+  //     }
+  //   }
+  //
 
   // Get the token from the cookie and store it in localStorage
   let token = document.cookie

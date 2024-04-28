@@ -31,7 +31,7 @@ function formSubmitLogin(form) {
 
   body = JSON.stringify(body);
 
-  fetch(form.getAttribute("action"), {
+  ft_fetch(form.getAttribute("action"), {
     method: form.getAttribute("method"),
     credentials: "include",
     headers: {
@@ -97,7 +97,7 @@ function formSubmitRegister(form) {
 
   body = JSON.stringify(body);
 
-  fetch(form.getAttribute("action"), {
+  ft_fetch(form.getAttribute("action"), {
     method: form.getAttribute("method"),
     credentials: "include",
     headers: {
