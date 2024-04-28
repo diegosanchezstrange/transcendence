@@ -23,9 +23,9 @@ class GameInstance():
         self.invite = None
 
         # Game status
-        self.dx = random.choice([0.5, 1])
+        self.dx = random.choice([1.5, 2])
         self.group_name = group_name
-        self.dy = random.choice([0.5, 1])
+        self.dy = random.choice([1.5, 2])
         self.paddle_right = 50
         self.paddle_left = 50
         self.court_top = 0
@@ -34,8 +34,8 @@ class GameInstance():
         self.dotX = 50
         self.dotY = 50
 
-        self.speedX= self.dx*random.choice([-1, 1])
-        self.speedY= self.dy*random.choice([-1, 1])
+        self.speedX= self.dx*random.choice([-1, 1]) - 0.5
+        self.speedY= self.dy*random.choice([-1, 1]) - 0.5
         self.started = True
         self.dotKicked = False
 
