@@ -24,14 +24,14 @@ async function find1v1Game() {
 
   id = Router.getUserId();
   let url = GAME_SERVICE_HOST + "/game/" + id;
-  let games = await fetch(url + "/?status=WAITING", {
+  let games = await ft_fetch(url + "/?status=WAITING", {
     method: "GET",
     headers: headers,
   });
 
   let games_detail = (await games.json())["detail"];
 
-  let pause_games = await fetch(url + "/?status=PAUSED", {
+  let pause_games = await ft_fetch(url + "/?status=PAUSED", {
     method: "GET",
     headers: headers,
   });
@@ -82,7 +82,7 @@ async function find1v1Game() {
       "success",
       document.getElementsByTagName("main")[0]
     );
-    response = await fetch(MATCHMAKING_SERVICE_HOST + "/queue/join/", {
+    response = await ft_fetch(MATCHMAKING_SERVICE_HOST + "/queue/join/", {
       method: "POST",
       headers: headers,
     });
@@ -112,7 +112,7 @@ async function enterLobby() {
     Authorization: "Bearer " + Router.getJwt(),
   };
 
-  let tournament = await fetch(GAME_SERVICE_HOST + "/tournament/", {
+  let tournament = await ft_fetch(GAME_SERVICE_HOST + "/tournament/", {
     method: "GET",
     headers: headers,
   });
@@ -131,7 +131,7 @@ async function enterLobby() {
     }
   }
   // no tournament found
-  let new_tournament = await fetch(
+  let new_tournament = await ft_fetch(
     MATCHMAKING_SERVICE_HOST + "/tournament/join/",
     {
       method: "POST",

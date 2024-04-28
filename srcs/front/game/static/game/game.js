@@ -32,7 +32,7 @@ class Game {
       return;
     }
 
-    let invitations = await fetch(
+    let invitations = await ft_fetch(
       GAME_SERVICE_HOST + "/challenge/?opponent=" + oponent + "&status=PENDING",
       {
         method: "GET",
@@ -41,14 +41,14 @@ class Game {
     );
 
     let url = GAME_SERVICE_HOST + "/game/" + id + "/?opponent=" + oponent;
-    let games = await fetch( url + "&status=WAITING",
+    let games = await ft_fetch( url + "&status=WAITING",
       {
         method: "GET",
         headers: headers,
       }
     );
 
-    let pause_games = await fetch(url + "&status=PAUSED",
+    let pause_games = await ft_fetch(url + "&status=PAUSED",
       {
         method: "GET",
         headers: headers,

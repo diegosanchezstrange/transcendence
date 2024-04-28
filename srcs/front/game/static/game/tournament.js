@@ -16,7 +16,7 @@ class Tournament {
       Authorization: "Bearer " + Router.getJwt(),
     };
 
-    let response = await fetch(
+    let response = await ft_fetch(
       GAME_SERVICE_HOST +
         "/tournament/player/status/?tournament_id=" +
         this.tournament_id,
@@ -45,7 +45,7 @@ class Tournament {
       tournament_id: this.tournament_id,
     };
 
-    let response = await fetch(GAME_SERVICE_HOST + "/tournament/nextgame/", {
+    let response = await ft_fetch(GAME_SERVICE_HOST + "/tournament/nextgame/", {
       method: "POST",
       headers: headers,
       body: JSON.stringify(body),
@@ -70,7 +70,7 @@ class Tournament {
       Authorization: "Bearer " + Router.getJwt(),
     };
 
-    let response = await fetch(
+    let response = await ft_fetch(
       GAME_SERVICE_HOST +
         "/tournament/players/?tournament_id=" +
         this.tournament_id,
